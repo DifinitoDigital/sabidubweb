@@ -1,3 +1,12 @@
+// Example: How to use the API URL for email verification in React
+//
+// const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+// fetch(`${apiUrl}/auth/verify-school-email?email=${email}&token=${token}`)
+//   .then(res => res.json())
+//   .then(data => {
+//     // handle response
+//   });
+
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
