@@ -4,24 +4,24 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 
 // Example: How to use the API URL for email verification in React
-const apiUrl ='https://bd22-102-91-5-188.ngrok-free.app';
-
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const email = params.get('email');
-  const token = params.get('token');
-  console.log('Email from URL:', email);
-  console.log('Token from URL:', token);
-
-  // Call backend to verify
-  fetch(`${apiUrl}/auth/school/verify-email-success?email=${email}&token=${token}`)
-    .then(res => res.json())
-    .then(data => {
-      console.log('Backend response:', data);
-    });
-}, []);
+const apiUrl = 'https://bd22-102-91-5-188.ngrok-free.app';
 
 export default function VerifyEmailSuccess() {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get('email');
+    const token = params.get('token');
+    console.log('Email from URL:', email);
+    console.log('Token from URL:', token);
+
+    // Call backend to verify
+    fetch(`${apiUrl}/auth/school/verify-email-success?email=${email}&token=${token}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('Backend response:', data);
+      });
+  }, []);
+
   useEffect(() => {
     // Confetti effect on load
     const confetti = () => {
