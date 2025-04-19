@@ -5,23 +5,39 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 type SchoolType = "secondary" | "tertiary" | "management";
 
-type PlanFeatures = {
-  monthly: string;
-  yearly: string;
-  features: string[];
+// Map SchoolType to API planType
+const planTypeMap = {
+  secondary: "SECONDARY",
+  tertiary: "TERTIARY",
+  management: "SCHOOL"
 };
 
-type SchoolPlan = {
-  basic: PlanFeatures;
-  premium: PlanFeatures;
-};
+interface SubscriptionFeature {
+  id: string;
+  name: string;
+  description?: string;
+  included: boolean;
+}
 
-type PricingData = {
-  [key in SchoolType]: SchoolPlan;
-};
+interface SubscriptionPlan {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  billingPeriod: number;
+  planType: string;
+  isPopular: boolean;
+  isRecommended: boolean;
+  hasUnlimitedAccess: boolean;
+  subscriptionFeatures: SubscriptionFeature[];
+  createdAt: Date;
+  updatedAt: Date;
+  billingCycle: string;
+}
 
 // Animation variants
 const fadeInUp = {
@@ -48,7 +64,28 @@ export default function Pricing() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isYearly, setIsYearly] = useState(false);
   const [schoolType, setSchoolType] = useState<SchoolType>("secondary");
+  const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const router = useRouter();
+  const [selectedPlan1, setSelectedPlan1] = useState<string>('');
+  const [selectedPlan2, setSelectedPlan2] = useState<string>('');
+  const [showDetailedComparison, setShowDetailedComparison] = useState<boolean>(false);
+
+  interface ComparisonResult {
+    plan1Name: string;
+    plan2Name: string;
+    plan1Price: number;
+    plan2Price: number;
+    priceDifference: number;
+    uniqueToPlan1: string[];
+    uniqueToPlan2: string[];
+    commonFeatures: string[];
+    plan1TotalFeatures: number;
+    plan2TotalFeatures: number;
+  }
+
+  const [comparisonResult, setComparisonResult] = useState<ComparisonResult | null>(null);
 
   useEffect(() => {
     // Check if coming from services page with management query
@@ -57,180 +94,87 @@ export default function Pricing() {
     }
   }, [router.query]);
 
+  useEffect(() => {
+    // Fetch subscription plans from API without filtering by planType
+    const fetchSubscriptionPlans = async () => {
+      try {
+        setLoading(true);
+        // Remove the planType parameter to fetch all plans
+        const response = await axios.get(`http://localhost:4000/subscription/plans`);
+        setSubscriptionPlans(response.data);
+        setError("");
+      } catch (err) {
+        console.error("Error fetching subscription plans:", err);
+        setError("Failed to load subscription plans");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubscriptionPlans();
+  }, []); // No need to re-fetch when school type changes since we're filtering client-side
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const pricingData: PricingData = {
-    secondary: {
-      basic: {
-        monthly: "₦2,500",
-        yearly: "₦24,000",
-        features: [
-          "Access to core subjects",
-          "Basic study materials",
-          "Progress tracking",
-        ],
-      },
-      premium: {
-        monthly: "₦5,000",
-        yearly: "₦48,000",
-        features: [
-          "All Basic features",
-          "Advanced study materials",
-          "AI-powered assistance",
-          "Live tutoring sessions",
-        ],
-      },
-    },
-    tertiary: {
-      basic: {
-        monthly: "₦3,500",
-        yearly: "₦36,000",
-        features: [
-          "Access to course materials",
-          "Research resources",
-          "Study groups",
-        ],
-      },
-      premium: {
-        monthly: "₦7,000",
-        yearly: "₦72,000",
-        features: [
-          "All Basic features",
-          "Project assistance",
-          "Career guidance",
-          "Industry connections",
-        ],
-      },
-    },
-    management: {
-      basic: {
-        monthly: "₦15,000",
-        yearly: "₦150,000",
-        features: [
-          "Student management system",
-          "Basic analytics",
-          "Staff management",
-        ],
-      },
-      premium: {
-        monthly: "₦25,000",
-        yearly: "₦250,000",
-        features: [
-          "All Basic features",
-          "Advanced analytics",
-          "Custom integrations",
-          "Priority support",
-        ],
-      },
-    },
+  // Filter plans client-side based on school type and billing cycle
+  const filteredPlans = subscriptionPlans.filter(plan => 
+    plan.planType === planTypeMap[schoolType] && 
+    (isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY")
+  );
+
+  // Get all plans by category and sort by price (highest to lowest)
+  const basicPlans = filteredPlans.filter(plan => !plan.isPopular).sort((a, b) => b.price - a.price);
+  const premiumPlans = filteredPlans.filter(plan => plan.isPopular).sort((a, b) => b.price - a.price);
+
+  // Helper to format price
+  const formatPrice = (price: number) => {
+    return `₦${price.toLocaleString()}`;
   };
 
-  const comparisonData = {
-    secondary: {
-      features: [
-        {
-          name: "Core Study Materials",
-          basic: "✓",
-          premium: "✓",
-          enterprise: "✓",
-        },
-        {
-          name: "Practice Tests",
-          basic: "Limited",
-          premium: "Unlimited",
-          enterprise: "Unlimited",
-        },
-        {
-          name: "AI Study Assistant",
-          basic: "✗",
-          premium: "✓",
-          enterprise: "✓",
-        },
-        {
-          name: "Live Tutoring",
-          basic: "✗",
-          premium: "5hrs/month",
-          enterprise: "Unlimited",
-        },
-        {
-          name: "Progress Tracking",
-          basic: "Basic",
-          premium: "Advanced",
-          enterprise: "Custom",
-        },
-      ],
-    },
-    tertiary: {
-      features: [
-        {
-          name: "Course Materials",
-          basic: "✓",
-          premium: "✓",
-          enterprise: "✓",
-        },
-        {
-          name: "Research Resources",
-          basic: "Limited",
-          premium: "Full Access",
-          enterprise: "Full Access + API",
-        },
-        {
-          name: "Project Assistance",
-          basic: "✗",
-          premium: "✓",
-          enterprise: "✓",
-        },
-        {
-          name: "Career Guidance",
-          basic: "✗",
-          premium: "Monthly",
-          enterprise: "Weekly",
-        },
-        {
-          name: "Industry Connections",
-          basic: "✗",
-          premium: "Limited",
-          enterprise: "Full Access",
-        },
-      ],
-    },
-    management: {
-      features: [
-        {
-          name: "Student Management",
-          basic: "Up to 500",
-          premium: "Up to 2000",
-          enterprise: "Unlimited",
-        },
-        {
-          name: "Analytics Dashboard",
-          basic: "Basic",
-          premium: "Advanced",
-          enterprise: "Custom",
-        },
-        {
-          name: "Staff Management",
-          basic: "✓",
-          premium: "✓",
-          enterprise: "✓",
-        },
-        {
-          name: "Custom Integration",
-          basic: "✗",
-          premium: "Limited APIs",
-          enterprise: "Full API Access",
-        },
-        {
-          name: "Support Level",
-          basic: "Email",
-          premium: "Priority",
-          enterprise: "24/7 Dedicated",
-        },
-      ],
-    },
+  const compareSpecificPlans = () => {
+    if (!selectedPlan1 || !selectedPlan2) {
+      setError('Please select two plans to compare');
+      return;
+    }
+
+    const plan1 = subscriptionPlans.find(p => p.id === selectedPlan1);
+    const plan2 = subscriptionPlans.find(p => p.id === selectedPlan2);
+
+    if (!plan1 || !plan2) {
+      setError('Invalid plan selection');
+      return;
+    }
+
+    const features1 = plan1.subscriptionFeatures.filter(f => f.included).map(f => f.name);
+    const features2 = plan2.subscriptionFeatures.filter(f => f.included).map(f => f.name);
+    
+    const uniqueToFirst = features1.filter(f => !features2.includes(f));
+    const uniqueToSecond = features2.filter(f => !features1.includes(f));
+    const commonFeatures = features1.filter(f => features2.includes(f));
+    
+    setComparisonResult({
+      plan1Name: plan1.name,
+      plan2Name: plan2.name,
+      plan1Price: plan1.price,
+      plan2Price: plan2.price,
+      priceDifference: Math.abs(plan1.price - plan2.price),
+      uniqueToPlan1: uniqueToFirst,
+      uniqueToPlan2: uniqueToSecond,
+      commonFeatures,
+      plan1TotalFeatures: features1.length,
+      plan2TotalFeatures: features2.length
+    });
+    
+    setError("");
   };
+
+  useEffect(() => {
+    if (selectedPlan1 && selectedPlan2) {
+      compareSpecificPlans();
+    }
+  }, [selectedPlan1, selectedPlan2]);
 
   return (
     <>
@@ -492,48 +436,54 @@ export default function Pricing() {
             {/* Billing Toggle */}
             <motion.div
               variants={fadeInUp}
-              className="flex items-center justify-center gap-6 mb-12"
+              className="flex flex-col items-center justify-center gap-4 mb-12"
             >
-              <span
-                className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
-                  !isYearly
-                    ? "text-[#FFEDB1]"
-                    : "text-gray-400 hover:text-gray-300"
-                }`}
-                onClick={() => setIsYearly(false)}
-              >
-                Monthly
-              </span>
-              <button
-                onClick={() => setIsYearly(!isYearly)}
-                className={`relative inline-flex items-center h-7 rounded-full w-16 transition-colors duration-300 focus:outline-none ${
-                  isYearly ? "bg-[#FFEDB1]" : "bg-gray-700"
-                }`}
-              >
-                <span className="sr-only">Toggle Billing Period</span>
+              <h3 className="text-white font-medium mb-2">Billing Cycle</h3>
+              <div className="flex items-center justify-center gap-6">
                 <span
-                  className={`absolute transform transition-transform duration-300 ease-in-out h-6 w-6 rounded-full bg-white shadow-md ${
-                    isYearly ? "translate-x-9" : "translate-x-1"
+                  className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
+                    !isYearly
+                      ? "text-[#FFEDB1] font-bold"
+                      : "text-gray-400 hover:text-gray-300"
                   }`}
-                ></span>
-                <span
-                  className={`absolute inset-0 flex items-center justify-center text-[8px] font-bold ${
-                    isYearly ? "text-black pl-1" : "text-white pr-1"
+                  onClick={() => setIsYearly(false)}
+                >
+                  Monthly
+                </span>
+                <button
+                  onClick={() => setIsYearly(!isYearly)}
+                  className={`relative inline-flex items-center h-7 rounded-full w-16 transition-colors duration-300 focus:outline-none ${
+                    isYearly ? "bg-[#FFEDB1]" : "bg-gray-700"
                   }`}
                 >
-                  {isYearly ? "ON" : "OFF"}
+                  <span className="sr-only">Toggle Billing Period</span>
+                  <span
+                    className={`absolute transform transition-transform duration-300 ease-in-out h-6 w-6 rounded-full bg-white shadow-md ${
+                      isYearly ? "translate-x-9" : "translate-x-1"
+                    }`}
+                  ></span>
+                  <span
+                    className={`absolute inset-0 flex items-center justify-center text-[8px] font-bold ${
+                      isYearly ? "text-black pl-1" : "text-white pr-1"
+                    }`}
+                  >
+                    {isYearly ? "ON" : "OFF"}
+                  </span>
+                </button>
+                <span
+                  className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
+                    isYearly
+                      ? "text-[#FFEDB1] font-bold"
+                      : "text-gray-400 hover:text-gray-300"
+                  }`}
+                  onClick={() => setIsYearly(true)}
+                >
+                  Yearly <span className="text-[#FFEDB1] ml-1">(Save 20%)</span>
                 </span>
-              </button>
-              <span
-                className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
-                  isYearly
-                    ? "text-[#FFEDB1]"
-                    : "text-gray-400 hover:text-gray-300"
-                }`}
-                onClick={() => setIsYearly(true)}
-              >
-                Yearly <span className="text-[#FFEDB1] ml-1">(Save 20%)</span>
-              </span>
+              </div>
+              <div className="text-sm text-gray-400 mt-1">
+                {isYearly ? "Showing yearly plans" : "Showing monthly plans"}
+              </div>
             </motion.div>
           </motion.div>
         </motion.section>
@@ -541,41 +491,163 @@ export default function Pricing() {
         {/* Pricing Plans */}
         <motion.section variants={fadeInUp} className="px-4 sm:px-6 pb-16">
           <div className="max-w-7xl mx-auto">
-            <motion.div
-              variants={staggerChildren}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            >
-              {/* Basic Plan */}
+            {loading ? (
+              <div className="text-center text-white py-12">Loading subscription plans...</div>
+            ) : error ? (
+              <div className="text-center text-red-500 py-12">{error}</div>
+            ) : (
               <motion.div
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                className="bg-[#1a1a1a] rounded-2xl p-8 border border-gray-800"
+                variants={staggerChildren}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8"
               >
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Basic
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    Perfect for getting started
-                  </p>
-                </div>
-                <div className="mb-6">
-                  <div className="text-3xl font-bold text-white">
-                    {isYearly
-                      ? pricingData[schoolType].basic.yearly
-                      : pricingData[schoolType].basic.monthly}
-                    <span className="text-gray-400 text-sm font-normal">
-                      {isYearly ? "/year" : "/month"}
-                    </span>
-                  </div>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  {pricingData[schoolType].basic.features.map(
-                    (feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center text-gray-400"
-                      >
+                {/* Basic Plans */}
+                {basicPlans.map((plan, index) => (
+                  <motion.div
+                    key={`basic-${plan.id}`}
+                    variants={fadeInUp}
+                    whileHover={{ scale: 1.02 }}
+                    className={`bg-[#1a1a1a] rounded-2xl p-8 relative ${
+                      plan.isRecommended ? "border-2 border-[#4CAF50]" : "border border-gray-800"
+                    }`}
+                  >
+                    {plan.isRecommended && (
+                      <div className="absolute -top-4 left-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
+                        Recommended
+                      </div>
+                    )}
+                    <div className="mb-6">
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        {plan.name}
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        {plan.description}
+                      </p>
+                    </div>
+                    <div className="mb-6">
+                      <div className="text-3xl font-bold text-white">
+                        {formatPrice(plan.price)}
+                        <span className="text-gray-400 text-sm font-normal">
+                          {isYearly ? "/year" : "/month"}
+                        </span>
+                      </div>
+                    </div>
+                    <ul className="space-y-4 mb-8">
+                      {plan.subscriptionFeatures.filter(f => f.included).map((feature, idx) => (
+                        <li
+                          key={idx}
+                          className="flex items-center text-gray-400"
+                        >
+                          <svg
+                            className="w-5 h-5 text-[#FFEDB1] mr-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          {feature.name}
+                        </li>
+                      ))}
+                    </ul>
+                    {schoolType === "management" && (
+                      <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                        Get Started
+                      </button>
+                    )}
+                  </motion.div>
+                ))}
+
+                {/* Premium Plans */}
+                {premiumPlans.map((plan, index) => (
+                  <motion.div
+                    key={`premium-${plan.id}`}
+                    variants={fadeInUp}
+                    whileHover={{ scale: 1.02 }}
+                    className={`bg-[#1a1a1a] rounded-2xl p-8 relative ${
+                      plan.isRecommended ? "border-2 border-[#4CAF50]" : "border-2 border-[#FFEDB1]"
+                    }`}
+                  >
+                    <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
+                      Popular
+                    </div>
+                    {plan.isRecommended && (
+                      <div className="absolute -top-4 left-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
+                        Recommended
+                      </div>
+                    )}
+                    <div className="mb-6">
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        {plan.name}
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        {plan.description}
+                      </p>
+                    </div>
+                    <div className="mb-6">
+                      <div className="text-3xl font-bold text-white">
+                        {formatPrice(plan.price)}
+                        <span className="text-gray-400 text-sm font-normal">
+                          {isYearly ? "/year" : "/month"}
+                        </span>
+                      </div>
+                    </div>
+                    <ul className="space-y-4 mb-8">
+                      {plan.subscriptionFeatures.filter(f => f.included).map((feature, idx) => (
+                        <li
+                          key={idx}
+                          className="flex items-center text-gray-400"
+                        >
+                          <svg
+                            className="w-5 h-5 text-[#FFEDB1] mr-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          {feature.name}
+                        </li>
+                      ))}
+                    </ul>
+                    {schoolType === "management" && (
+                      <button className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors">
+                        Get Premium
+                      </button>
+                    )}
+                  </motion.div>
+                ))}
+
+                {/* Enterprise Plan - Only show for management type */}
+                {schoolType === "management" && (
+                  <motion.div
+                    variants={fadeInUp}
+                    whileHover={{ scale: 1.02 }}
+                    className="bg-[#1a1a1a] rounded-2xl p-8 border border-gray-800"
+                  >
+                    <div className="mb-6">
+                      <h3 className="text-xl font-semibold text-white mb-2">
+                        Enterprise
+                      </h3>
+                      <p className="text-gray-400 text-sm">
+                        For large institutions
+                      </p>
+                    </div>
+                    <div className="mb-6">
+                      <div className="text-3xl font-bold text-white">Custom</div>
+                      <p className="text-gray-400 text-sm">Contact for pricing</p>
+                    </div>
+                    <ul className="space-y-4 mb-8">
+                      <li className="flex items-center text-gray-400">
                         <svg
                           className="w-5 h-5 text-[#FFEDB1] mr-3"
                           fill="none"
@@ -589,54 +661,9 @@ export default function Pricing() {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        {feature}
+                        All Premium features
                       </li>
-                    )
-                  )}
-                </ul>
-                {schoolType === "management" && (
-                  <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-                    Get Started
-                  </button>
-                )}
-              </motion.div>
-
-              {/* Premium Plan */}
-              <motion.div
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                className="bg-[#1a1a1a] rounded-2xl p-8 border-2 border-[#FFEDB1] relative"
-              >
-                <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
-                  Popular
-                </div>
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Premium
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    {schoolType === "management"
-                      ? "Best for school administrators"
-                      : "Best for serious students"}
-                  </p>
-                </div>
-                <div className="mb-6">
-                  <div className="text-3xl font-bold text-white">
-                    {isYearly
-                      ? pricingData[schoolType].premium.yearly
-                      : pricingData[schoolType].premium.monthly}
-                    <span className="text-gray-400 text-sm font-normal">
-                      {isYearly ? "/year" : "/month"}
-                    </span>
-                  </div>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  {pricingData[schoolType].premium.features.map(
-                    (feature, index) => (
-                      <li
-                        key={index}
-                        className="flex items-center text-gray-400"
-                      >
+                      <li className="flex items-center text-gray-400">
                         <svg
                           className="w-5 h-5 text-[#FFEDB1] mr-3"
                           fill="none"
@@ -650,163 +677,225 @@ export default function Pricing() {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        {feature}
+                        Custom integration
                       </li>
-                    )
-                  )}
-                </ul>
-                {schoolType === "management" && (
-                  <button className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors">
-                    Get Premium
-                  </button>
+                      <li className="flex items-center text-gray-400">
+                        <svg
+                          className="w-5 h-5 text-[#FFEDB1] mr-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        Dedicated support
+                      </li>
+                      <li className="flex items-center text-gray-400">
+                        <svg
+                          className="w-5 h-5 text-[#FFEDB1] mr-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        Analytics dashboard
+                      </li>
+                    </ul>
+                    <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                      Contact Sales
+                    </button>
+                  </motion.div>
                 )}
               </motion.div>
-
-              {/* Enterprise Plan */}
-              <motion.div
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                className="bg-[#1a1a1a] rounded-2xl p-8 border border-gray-800"
-              >
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Enterprise
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    For large institutions
-                  </p>
-                </div>
-                <div className="mb-6">
-                  <div className="text-3xl font-bold text-white">Custom</div>
-                  <p className="text-gray-400 text-sm">Contact for pricing</p>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    All Premium features
-                  </li>
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Custom integration
-                  </li>
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Dedicated support
-                  </li>
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Analytics dashboard
-                  </li>
-                </ul>
-                {schoolType === "management" && (
-                  <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-                    Contact Sales
-                  </button>
-                )}
-              </motion.div>
-            </motion.div>
+            )}
           </div>
         </motion.section>
 
-        {/* Comparison Table */}
+        {/* Detailed Plan Comparison */}
         <motion.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-4 sm:px-6 py-16"
+          className="px-4 sm:px-6 py-16 bg-[#0d0d0d]"
         >
           <div className="max-w-7xl mx-auto">
             <motion.h2
               variants={fadeInUp}
-              className="text-2xl font-bold text-white text-center mb-12"
+              className="text-2xl font-bold text-white text-center mb-8"
             >
-              Feature Comparison
+              Plan Comparison
             </motion.h2>
-            <motion.div variants={fadeInUp} className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-800">
-                    <th className="text-left py-4 px-4 text-gray-400 font-medium">
-                      Features
-                    </th>
-                    <th className="text-center py-4 px-4 text-gray-400 font-medium">
-                      Basic
-                    </th>
-                    <th className="text-center py-4 px-4 text-[#FFEDB1] font-medium">
-                      Premium
-                    </th>
-                    <th className="text-center py-4 px-4 text-gray-400 font-medium">
-                      Enterprise
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparisonData[schoolType].features.map((feature, index) => (
-                    <tr key={index} className="border-b border-gray-800">
-                      <td className="py-4 px-4 text-white">{feature.name}</td>
-                      <td className="text-center py-4 px-4 text-gray-400">
-                        {feature.basic}
-                      </td>
-                      <td className="text-center py-4 px-4 text-[#FFEDB1]">
-                        {feature.premium}
-                      </td>
-                      <td className="text-center py-4 px-4 text-gray-400">
-                        {feature.enterprise}
-                      </td>
-                    </tr>
+            
+            <motion.p
+              variants={fadeInUp}
+              className="text-gray-400 text-center mb-8 max-w-2xl mx-auto"
+            >
+              Select any two plans to see a detailed feature-by-feature comparison
+            </motion.p>
+            
+            <motion.div
+              variants={fadeInUp}
+              className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
+            >
+              <div>
+                <label className="block text-white mb-2">First Plan</label>
+                <select 
+                  className="w-full bg-[#1a1a1a] text-white border border-gray-700 rounded-lg p-3"
+                  value={selectedPlan1}
+                  onChange={(e) => setSelectedPlan1(e.target.value)}
+                >
+                  <option value="">-- Select Plan --</option>
+                  {subscriptionPlans.map(plan => (
+                    <option key={`plan1-${plan.id}`} value={plan.id}>
+                      {plan.name} ({formatPrice(plan.price)})
+                    </option>
                   ))}
-                </tbody>
-              </table>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-white mb-2">Second Plan</label>
+                <select 
+                  className="w-full bg-[#1a1a1a] text-white border border-gray-700 rounded-lg p-3"
+                  value={selectedPlan2}
+                  onChange={(e) => setSelectedPlan2(e.target.value)}
+                >
+                  <option value="">-- Select Plan --</option>
+                  {subscriptionPlans.map(plan => (
+                    <option key={`plan2-${plan.id}`} value={plan.id}>
+                      {plan.name} ({formatPrice(plan.price)})
+                    </option>
+                  ))}
+                </select>
+              </div>
             </motion.div>
+            
+            {comparisonResult && (
+              <motion.div
+                variants={fadeInUp}
+                className="bg-[#1a1a1a] rounded-xl p-6 md:p-8"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                      {comparisonResult.plan1Name}
+                    </h3>
+                    <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
+                      {formatPrice(comparisonResult.plan1Price)}
+                    </div>
+                    <div className="text-gray-400 text-sm">
+                      {comparisonResult.plan1TotalFeatures} features
+                    </div>
+                  </div>
+                  
+                  <div className="text-center border-t border-b md:border-t-0 md:border-b-0 md:border-l md:border-r border-gray-700 py-4 md:py-0 px-6">
+                    <h3 className="text-lg font-medium text-white mb-2">
+                      Comparison
+                    </h3>
+                    <div className="text-gray-400">
+                      Price difference: <span className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</span>
+                    </div>
+                    <div className="text-gray-400 mt-2">
+                      {comparisonResult.commonFeatures.length} common features
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                      {comparisonResult.plan2Name}
+                    </h3>
+                    <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
+                      {formatPrice(comparisonResult.plan2Price)}
+                    </div>
+                    <div className="text-gray-400 text-sm">
+                      {comparisonResult.plan2TotalFeatures} features
+                    </div>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="mb-6">
+                    <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">Common Features</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {comparisonResult.commonFeatures.map((feature, index) => (
+                        <div key={`common-${index}`} className="flex items-center text-gray-400">
+                          <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {feature}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">
+                        Only in {comparisonResult.plan1Name}
+                      </h4>
+                      {comparisonResult.uniqueToPlan1.length > 0 ? (
+                        <div className="space-y-3">
+                          {comparisonResult.uniqueToPlan1.map((feature, index) => (
+                            <div key={`unique1-${index}`} className="flex items-center text-gray-400">
+                              <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400">No unique features</p>
+                      )}
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">
+                        Only in {comparisonResult.plan2Name}
+                      </h4>
+                      {comparisonResult.uniqueToPlan2.length > 0 ? (
+                        <div className="space-y-3">
+                          {comparisonResult.uniqueToPlan2.map((feature, index) => (
+                            <div key={`unique2-${index}`} className="flex items-center text-gray-400">
+                              <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-gray-400">No unique features</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8 p-4 bg-[#111] rounded-lg">
+                    {comparisonResult.plan1Price < comparisonResult.plan2Price ? (
+                      <p className="text-gray-400 text-center">
+                        <strong className="text-white">{comparisonResult.plan2Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-white">{comparisonResult.uniqueToPlan2.length}</strong> additional features.
+                      </p>
+                    ) : (
+                      <p className="text-gray-400 text-center">
+                        <strong className="text-white">{comparisonResult.plan1Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-white">{comparisonResult.uniqueToPlan1.length}</strong> additional features.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
         </motion.section>
 
