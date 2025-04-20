@@ -17,7 +17,11 @@ export default function VerifyEmailSuccess() {
     console.log('Email from URL:', email);
     console.log('Token from URL:', token);
 
-    fetch(`https://dd86-102-91-5-188.ngrok-free.app/auth/school/verify-email-success?email=${email}&token=${token}`)
+    fetch(`https://dd86-102-91-5-188.ngrok-free.app/auth/school/verify-email?email=${email}&token=${token}`, {
+      headers: {
+        'ngrok-skip-browser-warning': '69420'
+      },
+    })
       .then(res => res.json())
       .then(data => {
         setResult(data);
