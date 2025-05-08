@@ -449,46 +449,46 @@ export default function Pricing() {
             >
               <h3 className="text-white font-medium mb-2">Billing Cycle</h3>
               <div className="flex items-center justify-center gap-6">
-                <span
-                  className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
-                    !isYearly
+              <span
+                className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
+                  !isYearly
                       ? "text-[#FFEDB1] font-bold"
-                      : "text-gray-400 hover:text-gray-300"
-                  }`}
-                  onClick={() => setIsYearly(false)}
-                >
-                  Monthly
-                </span>
-                <button
-                  onClick={() => setIsYearly(!isYearly)}
-                  className={`relative inline-flex items-center h-7 rounded-full w-16 transition-colors duration-300 focus:outline-none ${
-                    isYearly ? "bg-[#FFEDB1]" : "bg-gray-700"
-                  }`}
-                >
-                  <span className="sr-only">Toggle Billing Period</span>
-                  <span
-                    className={`absolute transform transition-transform duration-300 ease-in-out h-6 w-6 rounded-full bg-white shadow-md ${
-                      isYearly ? "translate-x-9" : "translate-x-1"
-                    }`}
-                  ></span>
-                  <span
-                    className={`absolute inset-0 flex items-center justify-center text-[8px] font-bold ${
-                      isYearly ? "text-black pl-1" : "text-white pr-1"
-                    }`}
-                  >
-                    {isYearly ? "ON" : "OFF"}
-                  </span>
-                </button>
+                    : "text-gray-400 hover:text-gray-300"
+                }`}
+                onClick={() => setIsYearly(false)}
+              >
+                Monthly
+              </span>
+              <button
+                onClick={() => setIsYearly(!isYearly)}
+                className={`relative inline-flex items-center h-7 rounded-full w-16 transition-colors duration-300 focus:outline-none ${
+                  isYearly ? "bg-[#FFEDB1]" : "bg-gray-700"
+                }`}
+              >
+                <span className="sr-only">Toggle Billing Period</span>
                 <span
-                  className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
-                    isYearly
-                      ? "text-[#FFEDB1] font-bold"
-                      : "text-gray-400 hover:text-gray-300"
+                  className={`absolute transform transition-transform duration-300 ease-in-out h-6 w-6 rounded-full bg-white shadow-md ${
+                    isYearly ? "translate-x-9" : "translate-x-1"
                   }`}
-                  onClick={() => setIsYearly(true)}
+                ></span>
+                <span
+                  className={`absolute inset-0 flex items-center justify-center text-[8px] font-bold ${
+                    isYearly ? "text-black pl-1" : "text-white pr-1"
+                  }`}
                 >
-                  Yearly <span className="text-[#FFEDB1] ml-1">(Save 20%)</span>
+                  {isYearly ? "ON" : "OFF"}
                 </span>
+              </button>
+              <span
+                className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
+                  isYearly
+                      ? "text-[#FFEDB1] font-bold"
+                    : "text-gray-400 hover:text-gray-300"
+                }`}
+                onClick={() => setIsYearly(true)}
+              >
+                Yearly <span className="text-[#FFEDB1] ml-1">(Save 20%)</span>
+              </span>
               </div>
               <div className="text-sm text-gray-400 mt-1">
                 {isYearly ? "Showing yearly plans" : "Showing monthly plans"}
@@ -505,225 +505,225 @@ export default function Pricing() {
             ) : error ? (
               <div className="text-center text-red-500 py-12">{error}</div>
             ) : (
-              <motion.div
-                variants={staggerChildren}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
-              >
+            <motion.div
+              variants={staggerChildren}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            >
                 {/* Basic Plans */}
                 {basicPlans.map((plan, index) => (
-                  <motion.div
+              <motion.div
                     key={`basic-${plan.id}`}
-                    variants={fadeInUp}
-                    whileHover={{ scale: 1.02 }}
+                variants={fadeInUp}
+                whileHover={{ scale: 1.02 }}
                     className={`bg-[#1a1a1a] rounded-2xl p-8 relative ${
                       plan.isRecommended ? "border-2 border-[#4CAF50]" : "border border-gray-800"
                     }`}
-                  >
+              >
                     {plan.isRecommended && (
                       <div className="absolute -top-4 left-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
                         Recommended
                       </div>
                     )}
-                    <div className="mb-6">
-                      <h3 className="text-xl font-semibold text-white mb-2">
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-white mb-2">
                         {plan.name}
-                      </h3>
-                      <p className="text-gray-400 text-sm">
+                  </h3>
+                  <p className="text-gray-400 text-sm">
                         {plan.description}
-                      </p>
-                    </div>
-                    <div className="mb-6">
-                      <div className="text-3xl font-bold text-white">
+                  </p>
+                </div>
+                <div className="mb-6">
+                  <div className="text-3xl font-bold text-white">
                         {formatPrice(plan.price)}
-                        <span className="text-gray-400 text-sm font-normal">
-                          {isYearly ? "/year" : "/month"}
-                        </span>
-                      </div>
-                    </div>
-                    <ul className="space-y-4 mb-8">
+                    <span className="text-gray-400 text-sm font-normal">
+                      {isYearly ? "/year" : "/month"}
+                    </span>
+                  </div>
+                </div>
+                <ul className="space-y-4 mb-8">
                       {plan.subscriptionFeatures.filter(f => f.included).map((feature, idx) => (
-                        <li
+                      <li
                           key={idx}
-                          className="flex items-center text-gray-400"
+                        className="flex items-center text-gray-400"
+                      >
+                        <svg
+                          className="w-5 h-5 text-[#FFEDB1] mr-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          <svg
-                            className="w-5 h-5 text-[#FFEDB1] mr-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
                           {feature.name}
-                        </li>
+                      </li>
                       ))}
-                    </ul>
-                    {schoolType === "management" && (
-                      <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-                        Get Started
-                      </button>
-                    )}
-                  </motion.div>
+                </ul>
+                {schoolType === "management" && (
+                  <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                    Get Started
+                  </button>
+                )}
+              </motion.div>
                 ))}
 
                 {/* Premium Plans */}
                 {premiumPlans.map((plan, index) => (
-                  <motion.div
+              <motion.div
                     key={`premium-${plan.id}`}
-                    variants={fadeInUp}
-                    whileHover={{ scale: 1.02 }}
+                variants={fadeInUp}
+                whileHover={{ scale: 1.02 }}
                     className={`bg-[#1a1a1a] rounded-2xl p-8 relative ${
                       plan.isRecommended ? "border-2 border-[#4CAF50]" : "border-2 border-[#FFEDB1]"
                     }`}
-                  >
-                    <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
-                      Popular
-                    </div>
+              >
+                <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
+                  Popular
+                </div>
                     {plan.isRecommended && (
                       <div className="absolute -top-4 left-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
                         Recommended
                       </div>
                     )}
-                    <div className="mb-6">
-                      <h3 className="text-xl font-semibold text-white mb-2">
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-white mb-2">
                         {plan.name}
-                      </h3>
-                      <p className="text-gray-400 text-sm">
+                  </h3>
+                  <p className="text-gray-400 text-sm">
                         {plan.description}
-                      </p>
-                    </div>
-                    <div className="mb-6">
-                      <div className="text-3xl font-bold text-white">
+                  </p>
+                </div>
+                <div className="mb-6">
+                  <div className="text-3xl font-bold text-white">
                         {formatPrice(plan.price)}
-                        <span className="text-gray-400 text-sm font-normal">
-                          {isYearly ? "/year" : "/month"}
-                        </span>
-                      </div>
-                    </div>
-                    <ul className="space-y-4 mb-8">
+                    <span className="text-gray-400 text-sm font-normal">
+                      {isYearly ? "/year" : "/month"}
+                    </span>
+                  </div>
+                </div>
+                <ul className="space-y-4 mb-8">
                       {plan.subscriptionFeatures.filter(f => f.included).map((feature, idx) => (
-                        <li
+                      <li
                           key={idx}
-                          className="flex items-center text-gray-400"
+                        className="flex items-center text-gray-400"
+                      >
+                        <svg
+                          className="w-5 h-5 text-[#FFEDB1] mr-3"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
                         >
-                          <svg
-                            className="w-5 h-5 text-[#FFEDB1] mr-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
                           {feature.name}
-                        </li>
+                      </li>
                       ))}
-                    </ul>
-                    {schoolType === "management" && (
-                      <button className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors">
-                        Get Premium
-                      </button>
-                    )}
-                  </motion.div>
+                </ul>
+                {schoolType === "management" && (
+                  <button className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors">
+                    Get Premium
+                  </button>
+                )}
+              </motion.div>
                 ))}
 
                 {/* Enterprise Plan - Only show for management type */}
                 {schoolType === "management" && (
-                  <motion.div
-                    variants={fadeInUp}
-                    whileHover={{ scale: 1.02 }}
-                    className="bg-[#1a1a1a] rounded-2xl p-8 border border-gray-800"
-                  >
-                    <div className="mb-6">
-                      <h3 className="text-xl font-semibold text-white mb-2">
-                        Enterprise
-                      </h3>
-                      <p className="text-gray-400 text-sm">
-                        For large institutions
-                      </p>
-                    </div>
-                    <div className="mb-6">
-                      <div className="text-3xl font-bold text-white">Custom</div>
-                      <p className="text-gray-400 text-sm">Contact for pricing</p>
-                    </div>
-                    <ul className="space-y-4 mb-8">
-                      <li className="flex items-center text-gray-400">
-                        <svg
-                          className="w-5 h-5 text-[#FFEDB1] mr-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        All Premium features
-                      </li>
-                      <li className="flex items-center text-gray-400">
-                        <svg
-                          className="w-5 h-5 text-[#FFEDB1] mr-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        Custom integration
-                      </li>
-                      <li className="flex items-center text-gray-400">
-                        <svg
-                          className="w-5 h-5 text-[#FFEDB1] mr-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        Dedicated support
-                      </li>
-                      <li className="flex items-center text-gray-400">
-                        <svg
-                          className="w-5 h-5 text-[#FFEDB1] mr-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        Analytics dashboard
-                      </li>
-                    </ul>
-                    <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-                      Contact Sales
-                    </button>
+              <motion.div
+                variants={fadeInUp}
+                whileHover={{ scale: 1.02 }}
+                className="bg-[#1a1a1a] rounded-2xl p-8 border border-gray-800"
+              >
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Enterprise
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    For large institutions
+                  </p>
+                </div>
+                <div className="mb-6">
+                  <div className="text-3xl font-bold text-white">Custom</div>
+                  <p className="text-gray-400 text-sm">Contact for pricing</p>
+                </div>
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center text-gray-400">
+                    <svg
+                      className="w-5 h-5 text-[#FFEDB1] mr-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    All Premium features
+                  </li>
+                  <li className="flex items-center text-gray-400">
+                    <svg
+                      className="w-5 h-5 text-[#FFEDB1] mr-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Custom integration
+                  </li>
+                  <li className="flex items-center text-gray-400">
+                    <svg
+                      className="w-5 h-5 text-[#FFEDB1] mr-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Dedicated support
+                  </li>
+                  <li className="flex items-center text-gray-400">
+                    <svg
+                      className="w-5 h-5 text-[#FFEDB1] mr-3"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Analytics dashboard
+                  </li>
+                </ul>
+                  <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
+                    Contact Sales
+                  </button>
                   </motion.div>
                 )}
               </motion.div>
