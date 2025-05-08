@@ -98,7 +98,7 @@ export default function CountdownPage() {
                     </div>
                       </div>
         {/* Email input glassy */}
-        <form
+        {/* <form
           onSubmit={handleSubmit}
           className="mt-10 flex items-center w-full max-w-md mx-auto bg-black/20 backdrop-blur-md rounded-full border border-[#FFEDB1]/30 px-2 sm:px-4 py-2"
           style={{ boxShadow: '0 4px 32px 0 rgba(0,0,0,0.15)' }}
@@ -119,7 +119,7 @@ export default function CountdownPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>
             </button>
-        </form>
+        </form> */}
           </div>
       {/* Social icons at bottom center */}
       <div className="fixed bottom-12 left-0 w-full flex justify-center space-x-6 z-20">
