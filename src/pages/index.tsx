@@ -9,10 +9,9 @@ if (
   now.getMonth() > targetMonth ||
   (now.getMonth() === targetMonth && now.getDate() > targetDay)
 ) {
-  year += 1; // If today is after September 30, use next year
+  year += 1;
 }
 const GLOBAL_RELEASE_DATE = new Date(year, targetMonth, targetDay, 0, 0, 0);
-
 function getTimeLeft(targetDate: Date) {
   const now = new Date();
   const diff = targetDate.getTime() - now.getTime();
