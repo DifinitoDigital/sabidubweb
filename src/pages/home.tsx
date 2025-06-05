@@ -70,6 +70,12 @@ export default function Home() {
               Pricing
             </Link>
             <Link
+              href="/competition"
+              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+            >
+              Competition
+            </Link>
+            <Link
               href="/pricing"
               className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
             >
@@ -169,6 +175,13 @@ export default function Home() {
                   onClick={toggleMenu}
                 >
                   Pricing
+                </Link>
+                <Link
+                  href="/competition"
+                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  onClick={toggleMenu}
+                >
+                  Competition
                 </Link>
                 <Link
                   href="#"
