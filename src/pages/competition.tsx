@@ -206,7 +206,7 @@ export default function Competition() {
             <div className="flex-1 flex justify-center md:justify-end">
               <div className="w-72 h-72 rounded-3xl overflow-hidden shadow-xl bg-[#222] flex items-center justify-center relative">
                 <Image src="/images/2149156427.jpg" alt="Team" width={288} height={288} className="object-cover w-full h-full" />
-                <div className="absolute bottom-4 right-4 bg-[#FFEDB1] text-[#111] px-4 py-2 rounded-full font-semibold text-sm shadow">June 2, 2025</div>
+              
               </div>
             </div>
           </div>
