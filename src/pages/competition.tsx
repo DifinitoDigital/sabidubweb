@@ -247,7 +247,7 @@ export default function Competition() {
                 <h2 className="text-2xl font-bold text-white">Program Overview</h2>
               </div>
               <p className="text-gray-300 mb-4">SabiDub is a fast-growing technology company specializing in software development, digital innovation, and empowering local tech talent. Our mission is to cultivate the next generation of African developers through intensive training and real-world experience.</p>
-              <p className="text-gray-300">The program will officially begin on June 2, 2025, at Wellington Blu Hotel and Suites, Enugu, Nigeria. Participants are expected to arrive on May 26, with registration and orientation taking place on May 27.</p>
+              <p className="text-gray-300">The program will officially begin on <span className='text-[#FFEDB1] font-semibold'>June 6, 2025</span>, at <span className='text-[#FFEDB1] font-semibold'>Wellington Blu Hotel and Suites, Enugu, Nigeria</span>. The closing ceremony is on <span className='text-[#FFEDB1] font-semibold'>June 14, 2025</span>. Participants are expected to arrive on <span className='text-[#FFEDB1] font-semibold'>June 6, 2025</span>, with registration and orientation taking place on <span className='text-[#FFEDB1] font-semibold'>June 7, 2025</span>.</p>
             </div>
             <div>
               <div className="flex items-center gap-4 mb-4">
@@ -295,7 +295,7 @@ export default function Competition() {
             <span className="text-[#FFEDB1] text-lg">Location:</span> <span className="text-[#FFEDB1] font-bold">Wellington Blu Hotel and Suites, Enugu, Nigeria</span>
           </div>
           <div className="text-center mb-6">
-            <span className="text-[#FFEDB1] text-lg">Duration:</span> <span className="text-[#FFEDB1] font-bold">June 6th – June 16th, 2025</span>
+            <span className="text-[#FFEDB1] text-lg">Duration:</span> <span className="text-[#FFEDB1] font-bold">June 6th – June 14th, 2025</span>
           </div>
           <div className="text-center text-[#FFEDB1] text-sm mb-10">Note: Daily sessions begin with morning devotion and end with reflections or wrap-ups. Sundays are excluded.</div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
