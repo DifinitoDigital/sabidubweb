@@ -2,6 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/competition": "pages/competition.js",
-  "/": "pages/index.js"
+  "/help": "pages/help.js",
+  "/privacy": "pages/privacy.js",
+  "/terms": "pages/terms.js"
 }

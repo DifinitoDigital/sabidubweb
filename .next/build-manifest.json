@@ -10,7 +10,10 @@
     "static/development/_buildManifest.js",
     "static/development/_ssgManifest.js"
   ],
-  "rootMainFiles": [],
+  "rootMainFiles": [
+    "static/chunks/webpack.js",
+    "static/chunks/main-app.js"
+  ],
   "pages": {
     "/_app": [
       "static/chunks/webpack.js",
@@ -22,10 +25,20 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/competition": [
+    "/help": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/competition.js"
+      "static/chunks/pages/help.js"
+    ],
+    "/privacy": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/privacy.js"
+    ],
+    "/terms": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/terms.js"
     ]
   },
   "ampFirstPages": []
