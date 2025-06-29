@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/help": "pages/help.js",
-  "/privacy": "pages/privacy.js",
-  "/terms": "pages/terms.js"
+  "/forgot-password": "pages/forgot-password.js",
+  "/reset-password": "pages/reset-password.js",
+  "/home": "pages/home.js"
 }
