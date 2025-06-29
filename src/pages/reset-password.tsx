@@ -74,9 +74,9 @@ export default function ResetPassword() {
       setResult(response);
       
       if (!response.error) {
-        // Redirect to login page after successful reset
+        // Redirect to reset-success page after successful reset
         setTimeout(() => {
-          router.push('/login');
+          router.push('/reset-success');
         }, 2000);
       }
     } catch (error) {
