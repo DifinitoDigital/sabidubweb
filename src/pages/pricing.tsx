@@ -29,7 +29,6 @@ interface SubscriptionFeature {
   id: string;
   name: string;
   description?: string;
-  included: boolean;
 }
 
 interface SubscriptionPlan {
@@ -37,15 +36,19 @@ interface SubscriptionPlan {
   name: string;
   description: string;
   price: number;
-  billingPeriod: number;
+  currency: string;
+  billingCycle: string;
+  duration: number;
+  features: SubscriptionFeature[];
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
   planType: string;
+  usageLimit: number | null;
+  hasUnlimitedAccess: boolean;
   isPopular: boolean;
   isRecommended: boolean;
-  hasUnlimitedAccess: boolean;
-  subscriptionFeatures: SubscriptionFeature[];
-  createdAt: Date;
-  updatedAt: Date;
-  billingCycle: string;
+  billingPeriod: number;
 }
 
 // Animation variants
@@ -80,6 +83,7 @@ export default function Pricing() {
   const [selectedPlan1, setSelectedPlan1] = useState<string>('');
   const [selectedPlan2, setSelectedPlan2] = useState<string>('');
   const [showDetailedComparison, setShowDetailedComparison] = useState<boolean>(false);
+  const [usageFilter, setUsageFilter] = useState<string>('all');
 
   interface ComparisonResult {
     plan1Name: string;
@@ -109,7 +113,8 @@ export default function Pricing() {
       try {
         setLoading(true);
         // Remove the planType parameter to fetch all plans
-        const response = await axios.get(`http://localhost:4000/subscription/plans`);
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+        const response = await axios.get(`${baseUrl}/subscription/plans`);
         setSubscriptionPlans(response.data);
         setError("");
       } catch (err) {
@@ -127,15 +132,36 @@ export default function Pricing() {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  // Filter plans client-side based on school type and billing cycle
-  const filteredPlans = subscriptionPlans.filter(plan => 
-    plan.planType === planTypeMap[schoolType] && 
-    (isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY")
-  );
+  // Filter plans client-side based on billing cycle, school type, and usage limit
+  let filteredPlans = subscriptionPlans.filter(plan => {
+    console.log("Filtering plan:", plan.name, "planType:", plan.planType, "schoolType:", schoolType, "planTypeMap:", planTypeMap[schoolType]);
+    console.log("Raw plan data:", plan);
+    
+    const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
+    const schoolTypeMatch = plan.planType === planTypeMap[schoolType];
+    
 
-  // Get all plans by category and sort by price (highest to lowest)
-  const basicPlans = filteredPlans.filter(plan => !plan.isPopular).sort((a, b) => b.price - a.price);
-  const premiumPlans = filteredPlans.filter(plan => plan.isPopular).sort((a, b) => b.price - a.price);
+    
+    const result = billingMatch && schoolTypeMatch;
+    console.log("Plan:", plan.name, "billingMatch:", billingMatch, "schoolTypeMatch:", schoolTypeMatch, "result:", result);
+    
+    return result;
+  });
+
+  // If no plans match the school type filter, show all plans for that billing cycle
+  if (filteredPlans.length === 0) {
+    console.log("No plans match school type filter, showing all plans for billing cycle");
+    filteredPlans = subscriptionPlans.filter(plan => {
+      const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
+      
+
+      
+      return billingMatch;
+    });
+  }
+
+  // Get all plans and sort by price (highest to lowest)
+  const allPlans = filteredPlans.sort((a, b) => b.price - a.price);
 
   // Helper to format price
   const formatPrice = (price: number) => {
@@ -148,16 +174,16 @@ export default function Pricing() {
       return;
     }
 
-    const plan1 = subscriptionPlans.find(p => p.id === selectedPlan1);
-    const plan2 = subscriptionPlans.find(p => p.id === selectedPlan2);
+    const plan1 = allPlans.find(p => p.id === selectedPlan1);
+    const plan2 = allPlans.find(p => p.id === selectedPlan2);
 
     if (!plan1 || !plan2) {
       setError('Invalid plan selection');
       return;
     }
 
-    const features1 = plan1.subscriptionFeatures.filter(f => f.included).map(f => f.name);
-    const features2 = plan2.subscriptionFeatures.filter(f => f.included).map(f => f.name);
+    const features1 = plan1.features.map(f => typeof f === 'string' ? f : f.name);
+    const features2 = plan2.features.map(f => typeof f === 'string' ? f : f.name);
     
     const uniqueToFirst = features1.filter(f => !features2.includes(f));
     const uniqueToSecond = features2.filter(f => !features1.includes(f));
@@ -423,7 +449,7 @@ export default function Pricing() {
             </h1>
             <motion.p
               variants={fadeIn}
-              className="text-gray-400 max-w-2xl mx-auto mb-8"
+              className="text-white max-w-2xl mx-auto mb-8"
             >
               Choose the perfect plan for your educational journey. All plans
               include access to our core features.
@@ -503,9 +529,11 @@ export default function Pricing() {
                 Yearly <span className="text-[#FFEDB1] ml-1">(Save 20%)</span>
               </span>
               </div>
-              <div className="text-sm text-gray-400 mt-1">
+              <div className="text-sm text-white mt-1">
                 {isYearly ? "Showing yearly plans" : "Showing monthly plans"}
               </div>
+              
+
             </motion.div>
           </motion.div>
         </motion.section>
@@ -522,86 +550,28 @@ export default function Pricing() {
               variants={staggerChildren}
               className="grid grid-cols-1 md:grid-cols-3 gap-8"
             >
-                {/* Basic Plans */}
-                {basicPlans.map((plan, index) => (
+                {/* All Plans */}
+                {allPlans.map((plan, index) => (
               <motion.div
-                    key={`basic-${plan.id}`}
+                    key={`plan-${plan.id}`}
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02 }}
-                    className={`bg-[#1a1a1a] rounded-2xl p-8 relative ${
-                      plan.isRecommended ? "border-2 border-[#4CAF50]" : "border border-gray-800"
+                    className={`bg-[#1a1a1a] rounded-2xl p-8 relative border-2 ${
+                      plan.name === "Premium Plan" ? "border-[#FFEDB1]" : 
+                      plan.name === "Enterprise Plan" ? "border-[#4CAF50]" : 
+                      "border-gray-700"
                     }`}
               >
-                    {plan.isRecommended && (
-                      <div className="absolute -top-4 left-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
-                        Recommended
-                      </div>
-                    )}
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                        {plan.name}
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                        {plan.description}
-                  </p>
-                </div>
-                <div className="mb-6">
-                  <div className="text-3xl font-bold text-white">
-                        {formatPrice(plan.price)}
-                    <span className="text-gray-400 text-sm font-normal">
-                      {isYearly ? "/year" : "/month"}
-                    </span>
+                {plan.name === "Premium Plan" && (
+                  <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
+                    Popular
                   </div>
-                </div>
-                <ul className="space-y-4 mb-8">
-                      {plan.subscriptionFeatures.filter(f => f.included).map((feature, idx) => (
-                      <li
-                          key={idx}
-                        className="flex items-center text-gray-400"
-                      >
-                        <svg
-                          className="w-5 h-5 text-[#FFEDB1] mr-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                          {feature.name}
-                      </li>
-                      ))}
-                </ul>
-                {schoolType === "management" && (
-                  <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-                    Get Started
-                  </button>
                 )}
-              </motion.div>
-                ))}
-
-                {/* Premium Plans */}
-                {premiumPlans.map((plan, index) => (
-              <motion.div
-                    key={`premium-${plan.id}`}
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                    className={`bg-[#1a1a1a] rounded-2xl p-8 relative ${
-                      plan.isRecommended ? "border-2 border-[#4CAF50]" : "border-2 border-[#FFEDB1]"
-                    }`}
-              >
-                <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
-                  Popular
-                </div>
-                    {plan.isRecommended && (
-                      <div className="absolute -top-4 left-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
-                        Recommended
-                      </div>
-                    )}
+                {plan.name === "Enterprise Plan" && (
+                  <div className="absolute -top-4 right-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
+                    Enterprise
+                  </div>
+                )}
                 <div className="mb-6">
                   <h3 className="text-xl font-semibold text-white mb-2">
                         {plan.name}
@@ -617,33 +587,75 @@ export default function Pricing() {
                       {isYearly ? "/year" : "/month"}
                     </span>
                   </div>
+                  {/* Usage Limit Display - Only show for School Management plans */}
+                  {schoolType === "management" && (
+                    <div className="mt-2">
+                      {(() => {
+                        console.log("Plan usage data:", {
+                          name: plan.name,
+                          hasUnlimitedAccess: plan.hasUnlimitedAccess,
+                          usageLimit: plan.usageLimit,
+                          planType: plan.planType
+                        });
+                        return null;
+                      })()}
+                      {plan.hasUnlimitedAccess ? (
+                        <div className="flex items-center text-[#FFEDB1] text-sm">
+                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                          </svg>
+                          {plan.usageLimit ? plan.usageLimit.toLocaleString() : '10,000'} Students
+                        </div>
+                      ) : plan.usageLimit ? (
+                        <div className="flex items-center text-gray-400 text-sm">
+                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                          </svg>
+                          {plan.usageLimit.toLocaleString()} Students
+                        </div>
+                      ) : (
+                        <div className="flex items-center text-gray-400 text-sm">
+                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                          </svg>
+                          No limit specified
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <ul className="space-y-4 mb-8">
-                      {plan.subscriptionFeatures.filter(f => f.included).map((feature, idx) => (
-                      <li
+                      {plan.features?.map((feature, idx) => (
+                        <li
                           key={idx}
-                        className="flex items-center text-gray-400"
-                      >
-                        <svg
-                          className="w-5 h-5 text-[#FFEDB1] mr-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
+                          className="flex items-center text-white"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                          {feature.name}
-                      </li>
+                          <svg
+                            className="w-5 h-5 text-[#FFEDB1] mr-3"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          {typeof feature === 'string' ? feature : feature?.name || 'Unknown feature'}
+                        </li>
                       ))}
                 </ul>
                 {schoolType === "management" && (
-                  <button className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors">
-                    Get Premium
+                  <button className={`w-full py-3 rounded-lg transition-colors ${
+                    plan.name === "Premium Plan" ? "bg-[#FFEDB1] text-black hover:bg-[#ffdb82]" :
+                    plan.name === "Enterprise Plan" ? "bg-[#4CAF50] text-white hover:bg-[#45a049]" :
+                    "bg-[#111] text-white hover:bg-gray-800"
+                  }`}>
+                    {plan.name === "Basic Plan" ? "Get Started" :
+                     plan.name === "Premium Plan" ? "Get Premium" :
+                     "Get Enterprise"}
                   </button>
                 )}
               </motion.div>
@@ -762,7 +774,7 @@ export default function Pricing() {
             
             <motion.p
               variants={fadeInUp}
-              className="text-gray-400 text-center mb-8 max-w-2xl mx-auto"
+              className="text-white text-center mb-8 max-w-2xl mx-auto"
             >
               Select any two plans to see a detailed feature-by-feature comparison
             </motion.p>
@@ -779,7 +791,7 @@ export default function Pricing() {
                   onChange={(e) => setSelectedPlan1(e.target.value)}
                 >
                   <option value="">-- Select Plan --</option>
-                  {subscriptionPlans.map(plan => (
+                  {allPlans.map(plan => (
                     <option key={`plan1-${plan.id}`} value={plan.id}>
                       {plan.name} ({formatPrice(plan.price)})
                     </option>
@@ -795,7 +807,7 @@ export default function Pricing() {
                   onChange={(e) => setSelectedPlan2(e.target.value)}
                 >
                   <option value="">-- Select Plan --</option>
-                  {subscriptionPlans.map(plan => (
+                  {allPlans.map(plan => (
                     <option key={`plan2-${plan.id}`} value={plan.id}>
                       {plan.name} ({formatPrice(plan.price)})
                     </option>
@@ -817,33 +829,33 @@ export default function Pricing() {
                     <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
                       {formatPrice(comparisonResult.plan1Price)}
                     </div>
-                    <div className="text-gray-400 text-sm">
-                      {comparisonResult.plan1TotalFeatures} features
-                    </div>
+                                      <div className="text-white text-sm">
+                    {comparisonResult.plan1TotalFeatures} features
                   </div>
-                  
-                  <div className="text-center border-t border-b md:border-t-0 md:border-b-0 md:border-l md:border-r border-gray-700 py-4 md:py-0 px-6">
-                    <h3 className="text-lg font-medium text-white mb-2">
-                      Comparison
-                    </h3>
-                    <div className="text-gray-400">
-                      Price difference: <span className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</span>
-                    </div>
-                    <div className="text-gray-400 mt-2">
-                      {comparisonResult.commonFeatures.length} common features
-                    </div>
+                </div>
+                
+                <div className="text-center border-t border-b md:border-t-0 md:border-b-0 md:border-l md:border-r border-gray-700 py-4 md:py-0 px-6">
+                  <h3 className="text-lg font-medium text-white mb-2">
+                    Comparison
+                  </h3>
+                  <div className="text-white">
+                    Price difference: <span className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</span>
                   </div>
-                  
-                  <div className="text-center">
-                    <h3 className="text-xl font-semibold text-white mb-2">
-                      {comparisonResult.plan2Name}
-                    </h3>
-                    <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
-                      {formatPrice(comparisonResult.plan2Price)}
-                    </div>
-                    <div className="text-gray-400 text-sm">
-                      {comparisonResult.plan2TotalFeatures} features
-                    </div>
+                  <div className="text-white mt-2">
+                    {comparisonResult.commonFeatures.length} common features
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    {comparisonResult.plan2Name}
+                  </h3>
+                  <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
+                    {formatPrice(comparisonResult.plan2Price)}
+                  </div>
+                  <div className="text-white text-sm">
+                    {comparisonResult.plan2TotalFeatures} features
+                  </div>
                   </div>
                 </div>
                 
@@ -852,7 +864,7 @@ export default function Pricing() {
                     <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">Common Features</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {comparisonResult.commonFeatures.map((feature, index) => (
-                        <div key={`common-${index}`} className="flex items-center text-gray-400">
+                        <div key={`common-${index}`} className="flex items-center text-white">
                           <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                           </svg>
@@ -870,7 +882,7 @@ export default function Pricing() {
                       {comparisonResult.uniqueToPlan1.length > 0 ? (
                         <div className="space-y-3">
                           {comparisonResult.uniqueToPlan1.map((feature, index) => (
-                            <div key={`unique1-${index}`} className="flex items-center text-gray-400">
+                            <div key={`unique1-${index}`} className="flex items-center text-white">
                               <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
@@ -879,7 +891,7 @@ export default function Pricing() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-400">No unique features</p>
+                        <p className="text-white">No unique features</p>
                       )}
                     </div>
                     
@@ -890,7 +902,7 @@ export default function Pricing() {
                       {comparisonResult.uniqueToPlan2.length > 0 ? (
                         <div className="space-y-3">
                           {comparisonResult.uniqueToPlan2.map((feature, index) => (
-                            <div key={`unique2-${index}`} className="flex items-center text-gray-400">
+                            <div key={`unique2-${index}`} className="flex items-center text-white">
                               <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                               </svg>
@@ -899,19 +911,19 @@ export default function Pricing() {
                           ))}
                         </div>
                       ) : (
-                        <p className="text-gray-400">No unique features</p>
+                        <p className="text-white">No unique features</p>
                       )}
                     </div>
                   </div>
                   
                   <div className="mt-8 p-4 bg-[#111] rounded-lg">
                     {comparisonResult.plan1Price < comparisonResult.plan2Price ? (
-                      <p className="text-gray-400 text-center">
-                        <strong className="text-white">{comparisonResult.plan2Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-white">{comparisonResult.uniqueToPlan2.length}</strong> additional features.
+                      <p className="text-white text-center">
+                        <strong className="text-[#FFEDB1]">{comparisonResult.plan2Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-[#FFEDB1]">{comparisonResult.uniqueToPlan2.length}</strong> additional features.
                       </p>
                     ) : (
-                      <p className="text-gray-400 text-center">
-                        <strong className="text-white">{comparisonResult.plan1Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-white">{comparisonResult.uniqueToPlan1.length}</strong> additional features.
+                      <p className="text-white text-center">
+                        <strong className="text-[#FFEDB1]">{comparisonResult.plan1Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-[#FFEDB1]">{comparisonResult.uniqueToPlan1.length}</strong> additional features.
                       </p>
                     )}
                   </div>

@@ -4,7 +4,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 const forgotPassword = async (email: string) => {
-  const response = await fetch('https://d198-102-91-69-62.ngrok-free.app/auth/forgot-password', {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+  const response = await fetch(`${baseUrl}/auth/forgot-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

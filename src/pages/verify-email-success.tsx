@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 // Example: How to use the API URL for email verification in React
-const apiUrl = 'https://bd22-102-91-5-188.ngrok-free.app';
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
 
 export default function VerifyEmailSuccess() {
   const [result, setResult] = useState<{ error?: boolean; message?: string } | null>(null);
@@ -17,7 +17,7 @@ export default function VerifyEmailSuccess() {
     console.log('Email from URL:', email);
     console.log('Token from URL:', token);
 
-    fetch(`https://dd86-102-91-5-188.ngrok-free.app/auth/school/verify-email?email=${email}&token=${token}`, {
+    fetch(`${apiUrl}/auth/school/verify-email?email=${email}&token=${token}`, {
       headers: {
         'ngrok-skip-browser-warning': '69420'
       },

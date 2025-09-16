@@ -1,9 +1,47 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Footer from "../components/Footer";
+import { useRouter } from "next/router";
+
+// Types for the API response
+interface Author {
+  id: string;
+  name: string;
+  email: string;
+  profilePicture: string;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  category: string;
+  tags: string[];
+  readingTime: string;
+  isPublished: boolean;
+  isFeatured: boolean;
+  viewCount: number;
+  likeCount: number;
+  commentCount: number;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  author: Author;
+}
+
+interface BlogResponse {
+  posts: BlogPost[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
 
 const categories = [
   "All",
@@ -14,57 +52,6 @@ const categories = [
   "Announcements",
 ];
 
-const posts = [
-  {
-    id: 1,
-    title: "How to Prepare for WAEC and JAMB Exams",
-    category: "Education",
-    excerpt: "Get the best tips and resources to ace your WAEC and JAMB exams with confidence.",
-    image: "/images/2149156427.jpg",
-    date: "2024-06-01",
-    author: "Jane Doe",
-    readingTime: "4 min read",
-    tags: ["WAEC", "JAMB", "Study"],
-    featured: true,
-  },
-  {
-    id: 2,
-    title: "Top 5 Study Apps for Nigerian Students",
-    category: "Technology",
-    excerpt: "Discover the best apps to boost your productivity and learning as a student in Nigeria.",
-    image: "/images/146757.jpg",
-    date: "2024-05-20",
-    author: "John Smith",
-    readingTime: "3 min read",
-    tags: ["Apps", "Productivity"],
-    featured: false,
-  },
-  {
-    id: 3,
-    title: "Balancing School and Social Life",
-    category: "Student Life",
-    excerpt: "Learn how to manage your time and enjoy both academic and social success.",
-    image: "/images/128895.jpg",
-    date: "2024-05-10",
-    author: "Amina Ibrahim",
-    readingTime: "5 min read",
-    tags: ["Balance", "Student Life"],
-    featured: false,
-  },
-  {
-    id: 4,
-    title: "SabiDub Platform: New Features Announced!",
-    category: "Announcements",
-    excerpt: "Check out the latest updates and features now available on SabiDub.",
-    image: "/images/2151104075.jpg",
-    date: "2024-06-05",
-    author: "SabiDub Team",
-    readingTime: "2 min read",
-    tags: ["Platform", "Updates"],
-    featured: false,
-  },
-];
-
 const fadeInUp = {
   initial: { opacity: 0, y: 30 },
   animate: { opacity: 1, y: 0 },
@@ -72,18 +59,63 @@ const fadeInUp = {
 };
 
 export default function BlogPage() {
+  const router = useRouter();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  const filteredPosts =
-    selectedCategory === "All"
-      ? posts
-      : posts.filter((post) => post.category === selectedCategory);
+  // Fetch posts from API
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams({
+          page: currentPage.toString(),
+          limit: '10'
+        });
+        
+        if (selectedCategory !== "All") {
+          params.append('category', selectedCategory);
+        }
 
-  const featured = posts.find((p) => p.featured);
-  const trending = posts.filter((p) => !p.featured).slice(0, 2);
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+        const response = await fetch(`${baseUrl}/blog/posts?${params.toString()}`);
+        
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server returned non-JSON response');
+        }
+
+        const data: BlogResponse = await response.json();
+        setPosts(data.posts);
+        setTotalPages(data.totalPages);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching posts:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch posts');
+        setPosts([]);
+        setTotalPages(1);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [selectedCategory, currentPage]);
+
+  const filteredPosts = posts;
+  const featured = posts.find((p) => p.isFeatured);
+  const trending = posts.filter((p) => !p.isFeatured).slice(0, 2);
 
   return (
     <>
@@ -181,7 +213,7 @@ export default function BlogPage() {
           {/* Featured Post */}
           {featured && (
             <motion.div variants={fadeInUp} initial="initial" animate="animate" className="max-w-3xl mx-auto mb-12 relative z-10">
-              <Link href={`/blog/${featured.id}`} className="block group rounded-3xl overflow-hidden shadow-2xl border border-[#FFEDB1]/20 bg-[#1a1a1a] hover:scale-[1.01] transition-transform">
+              <Link href={`/blog/${featured.slug}`} className="block group rounded-3xl overflow-hidden shadow-2xl border border-[#FFEDB1]/20 bg-[#1a1a1a] hover:scale-[1.01] transition-transform">
                 <div className="relative w-full h-64 sm:h-80">
                   <Image src={featured.image} alt={featured.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-[#111]/60 to-transparent" />
@@ -190,9 +222,9 @@ export default function BlogPage() {
                     <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{featured.title}</h2>
                     <p className="text-gray-300 mb-2 max-w-xl">{featured.excerpt}</p>
                     <div className="flex items-center gap-4 text-xs text-gray-400">
-                      <span>By {featured.author}</span>
+                      <span>By {featured.author.name}</span>
                       <span>• {featured.readingTime}</span>
-                      <span>• {new Date(featured.date).toLocaleDateString()}</span>
+                      <span>• {new Date(featured.publishedAt).toLocaleDateString()}</span>
                     </div>
                     <div className="flex gap-2 mt-2">
                       {featured.tags.map((tag) => (
@@ -210,7 +242,7 @@ export default function BlogPage() {
           <h3 className="text-lg font-bold text-white mb-6">Trending</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
             {trending.map((post) => (
-              <Link href={`/blog/${post.id}`} key={post.id} className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-800">
+              <Link href={`/blog/${post.slug}`} key={post.id} className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-800">
                 <div className="relative w-full h-48">
                   <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
                 </div>
@@ -219,9 +251,9 @@ export default function BlogPage() {
                   <h2 className="text-lg font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{post.title}</h2>
                   <p className="text-gray-400 mb-2 flex-1">{post.excerpt}</p>
                   <div className="flex items-center gap-4 text-xs text-gray-400">
-                    <span>By {post.author}</span>
+                    <span>By {post.author.name}</span>
                     <span>• {post.readingTime}</span>
-                    <span>• {new Date(post.date).toLocaleDateString()}</span>
+                    <span>• {new Date(post.publishedAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex gap-2 mt-2">
                     {post.tags.map((tag) => (
@@ -239,39 +271,102 @@ export default function BlogPage() {
             {categories.map((cat) => (
               <button
                 key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setCurrentPage(1); // Reset to first page when changing category
+                }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border focus:outline-none focus:ring-2 focus:ring-[#FFEDB1]/30 ${selectedCategory === cat ? "bg-[#FFEDB1] text-black border-[#FFEDB1]" : "bg-[#1a1a1a] text-white border-gray-700 hover:bg-[#252525]"}`}
               >
                 {cat}
               </button>
             ))}
           </div>
-          <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" variants={{ animate: { transition: { staggerChildren: 0.15 } } }} initial="initial" animate="animate">
-            {filteredPosts.map((post, idx) => (
-              <motion.div key={post.id} variants={fadeInUp} className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-800">
-                <Link href={`/blog/${post.id}`} className="block">
-                  <div className="relative w-full h-56">
-                    <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
-                  </div>
-                  <div className="p-6 flex-1 flex flex-col">
-                    <div className="text-xs text-[#FFEDB1] mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
-                    <h2 className="text-xl font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{post.title}</h2>
-                    <p className="text-gray-400 mb-2 flex-1">{post.excerpt}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
-                      <span>By {post.author}</span>
-                      <span>• {post.readingTime}</span>
-                      <span>• {new Date(post.date).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      {post.tags.map((tag) => (
-                        <span key={tag} className="bg-[#FFEDB1]/10 text-[#FFEDB1] px-2 py-1 rounded-full text-xs">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </Link>
+
+          {/* Loading State */}
+          {loading && (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#FFEDB1]"></div>
+              <p className="text-gray-400 mt-4">Loading posts...</p>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-12">
+              <div className="bg-[#1a1a1a] rounded-lg p-6 border border-red-500/20">
+                <p className="text-red-400 mb-2 font-medium">Error Loading Posts</p>
+                <p className="text-gray-400 text-sm mb-4">{error}</p>
+                <button 
+                  onClick={() => window.location.reload()} 
+                  className="bg-[#FFEDB1] text-black px-4 py-2 rounded-md hover:bg-[#ffdb82] transition-colors text-sm"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Posts Grid */}
+          {!loading && !error && (
+            <>
+              <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" variants={{ animate: { transition: { staggerChildren: 0.15 } } }} initial="initial" animate="animate">
+                {filteredPosts.map((post, idx) => (
+                  <motion.div key={post.id} variants={fadeInUp} className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-800">
+                    <Link href={`/blog/${post.slug}`} className="block">
+                      <div className="relative w-full h-56">
+                        <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
+                      </div>
+                      <div className="p-6 flex-1 flex flex-col">
+                        <div className="text-xs text-[#FFEDB1] mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
+                        <h2 className="text-xl font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{post.title}</h2>
+                        <p className="text-gray-400 mb-2 flex-1">{post.excerpt}</p>
+                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                          <span>By {post.author.name}</span>
+                          <span>• {post.readingTime}</span>
+                          <span>• {new Date(post.publishedAt).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          {post.tags.map((tag) => (
+                            <span key={tag} className="bg-[#FFEDB1]/10 text-[#FFEDB1] px-2 py-1 rounded-full text-xs">{tag}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-12">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-md bg-[#1a1a1a] text-white border border-gray-700 hover:bg-[#252525] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Previous
+                  </button>
+                  <span className="text-gray-400 px-4">
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-md bg-[#1a1a1a] text-white border border-gray-700 hover:bg-[#252525] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+
+              {/* No Posts Message */}
+              {filteredPosts.length === 0 && !loading && !error && (
+                <div className="text-center py-12">
+                  <p className="text-gray-400">No posts found in this category.</p>
+                </div>
+              )}
+            </>
+          )}
         </section>
         {/* Call to Action */}
         <section className="px-4 sm:px-6 pb-20 max-w-7xl mx-auto">

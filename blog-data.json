@@ -1,0 +1,54 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "How to Prepare for WAEC and JAMB Exams",
+      "category": "Education",
+      "image": "/images/2149156427.jpg",
+      "date": "2024-06-01",
+      "excerpt": "Get the best tips and resources to ace your WAEC and JAMB exams with confidence.",
+      "content": "Preparing for WAEC and JAMB exams can be stressful, but with the right resources and strategies, you can excel. Here are some tips:\n\n1. Start early and create a study plan.\n2. Use past questions and practice regularly.\n3. Join study groups and ask for help when needed.\n4. Take care of your health and get enough rest.\n\nGood luck!",
+      "author": "Jane Doe",
+      "readingTime": "4 min read",
+      "tags": ["WAEC", "JAMB", "Study"]
+    },
+    {
+      "id": 2,
+      "title": "Top 5 Study Apps for Nigerian Students",
+      "category": "Technology",
+      "image": "/images/146757.jpg",
+      "date": "2024-05-20",
+      "excerpt": "Discover the best apps to boost your productivity and learning as a student in Nigeria.",
+      "content": "Technology can boost your learning! Here are the top 5 study apps for Nigerian students:\n\n1. SabiDub App\n2. Google Classroom\n3. Khan Academy\n4. Quizlet\n5. Coursera\n\nTry them out and see which works best for you!",
+      "author": "John Smith",
+      "readingTime": "3 min read",
+      "tags": ["Apps", "Productivity"]
+    },
+    {
+      "id": 3,
+      "title": "Balancing School and Social Life",
+      "category": "Student Life",
+      "image": "/images/128895.jpg",
+      "date": "2024-05-10",
+      "excerpt": "Learn how to manage your time and enjoy both academic and social success.",
+      "content": "Balancing academics and social life is important. Here are some tips:\n\n- Prioritize your tasks\n- Make time for friends and hobbies\n- Don't be afraid to say no\n- Stay organized\n\nRemember, it's all about balance!",
+      "author": "Amina Ibrahim",
+      "readingTime": "5 min read",
+      "tags": ["Balance", "Student Life"]
+    },
+    {
+      "id": 4,
+      "title": "SabiDub Platform: New Features Announced!",
+      "category": "Announcements",
+      "image": "/images/2151104075.jpg",
+      "date": "2024-06-05",
+      "excerpt": "Check out the latest updates and features now available on SabiDub.",
+      "content": "We're excited to announce new features on SabiDub!\n\n- Improved dashboard\n- More study resources\n- Enhanced performance tracking\n\nUpdate your app to enjoy these features!",
+      "author": "SabiDub Team",
+      "readingTime": "2 min read",
+      "tags": ["Platform", "Updates"]
+    }
+  ],
+
+  "moreContent": "\n\n### Why Early Preparation Matters\n\nStarting your exam preparation early gives you enough time to cover all topics, revise, and practice. It reduces stress and boosts your confidence.\n\n### Top Resources for WAEC and JAMB\n\n- Official syllabuses\n- Past questions and answers\n- Online study groups\n- Educational apps like SabiDub\n\n### Common Mistakes to Avoid\n\n1. Procrastinating until the last minute\n2. Ignoring weak subjects\n3. Not practicing with past questions\n4. Poor time management during the exam\n\n### Final Tips\n\nStay positive, believe in yourself, and remember to take breaks. Good luck!"
+} 

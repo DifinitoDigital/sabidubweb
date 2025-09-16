@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 
 // Reset password API function
 const resetPassword = async (token: string, newPassword: string) => {
-  const response = await fetch('https://d198-102-91-69-62.ngrok-free.app/auth/reset-password', {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+  const response = await fetch(`${baseUrl}/auth/reset-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
