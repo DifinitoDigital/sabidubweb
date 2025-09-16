@@ -245,7 +245,7 @@ export default function BlogPostView() {
               </div>
               <article className="prose prose-invert max-w-none">
                 <div className="text-gray-300 text-lg leading-relaxed space-y-4">
-                  {`${post.content}${moreContent}`.split('\n').map((line, i) => {
+                  {post.content.split('\n').map((line, i) => {
                     if (line.startsWith('### ')) {
                       return (
                         <h3 key={i} className="text-2xl font-bold text-white mt-8 mb-4">

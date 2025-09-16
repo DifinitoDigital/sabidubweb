@@ -113,7 +113,7 @@ export default function Pricing() {
       try {
         setLoading(true);
         // Remove the planType parameter to fetch all plans
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
         const response = await axios.get(`${baseUrl}/subscription/plans`);
         setSubscriptionPlans(response.data);
         setError("");
@@ -134,8 +134,7 @@ export default function Pricing() {
 
   // Filter plans client-side based on billing cycle, school type, and usage limit
   let filteredPlans = subscriptionPlans.filter(plan => {
-    console.log("Filtering plan:", plan.name, "planType:", plan.planType, "schoolType:", schoolType, "planTypeMap:", planTypeMap[schoolType]);
-    console.log("Raw plan data:", plan);
+    // console.debug("Filtering plan:", plan.name, plan);
     
     const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
     const schoolTypeMatch = plan.planType === planTypeMap[schoolType];
@@ -143,14 +142,14 @@ export default function Pricing() {
 
     
     const result = billingMatch && schoolTypeMatch;
-    console.log("Plan:", plan.name, "billingMatch:", billingMatch, "schoolTypeMatch:", schoolTypeMatch, "result:", result);
+    // console.debug("Filter result:", { name: plan.name, billingMatch, schoolTypeMatch, result });
     
     return result;
   });
 
   // If no plans match the school type filter, show all plans for that billing cycle
   if (filteredPlans.length === 0) {
-    console.log("No plans match school type filter, showing all plans for billing cycle");
+    // console.debug("No plans match school type filter, showing all plans for billing cycle");
     filteredPlans = subscriptionPlans.filter(plan => {
       const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
       
