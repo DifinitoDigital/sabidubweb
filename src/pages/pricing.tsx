@@ -15,14 +15,16 @@ import { useRouter } from "next/router";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import axios from "axios";
+import { LuZap, LuCheck, LuSearch } from "react-icons/lu";
 
-type SchoolType = "secondary" | "tertiary" | "management";
+type SchoolType = "secondary" | "tertiary" | "management" | "admission";
 
 // Map SchoolType to API planType
 const planTypeMap = {
   secondary: "SECONDARY",
   tertiary: "TERTIARY",
-  management: "SCHOOL"
+  management: "SCHOOL",
+  admission: "ADMISSION_CHECKER"
 };
 
 interface SubscriptionFeature {
@@ -135,15 +137,11 @@ export default function Pricing() {
   // Filter plans client-side based on billing cycle, school type, and usage limit
   let filteredPlans = subscriptionPlans.filter(plan => {
     // console.debug("Filtering plan:", plan.name, plan);
-    
-    const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
-    const schoolTypeMatch = plan.planType === planTypeMap[schoolType];
-    
 
-    
+    const billingMatch = schoolType === "admission" ? true : (isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY");
+    const schoolTypeMatch = plan.planType === planTypeMap[schoolType];
+
     const result = billingMatch && schoolTypeMatch;
-    // console.debug("Filter result:", { name: plan.name, billingMatch, schoolTypeMatch, result });
-    
     return result;
   });
 
@@ -152,9 +150,9 @@ export default function Pricing() {
     // console.debug("No plans match school type filter, showing all plans for billing cycle");
     filteredPlans = subscriptionPlans.filter(plan => {
       const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
-      
 
-      
+
+
       return billingMatch;
     });
   }
@@ -183,11 +181,11 @@ export default function Pricing() {
 
     const features1 = plan1.features.map(f => typeof f === 'string' ? f : f.name);
     const features2 = plan2.features.map(f => typeof f === 'string' ? f : f.name);
-    
+
     const uniqueToFirst = features1.filter(f => !features2.includes(f));
     const uniqueToSecond = features2.filter(f => !features1.includes(f));
     const commonFeatures = features1.filter(f => features2.includes(f));
-    
+
     setComparisonResult({
       plan1Name: plan1.name,
       plan2Name: plan2.name,
@@ -200,7 +198,7 @@ export default function Pricing() {
       plan1TotalFeatures: features1.length,
       plan2TotalFeatures: features2.length
     });
-    
+
     setError("");
   };
 
@@ -208,7 +206,7 @@ export default function Pricing() {
     if (selectedPlan1 && selectedPlan2) {
       compareSpecificPlans();
     }
-  }, [selectedPlan1, selectedPlan2]);
+  }, [selectedPlan1, selectedPlan2, allPlans]);
 
   return (
     <>
@@ -220,19 +218,26 @@ export default function Pricing() {
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
       </Head>
+
+      <style jsx global>{`
+        body {
+          font-family: 'Outfit', sans-serif;
+        }
+      `}</style>
 
       <motion.main
         initial="initial"
         animate="animate"
-        className="min-h-screen bg-[#111] relative"
+        className="min-h-screen bg-white relative"
       >
         {/* Navigation */}
         <nav className="px-4 sm:px-6 py-6 sm:py-8 flex items-center justify-between max-w-7xl mx-auto relative z-50">
           <Link href="/" className="flex items-center">
             <div className="relative w-40 h-12">
               <Image
-                src="/images/white.png"
+                src="/images/black.png"
                 alt="SabiDub Logo"
                 fill
                 className="object-contain"
@@ -245,41 +250,41 @@ export default function Pricing() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Home
             </Link>
             <Link
               href="/about"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               About
             </Link>
             <Link
               href="/services"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Services
             </Link>
             <Link
               href="/pricing"
-              className="text-white hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-900 hover:text-yellow-600 transition-colors"
             >
               Pricing
             </Link>
             <Link
-              href="/competition"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              href="/admission-checker"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
-              Competition
+              Admission Checker
             </Link>
             <Link
               href="/contact"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Contact
             </Link>
-            <button className="bg-[#FFEDB1] text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+            <button className="bg-yellow-400 text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
               Download App
             </button>
           </div>
@@ -287,38 +292,34 @@ export default function Pricing() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-[#1a1a1a] rounded-lg hover:bg-[#252525] transition-colors relative z-50"
+            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-white border border-gray-100 shadow-sm rounded-lg hover:bg-gray-50 transition-colors relative z-50"
           >
             <span
-              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${
-                isMenuOpen ? "rotate-45 translate-y-1.5" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""
+                }`}
             ></span>
             <span
-              className={`w-5 h-0.5 bg-white transition-opacity ${
-                isMenuOpen ? "opacity-0" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white transition-opacity ${isMenuOpen ? "opacity-0" : ""
+                }`}
             ></span>
             <span
-              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${
-                isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+                }`}
             ></span>
           </button>
         </nav>
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-[#1a1a1a] z-40 transform transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-white border border-gray-100 shadow-sm z-40 transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           <div className="p-6 h-full overflow-y-auto">
             <div className="flex flex-col space-y-6">
               <div className="flex items-center justify-end mb-8">
                 <button
                   onClick={toggleMenu}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   <svg
                     className="w-6 h-6"
@@ -339,54 +340,54 @@ export default function Pricing() {
               <div className="flex flex-col space-y-4">
                 <Link
                   href="/"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Home
                 </Link>
                 <Link
                   href="/about"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   About
                 </Link>
                 <Link
                   href="/services"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Services
                 </Link>
                 <Link
                   href="/pricing"
-                  className="text-white hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-900 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Pricing
                 </Link>
                 <Link
-                  href="/competition"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  href="/admission-checker"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
-                  Competition
+                  Admission Checker
                 </Link>
                 <Link
                   href="/contact"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Contact
                 </Link>
               </div>
 
-              <button className="w-full bg-[#FFEDB1] text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+              <button className="w-full bg-yellow-400 text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
                 Download App
               </button>
 
               <div className="mt-6 flex items-center justify-center space-x-4">
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -395,7 +396,7 @@ export default function Pricing() {
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -404,7 +405,7 @@ export default function Pricing() {
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -429,111 +430,83 @@ export default function Pricing() {
         {/* Pricing Header */}
         <motion.section
           variants={fadeInUp}
-          className="px-4 sm:px-6 pt-12 sm:pt-20 pb-8"
+          className="px-4 sm:px-6 pt-16 pb-8"
         >
           <motion.div
             variants={fadeInUp}
-            className="max-w-7xl mx-auto text-center"
+            className="max-w-6xl mx-auto"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-              Simple, Transparent{" "}
-              <motion.span
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="text-[#FFEDB1]"
-              >
-                Pricing
-              </motion.span>
-            </h1>
-            <motion.p
-              variants={fadeIn}
-              className="text-white max-w-2xl mx-auto mb-8"
-            >
-              Choose the perfect plan for your educational journey. All plans
-              include access to our core features.
-            </motion.p>
+            <div className="flex flex-col md:flex-row items-start justify-between gap-6 mb-10">
+              <div className="text-left">
+                <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-[1.1] tracking-tight">
+                  We've got a plan <br />
+                  <span className="italic font-light">that's perfect for you</span>
+                </h1>
+              </div>
 
-            {/* School Type Toggle */}
-            <motion.div
-              variants={staggerChildren}
-              className="flex items-center justify-center gap-4 mb-8"
-            >
-              {[
-                { type: "secondary", label: "Secondary School" },
-                { type: "tertiary", label: "Tertiary Institution" },
-                { type: "management", label: "School Management" },
-              ].map((item) => (
-                <motion.button
-                  key={item.type}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setSchoolType(item.type as SchoolType)}
-                  className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                    schoolType === item.type
-                      ? "bg-[#FFEDB1] text-black"
-                      : "bg-[#1a1a1a] text-gray-400 hover:text-white"
-                  }`}
-                >
-                  {item.label}
-                </motion.button>
-              ))}
-            </motion.div>
+              <div className="flex flex-col items-start md:items-end">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center -space-x-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative">
+                        <img
+                          src={`https://i.pravatar.cc/150?u=${i}`}
+                          alt="User"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center">
+                    <div className="flex text-black text-[10px] mr-1">
+                      {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">5.0</span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-gray-500 font-bold tracking-tight uppercase">
+                  FROM 4,000+ REVIEWS
+                </p>
+              </div>
+            </div>
 
-            {/* Billing Toggle */}
-            <motion.div
-              variants={fadeInUp}
-              className="flex flex-col items-center justify-center gap-4 mb-12"
-            >
-              <h3 className="text-white font-medium mb-2">Billing Cycle</h3>
-              <div className="flex items-center justify-center gap-6">
-              <span
-                className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
-                  !isYearly
-                      ? "text-[#FFEDB1] font-bold"
-                    : "text-gray-400 hover:text-gray-300"
-                }`}
-                onClick={() => setIsYearly(false)}
-              >
-                Monthly
-              </span>
-              <button
-                onClick={() => setIsYearly(!isYearly)}
-                className={`relative inline-flex items-center h-7 rounded-full w-16 transition-colors duration-300 focus:outline-none ${
-                  isYearly ? "bg-[#FFEDB1]" : "bg-gray-700"
-                }`}
-              >
-                <span className="sr-only">Toggle Billing Period</span>
-                <span
-                  className={`absolute transform transition-transform duration-300 ease-in-out h-6 w-6 rounded-full bg-white shadow-md ${
-                    isYearly ? "translate-x-9" : "translate-x-1"
-                  }`}
-                ></span>
-                <span
-                  className={`absolute inset-0 flex items-center justify-center text-[8px] font-bold ${
-                    isYearly ? "text-black pl-1" : "text-white pr-1"
-                  }`}
+            {/* Billing && School Type Toggles */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
+              <div className="flex items-center p-1 bg-gray-100 rounded-lg w-fit">
+                <button
+                  onClick={() => setIsYearly(false)}
+                  className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all duration-200 ${!isYearly ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
                 >
-                  {isYearly ? "ON" : "OFF"}
+                  Monthly
+                </button>
+                <button
+                  onClick={() => setIsYearly(true)}
+                  className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all duration-200 ${isYearly ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+                >
+                  Annual
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-1 bg-yellow-400 text-gray-900 text-[10px] rounded-md font-bold">
+                  Save 16%
                 </span>
-              </button>
-              <span
-                className={`text-sm font-medium cursor-pointer transition-colors duration-300 ${
-                  isYearly
-                      ? "text-[#FFEDB1] font-bold"
-                    : "text-gray-400 hover:text-gray-300"
-                }`}
-                onClick={() => setIsYearly(true)}
-              >
-                Yearly <span className="text-[#FFEDB1] ml-1">(Save 20%)</span>
-              </span>
-              </div>
-              <div className="text-sm text-white mt-1">
-                {isYearly ? "Showing yearly plans" : "Showing monthly plans"}
-              </div>
-              
 
-            </motion.div>
+                <div className="h-4 w-[1px] bg-gray-200 mx-2 hidden sm:block" />
+
+                <div className="flex items-center gap-1.5">
+                  {(["secondary", "tertiary", "management", "admission"] as SchoolType[]).map((type) => (
+                    <button
+                      key={type}
+                      onClick={() => setSchoolType(type)}
+                      className={`px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-tight transition-all ${schoolType === type ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-500 hover:bg-gray-100"}`}
+                    >
+                      {type === "management" ? "School" : type}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </motion.div>
         </motion.section>
 
@@ -541,251 +514,167 @@ export default function Pricing() {
         <motion.section variants={fadeInUp} className="px-4 sm:px-6 pb-16">
           <div className="max-w-7xl mx-auto">
             {loading ? (
-              <div className="text-center text-white py-12">Loading subscription plans...</div>
+              <div className="text-center text-gray-900 py-12">Loading subscription plans...</div>
             ) : error ? (
               <div className="text-center text-red-500 py-12">{error}</div>
             ) : (
-            <motion.div
-              variants={staggerChildren}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8"
-            >
-                {/* All Plans */}
-                {allPlans.map((plan, index) => (
               <motion.div
-                    key={`plan-${plan.id}`}
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                    className={`bg-[#1a1a1a] rounded-2xl p-8 relative border-2 ${
-                      plan.name === "Premium Plan" ? "border-[#FFEDB1]" : 
-                      plan.name === "Enterprise Plan" ? "border-[#4CAF50]" : 
-                      "border-gray-700"
-                    }`}
+                variants={staggerChildren}
+                className="grid grid-cols-1 md:grid-cols-3 gap-8"
               >
-                {plan.name === "Premium Plan" && (
-                  <div className="absolute -top-4 right-4 bg-[#FFEDB1] text-black px-4 py-1 rounded-full text-sm font-medium">
-                    Popular
-                  </div>
-                )}
-                {plan.name === "Enterprise Plan" && (
-                  <div className="absolute -top-4 right-4 bg-[#4CAF50] text-white px-4 py-1 rounded-full text-sm font-medium">
-                    Enterprise
-                  </div>
-                )}
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                        {plan.name}
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                        {plan.description}
-                  </p>
-                </div>
-                <div className="mb-6">
-                  <div className="text-3xl font-bold text-white">
-                        {formatPrice(plan.price)}
-                    <span className="text-gray-400 text-sm font-normal">
-                      {isYearly ? "/year" : "/month"}
-                    </span>
-                  </div>
-                  {/* Usage Limit Display - Only show for School Management plans */}
-                  {schoolType === "management" && (
-                    <div className="mt-2">
-                      {(() => {
-                        console.log("Plan usage data:", {
-                          name: plan.name,
-                          hasUnlimitedAccess: plan.hasUnlimitedAccess,
-                          usageLimit: plan.usageLimit,
-                          planType: plan.planType
-                        });
-                        return null;
-                      })()}
-                      {plan.hasUnlimitedAccess ? (
-                        <div className="flex items-center text-[#FFEDB1] text-sm">
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                          </svg>
-                          {plan.usageLimit ? plan.usageLimit.toLocaleString() : '10,000'} Students
+                {allPlans.map((plan, index) => (
+                  <motion.div
+                    key={`plan-${plan.id}`}
+                    variants={fadeInUp}
+                    className="flex flex-col bg-white border border-gray-200 rounded-[2rem] overflow-hidden"
+                  >
+                    {/* Upper Section (Gray) */}
+                    <div className="p-7 bg-gray-50 border-b border-gray-100">
+                      <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-xl font-black text-gray-900 tracking-tight">
+                          {plan.name}
+                        </h3>
+                        {plan.isPopular && (
+                          <span className="px-3 py-1 bg-yellow-400 text-black text-[9px] font-black rounded-lg uppercase tracking-tight shadow-sm">
+                            Popular
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="mb-6">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-5xl font-black text-gray-900 tracking-tighter">₦{plan.price.toLocaleString()}</span>
+                          <div className="text-[10px] font-black text-gray-400 uppercase leading-none">
+                            per user<br />per {isYearly ? "year" : "month"}
+                          </div>
                         </div>
-                      ) : plan.usageLimit ? (
-                        <div className="flex items-center text-gray-400 text-sm">
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                          </svg>
-                          {plan.usageLimit.toLocaleString()} Students
-                        </div>
-                      ) : (
-                        <div className="flex items-center text-gray-400 text-sm">
-                          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                          </svg>
-                          No limit specified
-                        </div>
-                      )}
+                        <p className="text-xs text-gray-500 mt-5 font-bold leading-relaxed max-w-[200px]">
+                          {plan.description}
+                        </p>
+                      </div>
+
+                      <button className="w-full py-3.5 bg-black hover:bg-gray-800 text-white rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-gray-200">
+                        Get started
+                      </button>
                     </div>
-                  )}
-                </div>
-                <ul className="space-y-4 mb-8">
-                      {plan.features?.map((feature, idx) => (
-                        <li
-                          key={idx}
-                          className="flex items-center text-white"
-                        >
-                          <svg
-                            className="w-5 h-5 text-[#FFEDB1] mr-3"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
+
+                    {/* Lower Section (White) */}
+                    <div className="p-7 pt-6 flex-1 flex flex-col">
+                      <div className="mb-5">
+                        <span className="text-[9px] font-black text-gray-900 uppercase tracking-widest">Features</span>
+                        <p className="text-[11px] text-gray-400 font-bold mt-1">
+                          Everything in our {index === 0 ? "free plan" : "Basic plus"}...
+                        </p>
+                      </div>
+
+                      <ul className="space-y-3.5">
+                        {(plan.features || []).map((feature, idx) => (
+                          <li
+                            key={idx}
+                            className="flex items-center text-xs font-bold text-gray-700"
                           >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                            />
-                          </svg>
-                          {typeof feature === 'string' ? feature : feature?.name || 'Unknown feature'}
-                        </li>
-                      ))}
-                </ul>
-                {schoolType === "management" && (
-                  <button className={`w-full py-3 rounded-lg transition-colors ${
-                    plan.name === "Premium Plan" ? "bg-[#FFEDB1] text-black hover:bg-[#ffdb82]" :
-                    plan.name === "Enterprise Plan" ? "bg-[#4CAF50] text-white hover:bg-[#45a049]" :
-                    "bg-[#111] text-white hover:bg-gray-800"
-                  }`}>
-                    {plan.name === "Basic Plan" ? "Get Started" :
-                     plan.name === "Premium Plan" ? "Get Premium" :
-                     "Get Enterprise"}
-                  </button>
-                )}
-              </motion.div>
+                            <div className="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center mr-2.5 flex-shrink-0">
+                              <LuCheck className="w-2.5 h-2.5 text-black stroke-[4]" />
+                            </div>
+                            {typeof feature === 'string' ? feature : feature?.name || 'Unknown feature'}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </motion.div>
                 ))}
 
                 {/* Enterprise Plan - Only show for management type */}
                 {schoolType === "management" && (
-              <motion.div
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
-                className="bg-[#1a1a1a] rounded-2xl p-8 border border-gray-800"
-              >
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    Enterprise
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    For large institutions
-                  </p>
-                </div>
-                <div className="mb-6">
-                  <div className="text-3xl font-bold text-white">Custom</div>
-                  <p className="text-gray-400 text-sm">Contact for pricing</p>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    All Premium features
-                  </li>
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Custom integration
-                  </li>
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Dedicated support
-                  </li>
-                  <li className="flex items-center text-gray-400">
-                    <svg
-                      className="w-5 h-5 text-[#FFEDB1] mr-3"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Analytics dashboard
-                  </li>
-                </ul>
-                  <button className="w-full bg-[#111] text-white py-3 rounded-lg hover:bg-gray-800 transition-colors">
-                    Contact Sales
-                  </button>
+                  <motion.div
+                    key="enterprise-plan"
+                    variants={fadeInUp}
+                    className="flex flex-col bg-white border border-gray-200 rounded-[2rem] overflow-hidden"
+                  >
+                    {/* Upper Section (Gray) */}
+                    <div className="p-7 bg-gray-50 border-b border-gray-100">
+                      <div className="mb-5">
+                        <h3 className="text-xl font-black text-gray-900 tracking-tight">
+                          Enterprise
+                        </h3>
+                      </div>
+
+                      <div className="mb-6">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-black text-gray-900 tracking-tighter">Custom</span>
+                        </div>
+                        <p className="text-xs text-gray-500 mt-5 font-bold leading-relaxed max-w-[200px]">
+                          Tailored solutions for large-scale educational institutions.
+                        </p>
+                      </div>
+
+                      <button className="w-full py-3.5 bg-black hover:bg-gray-800 text-white rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-xl shadow-gray-200">
+                        Contact Sales
+                      </button>
+                    </div>
+
+                    {/* Lower Section (White) */}
+                    <div className="p-7 pt-6 flex-1 flex flex-col">
+                      <div className="mb-5">
+                        <span className="text-[9px] font-black text-gray-900 uppercase tracking-widest">Enterprise Features</span>
+                        <p className="text-[11px] text-gray-400 font-bold mt-1">
+                          Everything in Premium plus...
+                        </p>
+                      </div>
+
+                      <ul className="space-y-3.5">
+                        {["Single Sign-On (SSO)", "Dedicated Support", "Custom Analytics", "API Access"].map((feature, idx) => (
+                          <li
+                            key={idx}
+                            className="flex items-center text-xs font-bold text-gray-700"
+                          >
+                            <div className="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center mr-2.5 flex-shrink-0">
+                              <LuCheck className="w-2.5 h-2.5 text-black stroke-[4]" />
+                            </div>
+                            {feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </motion.div>
                 )}
               </motion.div>
             )}
           </div>
-        </motion.section>
+        </motion.section >
 
         {/* Detailed Plan Comparison */}
-        <motion.section
-          initial={{ opacity: 0 }}
+        < motion.section
+          initial={{ opacity: 0 }
+          }
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-4 sm:px-6 py-16 bg-[#0d0d0d]"
+          className="px-4 sm:px-6 py-16 bg-gray-50"
         >
           <div className="max-w-7xl mx-auto">
             <motion.h2
               variants={fadeInUp}
-              className="text-2xl font-bold text-white text-center mb-8"
+              className="text-2xl font-bold text-gray-900 text-center mb-8"
             >
               Plan Comparison
             </motion.h2>
-            
+
             <motion.p
               variants={fadeInUp}
-              className="text-white text-center mb-8 max-w-2xl mx-auto"
+              className="text-gray-900 text-center mb-8 max-w-2xl mx-auto"
             >
               Select any two plans to see a detailed feature-by-feature comparison
             </motion.p>
-            
+
             <motion.div
               variants={fadeInUp}
               className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"
             >
               <div>
-                <label className="block text-white mb-2">First Plan</label>
-                <select 
-                  className="w-full bg-[#1a1a1a] text-white border border-gray-700 rounded-lg p-3"
+                <label className="block text-gray-900 mb-2">First Plan</label>
+                <select
+                  className="w-full bg-white border border-gray-100 shadow-sm text-gray-900 border border-gray-200 rounded-lg p-3"
                   value={selectedPlan1}
                   onChange={(e) => setSelectedPlan1(e.target.value)}
                 >
@@ -797,11 +686,11 @@ export default function Pricing() {
                   ))}
                 </select>
               </div>
-              
+
               <div>
-                <label className="block text-white mb-2">Second Plan</label>
-                <select 
-                  className="w-full bg-[#1a1a1a] text-white border border-gray-700 rounded-lg p-3"
+                <label className="block text-gray-900 mb-2">Second Plan</label>
+                <select
+                  className="w-full bg-white border border-gray-100 shadow-sm text-gray-900 border border-gray-200 rounded-lg p-3"
                   value={selectedPlan2}
                   onChange={(e) => setSelectedPlan2(e.target.value)}
                 >
@@ -814,131 +703,127 @@ export default function Pricing() {
                 </select>
               </div>
             </motion.div>
-            
+
             {comparisonResult && (
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#1a1a1a] rounded-xl p-6 md:p-8"
+                className="bg-white border-2 border-gray-900 rounded-[2.5rem] overflow-hidden shadow-2xl"
               >
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <div className="text-center">
-                    <h3 className="text-xl font-semibold text-white mb-2">
-                      {comparisonResult.plan1Name}
-                    </h3>
-                    <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
-                      {formatPrice(comparisonResult.plan1Price)}
+                <div className="grid grid-cols-1 md:grid-cols-2">
+                  {/* Plan 1 Column */}
+                  <div className="p-10 md:border-r border-gray-200">
+                    <div className="mb-10">
+                      <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Plan One</span>
+                      <h3 className="text-3xl font-black text-gray-900 mt-2">
+                        {comparisonResult.plan1Name}
+                      </h3>
+                      <div className="text-5xl font-black text-gray-700 mt-4">
+                        {formatPrice(comparisonResult.plan1Price)}
+                      </div>
                     </div>
-                                      <div className="text-white text-sm">
-                    {comparisonResult.plan1TotalFeatures} features
-                  </div>
-                </div>
-                
-                <div className="text-center border-t border-b md:border-t-0 md:border-b-0 md:border-l md:border-r border-gray-700 py-4 md:py-0 px-6">
-                  <h3 className="text-lg font-medium text-white mb-2">
-                    Comparison
-                  </h3>
-                  <div className="text-white">
-                    Price difference: <span className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</span>
-                  </div>
-                  <div className="text-white mt-2">
-                    {comparisonResult.commonFeatures.length} common features
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {comparisonResult.plan2Name}
-                  </h3>
-                  <div className="text-2xl font-bold text-[#FFEDB1] mb-1">
-                    {formatPrice(comparisonResult.plan2Price)}
-                  </div>
-                  <div className="text-white text-sm">
-                    {comparisonResult.plan2TotalFeatures} features
-                  </div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="mb-6">
-                    <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">Common Features</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {comparisonResult.commonFeatures.map((feature, index) => (
-                        <div key={`common-${index}`} className="flex items-center text-white">
-                          <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                          {feature}
-                        </div>
-                      ))}
+
+                    <div className="space-y-8">
+                      <div>
+                        <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest mb-6">Unique to this plan</h4>
+                        {comparisonResult.uniqueToPlan1.length > 0 ? (
+                          <div className="space-y-4">
+                            {comparisonResult.uniqueToPlan1.map((feature, index) => (
+                              <div key={`unique1-${index}`} className="flex items-center text-sm font-bold text-gray-700">
+                                <div className="w-5 h-5 rounded-full bg-yellow-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                  <LuZap className="w-3 h-3 text-yellow-600 fill-yellow-600" />
+                                </div>
+                                {feature}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-400 italic">No unique features</p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">
-                        Only in {comparisonResult.plan1Name}
-                      </h4>
-                      {comparisonResult.uniqueToPlan1.length > 0 ? (
-                        <div className="space-y-3">
-                          {comparisonResult.uniqueToPlan1.map((feature, index) => (
-                            <div key={`unique1-${index}`} className="flex items-center text-white">
-                              <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                              {feature}
-                            </div>
-                          ))}
-                        </div>
+
+                  {/* Plan 2 Column */}
+                  <div className="p-10 bg-gray-50">
+                    <div className="mb-10">
+                      <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Plan Two</span>
+                      <h3 className="text-3xl font-black text-gray-900 mt-2">
+                        {comparisonResult.plan2Name}
+                      </h3>
+                      <div className="text-5xl font-black text-gray-700 mt-4">
+                        {formatPrice(comparisonResult.plan2Price)}
+                      </div>
+                    </div>
+
+                    <div className="space-y-8">
+                      <div>
+                        <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest mb-6">Unique to this plan</h4>
+                        {comparisonResult.uniqueToPlan2.length > 0 ? (
+                          <div className="space-y-4">
+                            {comparisonResult.uniqueToPlan2.map((feature, index) => (
+                              <div key={`unique2-${index}`} className="flex items-center text-sm font-bold text-gray-700">
+                                <div className="w-5 h-5 rounded-full bg-yellow-100 flex items-center justify-center mr-3 flex-shrink-0">
+                                  <LuZap className="w-3 h-3 text-yellow-600 fill-yellow-600" />
+                                </div>
+                                {feature}
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-gray-400 italic">No unique features</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Common Features Footer */}
+                <div className="p-10 border-t border-gray-200 bg-white">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+                    <h4 className="text-xs font-black text-gray-900 uppercase tracking-widest">Shared across both plans</h4>
+                    <div className="px-4 py-1.5 bg-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest text-gray-500">
+                      {comparisonResult.commonFeatures.length} shared features
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-y-4 gap-x-8">
+                    {comparisonResult.commonFeatures.map((feature, index) => (
+                      <div key={`common-${index}`} className="flex items-center text-sm font-semibold text-gray-500">
+                        <div className="w-2 h-2 rounded-full bg-gray-300 mr-3 flex-shrink-0" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-12 pt-8 border-t border-gray-100 flex flex-col items-center">
+                    <p className="text-lg font-bold text-gray-900 text-center max-w-xl">
+                      {comparisonResult.plan1Price < comparisonResult.plan2Price ? (
+                        <>
+                          Choosing <span className="text-yellow-600 border-b-2 border-yellow-200">{comparisonResult.plan2Name}</span> gives you <span className="text-yellow-600">{comparisonResult.uniqueToPlan2.length} extra tools</span> for an additional <span className="px-2 py-0.5 bg-yellow-400/20 rounded text-yellow-700 font-black">{formatPrice(comparisonResult.priceDifference)}</span>
+                        </>
                       ) : (
-                        <p className="text-white">No unique features</p>
+                        <>
+                          Choosing <span className="text-yellow-600 border-b-2 border-yellow-200">{comparisonResult.plan1Name}</span> gives you <span className="text-yellow-600">{comparisonResult.uniqueToPlan1.length} extra tools</span> for an additional <span className="px-2 py-0.5 bg-yellow-400/20 rounded text-yellow-700 font-black">{formatPrice(comparisonResult.priceDifference)}</span>
+                        </>
                       )}
-                    </div>
-                    
-                    <div>
-                      <h4 className="text-lg font-medium text-white border-b border-gray-700 pb-2 mb-4">
-                        Only in {comparisonResult.plan2Name}
-                      </h4>
-                      {comparisonResult.uniqueToPlan2.length > 0 ? (
-                        <div className="space-y-3">
-                          {comparisonResult.uniqueToPlan2.map((feature, index) => (
-                            <div key={`unique2-${index}`} className="flex items-center text-white">
-                              <svg className="w-5 h-5 text-[#FFEDB1] mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                              </svg>
-                              {feature}
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-white">No unique features</p>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div className="mt-8 p-4 bg-[#111] rounded-lg">
-                    {comparisonResult.plan1Price < comparisonResult.plan2Price ? (
-                      <p className="text-white text-center">
-                        <strong className="text-[#FFEDB1]">{comparisonResult.plan2Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-[#FFEDB1]">{comparisonResult.uniqueToPlan2.length}</strong> additional features.
-                      </p>
-                    ) : (
-                      <p className="text-white text-center">
-                        <strong className="text-[#FFEDB1]">{comparisonResult.plan1Name}</strong> costs <strong className="text-[#FFEDB1]">{formatPrice(comparisonResult.priceDifference)}</strong> more but includes <strong className="text-[#FFEDB1]">{comparisonResult.uniqueToPlan1.length}</strong> additional features.
-                      </p>
-                    )}
+                    </p>
+                    <button className="mt-8 px-12 py-4 bg-gray-900 text-white rounded-2xl font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200">
+                      Upgrade now
+                    </button>
                   </div>
                 </div>
               </motion.div>
             )}
           </div>
-        </motion.section>
+        </motion.section >
 
         {/* Usage Statistics */}
-        <motion.section
+        < motion.section
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-4 sm:px-6 py-16 bg-[#0d0d0d]"
+          className="px-4 sm:px-6 py-16 bg-gray-50"
         >
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -949,20 +834,20 @@ export default function Pricing() {
               <motion.div
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02 }}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-white font-semibold">User Growth</h3>
+                  <h3 className="text-gray-900 font-semibold">User Growth</h3>
                   <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-[#FFEDB1]"></span>
-                      <span className="text-sm text-gray-400">
+                      <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
+                      <span className="text-sm text-gray-600">
                         Active Users
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-3 h-3 rounded-full bg-[#4CAF50]"></span>
-                      <span className="text-sm text-gray-400">Growth Rate</span>
+                      <span className="text-sm text-gray-600">Growth Rate</span>
                     </div>
                   </div>
                 </div>
@@ -979,12 +864,12 @@ export default function Pricing() {
                       >
                         <stop
                           offset="0%"
-                          stopColor="#FFEDB1"
+                          stopColor="#FACC15"
                           stopOpacity="0.2"
                         />
                         <stop
                           offset="100%"
-                          stopColor="#FFEDB1"
+                          stopColor="#FACC15"
                           stopOpacity="0"
                         />
                       </linearGradient>
@@ -998,7 +883,7 @@ export default function Pricing() {
                     <path
                       d={`M40,180 C100,160 160,120 220,100 C280,80 340,60 400,40`}
                       fill="none"
-                      stroke="#FFEDB1"
+                      stroke="#FACC15"
                       strokeWidth="3"
                       strokeLinecap="round"
                     />
@@ -1023,7 +908,7 @@ export default function Pricing() {
                           cy={point.y}
                           r="6"
                           fill="#1a1a1a"
-                          stroke="#FFEDB1"
+                          stroke="#FACC15"
                           strokeWidth="3"
                         />
                         <circle
@@ -1039,7 +924,7 @@ export default function Pricing() {
                   </svg>
 
                   {/* Y-axis */}
-                  <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-400 -ml-6">
+                  <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-600 -ml-6">
                     <span>50K</span>
                     <span>37.5K</span>
                     <span>25K</span>
@@ -1048,7 +933,7 @@ export default function Pricing() {
                   </div>
 
                   {/* X-axis */}
-                  <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-400 px-8">
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-600 px-8">
                     <span>Q1</span>
                     <span>Q2</span>
                     <span>Q3</span>
@@ -1061,9 +946,9 @@ export default function Pricing() {
               <motion.div
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02 }}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
-                <h3 className="text-white font-semibold mb-6">
+                <h3 className="text-gray-900 font-semibold mb-6">
                   Usage Analytics
                 </h3>
                 <motion.div variants={staggerChildren} className="space-y-4">
@@ -1074,10 +959,10 @@ export default function Pricing() {
                   ].map((stat, index) => (
                     <motion.div key={index} variants={fadeInUp}>
                       <div className="flex justify-between items-center mb-2">
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-gray-600">
                           {stat.label}
                         </span>
-                        <span className="text-sm text-[#FFEDB1]">
+                        <span className="text-sm text-yellow-600">
                           {stat.value}
                         </span>
                       </div>
@@ -1089,7 +974,7 @@ export default function Pricing() {
                         transition={{ duration: 1, delay: index * 0.2 }}
                       >
                         <div
-                          className="h-full bg-[#FFEDB1] rounded-full"
+                          className="h-full bg-yellow-400 rounded-full"
                           style={{ width: stat.value }}
                         ></div>
                       </motion.div>
@@ -1099,10 +984,10 @@ export default function Pricing() {
               </motion.div>
             </motion.div>
           </div>
-        </motion.section>
+        </motion.section >
 
         <Footer />
-      </motion.main>
+      </motion.main >
     </>
   );
 }

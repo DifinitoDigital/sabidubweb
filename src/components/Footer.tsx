@@ -3,26 +3,26 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0d0d0d] text-gray-400 py-24">
+    <footer className="bg-white text-gray-600 py-24 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Download App Banner */}
-        <section className="px-4 sm:px-6 py-8 sm:py-16 bg-[#111] mb-16 pb-16">
-          <div className="max-w-5xl mx-auto rounded-2xl bg-gradient-to-r from-[#1a1a1a] to-[#252525] p-8 sm:p-12 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFEDB1] opacity-10 rounded-full translate-x-1/3 -translate-y-1/3"></div>
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#FFEDB1] opacity-10 rounded-full -translate-x-1/3 translate-y-1/3"></div>
+        <section className="px-4 sm:px-6 py-8 sm:py-16 bg-white mb-16 pb-16">
+          <div className="max-w-5xl mx-auto rounded-2xl bg-gradient-to-r from-gray-50 to-gray-100 p-8 sm:p-12 relative overflow-hidden border border-gray-200 shadow-sm">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400 opacity-10 rounded-full translate-x-1/3 -translate-y-1/3"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-yellow-400 opacity-10 rounded-full -translate-x-1/3 translate-y-1/3"></div>
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6">
                 Download Our App Free and
                 <br className="hidden sm:block" />
                 Enjoy Exclusive Features!
               </h2>
-              <p className="text-gray-400 max-w-md mb-6 sm:mb-8">
+              <p className="text-gray-600 max-w-md mb-6 sm:mb-8">
                 Enjoy a richer experience, exclusive content, and personalized
                 lessons right on your fingertips. Download the app today for a
                 better education journey.
               </p>
               <div className="flex flex-col sm:flex-row justify-start gap-4">
-                <button className="bg-[#1a1a1a] text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#252525] transition-all duration-300 transform hover:scale-105 group">
+                <button className="bg-black text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 group">
                   <svg
                     className="w-8 h-8 text-[#FFEDB1] group-hover:scale-110 transition-transform"
                     viewBox="0 0 24 24"
@@ -35,7 +35,7 @@ const Footer = () => {
                     <div className="text-sm font-medium">Google Play</div>
                   </div>
                 </button>
-                <button className="bg-[#1a1a1a] text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#252525] transition-all duration-300 transform hover:scale-105 group">
+                <button className="bg-black text-white px-6 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 group">
                   <svg
                     className="w-8 h-8 text-[#FFEDB1] group-hover:scale-110 transition-transform"
                     viewBox="0 0 24 24"
@@ -58,7 +58,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
           {/* Company Info */}
           <div className="space-y-6">
-            <h3 className="text-white font-semibold text-xl">SabiDub</h3>
+            <h3 className="text-gray-900 font-semibold text-xl">SabiDub</h3>
             <p className="text-base">
               Empowering Nigerian students with comprehensive educational
               resources and personalized learning experiences.
@@ -66,25 +66,25 @@ const Footer = () => {
             <div className="flex space-x-6">
               <Link
                 href="https://facebook.com"
-                className="hover:text-[#FFEDB1] transition-colors"
+                className="hover:text-yellow-600 transition-colors"
               >
                 <FaFacebook size={24} />
               </Link>
               <Link
                 href="https://twitter.com"
-                className="hover:text-[#FFEDB1] transition-colors"
+                className="hover:text-yellow-600 transition-colors"
               >
                 <FaTwitter size={24} />
               </Link>
               <Link
                 href="https://instagram.com"
-                className="hover:text-[#FFEDB1] transition-colors"
+                className="hover:text-yellow-600 transition-colors"
               >
                 <FaInstagram size={24} />
               </Link>
               <Link
                 href="https://linkedin.com"
-                className="hover:text-[#FFEDB1] transition-colors"
+                className="hover:text-yellow-600 transition-colors"
               >
                 <FaLinkedin size={24} />
               </Link>
@@ -93,14 +93,14 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold text-xl mb-6">
+            <h3 className="text-gray-900 font-semibold text-xl mb-6">
               Quick Links
             </h3>
             <ul className="space-y-4">
               <li>
                 <Link
                   href="/"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Home
                 </Link>
@@ -108,7 +108,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   About Us
                 </Link>
@@ -116,7 +116,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/services"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Services
                 </Link>
@@ -124,7 +124,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/pricing"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Pricing
                 </Link>
@@ -132,7 +132,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Contact
                 </Link>
@@ -142,12 +142,12 @@ const Footer = () => {
 
           {/* Resources */}
           <div>
-            <h3 className="text-white font-semibold text-xl mb-6">Resources</h3>
+            <h3 className="text-gray-900 font-semibold text-xl mb-6">Resources</h3>
             <ul className="space-y-4">
               <li>
                 <Link
                   href="/blog"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Blog
                 </Link>
@@ -155,7 +155,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/help"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Help Center
                 </Link>
@@ -163,7 +163,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/careers"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Careers
                 </Link>
@@ -171,7 +171,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/terms"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Terms of Service
                 </Link>
@@ -179,7 +179,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/privacy"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   Privacy Policy
                 </Link>
@@ -189,14 +189,14 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold text-xl mb-6">
+            <h3 className="text-gray-900 font-semibold text-xl mb-6">
               Contact Us
             </h3>
             <ul className="space-y-4">
               <li>
                 <a
                   href="tel:+2348012345678"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   +234 801 234 5678
                 </a>
@@ -204,7 +204,7 @@ const Footer = () => {
               <li>
                 <a
                   href="mailto:info@sabidu.com"
-                  className="hover:text-[#FFEDB1] transition-colors"
+                  className="hover:text-yellow-600 transition-colors"
                 >
                   info@sabidub.com
                 </a>
@@ -219,7 +219,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-gray-800 text-sm text-center">
+        <div className="mt-16 pt-8 border-t border-gray-200 text-sm text-center">
           <p>&copy; {new Date().getFullYear()} Sabidu. All rights reserved.</p>
         </div>
       </div>

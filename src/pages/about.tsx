@@ -49,14 +49,14 @@ export default function About() {
       <motion.main
         initial="initial"
         animate="animate"
-        className="min-h-screen bg-[#111]"
+        className="min-h-screen bg-white"
       >
         {/* Navigation */}
         <nav className="px-4 sm:px-6 py-6 sm:py-8 flex items-center justify-between max-w-7xl mx-auto relative z-50">
           <Link href="/" className="flex items-center">
             <div className="relative w-40 h-12">
               <Image
-                src="/images/white.png"
+                src="/images/black.png"
                 alt="SabiDub Logo"
                 fill
                 className="object-contain"
@@ -69,41 +69,41 @@ export default function About() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Home
             </Link>
             <Link
               href="/about"
-              className="text-white hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-900 hover:text-yellow-600 transition-colors"
             >
               About
             </Link>
             <Link
               href="/services"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Services
             </Link>
             <Link
               href="/pricing"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Pricing
             </Link>
             <Link
-              href="/competition"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              href="/admission-checker"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
-              Competition
+              Admission Checker
             </Link>
             <Link
               href="/contact"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Contact
             </Link>
-            <button className="bg-[#FFEDB1] text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+            <button className="bg-yellow-400 text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
               Download App
             </button>
           </div>
@@ -111,38 +111,34 @@ export default function About() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-[#1a1a1a] rounded-lg hover:bg-[#252525] transition-colors relative z-50"
+            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-white border border-gray-100 shadow-sm rounded-lg hover:bg-[#252525] transition-colors relative z-50"
           >
             <span
-              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${
-                isMenuOpen ? "rotate-45 translate-y-1.5" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""
+                }`}
             ></span>
             <span
-              className={`w-5 h-0.5 bg-white transition-opacity ${
-                isMenuOpen ? "opacity-0" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white transition-opacity ${isMenuOpen ? "opacity-0" : ""
+                }`}
             ></span>
             <span
-              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${
-                isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+                }`}
             ></span>
           </button>
         </nav>
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-[#1a1a1a] z-40 transform transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-white border border-gray-100 shadow-sm z-40 transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           <div className="p-6 h-full overflow-y-auto">
             <div className="flex flex-col space-y-6">
               <div className="flex items-center justify-end mb-8">
                 <button
                   onClick={toggleMenu}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   <svg
                     className="w-6 h-6"
@@ -163,54 +159,54 @@ export default function About() {
               <div className="flex flex-col space-y-4">
                 <Link
                   href="/"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Home
                 </Link>
                 <Link
                   href="/about"
-                  className="text-white hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-900 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   About
                 </Link>
                 <Link
                   href="/services"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Services
                 </Link>
                 <Link
                   href="/pricing"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Pricing
                 </Link>
                 <Link
-                  href="/competition"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  href="/admission-checker"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
-                  Competition
+                  Admission Checker
                 </Link>
                 <Link
                   href="/contact"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Contact
                 </Link>
               </div>
 
-              <button className="w-full bg-[#FFEDB1] text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+              <button className="w-full bg-yellow-400 text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
                 Download App
               </button>
 
               <div className="mt-6 flex items-center justify-center space-x-4">
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -219,7 +215,7 @@ export default function About() {
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -228,7 +224,7 @@ export default function About() {
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -256,25 +252,25 @@ export default function About() {
           className="px-6 sm:px-6 pt-16 sm:pt-20 pb-16 sm:pb-24 max-w-7xl mx-auto"
         >
           <motion.div variants={fadeInUp} className="text-center mb-8">
-            <p className="text-[#FFEDB1] uppercase tracking-wider text-sm font-medium">
+            <p className="text-yellow-600 uppercase tracking-wider text-sm font-medium">
               OUR STORY
             </p>
           </motion.div>
 
           <div className="flex flex-col lg:flex-row gap-12 mt-8">
             <motion.div variants={fadeInUp} className="lg:w-1/2 px-4 sm:px-0">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">
                 Empowering Nigerian Education Through{" "}
                 <motion.span
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-[#FFEDB1]"
+                  className="text-yellow-600"
                 >
                   Digital Innovation
                 </motion.span>
               </h1>
-              <motion.p variants={fadeIn} className="text-gray-400 mb-8">
+              <motion.p variants={fadeIn} className="text-gray-600 mb-8">
                 At SabiDub, we're revolutionizing education in Nigeria by
                 bridging the gap between secondary and tertiary education.
               </motion.p>
@@ -298,11 +294,11 @@ export default function About() {
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
-                      className="text-3xl font-bold text-[#FFEDB1] mb-2"
+                      className="text-3xl font-bold text-yellow-600 mb-2"
                     >
                       {stat.number}
                     </motion.h3>
-                    <p className="text-gray-400">{stat.label}</p>
+                    <p className="text-gray-600">{stat.label}</p>
                   </motion.div>
                 ))}
               </motion.div>
@@ -341,7 +337,7 @@ export default function About() {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.5 + index * 0.2 }}
-                    className="absolute top-4 left-4 bg-[#FFEDB1] px-3 py-1 rounded-full"
+                    className="absolute top-4 left-4 bg-yellow-400 px-3 py-1 rounded-full"
                   >
                     <span className="text-black text-sm font-medium">
                       {image.label}
@@ -359,7 +355,7 @@ export default function About() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-6 sm:px-6 py-16 bg-[#1a1a1a]"
+          className="px-6 sm:px-6 py-16 bg-white border border-gray-100 shadow-sm"
         >
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -383,14 +379,14 @@ export default function About() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: index * 0.2 }}
-                  className="bg-[#222] p-6 sm:p-8 rounded-xl"
+                  className="bg-gray-50 p-6 sm:p-8 rounded-xl"
                 >
                   <motion.h3
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 }}
-                    className="text-2xl font-bold text-[#FFEDB1] mb-4"
+                    className="text-2xl font-bold text-yellow-600 mb-4"
                   >
                     {item.title}
                   </motion.h3>
@@ -399,7 +395,7 @@ export default function About() {
                     whileInView={{ opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.4 }}
-                    className="text-gray-400"
+                    className="text-gray-600"
                   >
                     {item.content}
                   </motion.p>
@@ -414,28 +410,28 @@ export default function About() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="px-6 sm:px-6 py-16 bg-[#111]"
+          className="px-6 sm:px-6 py-16 bg-white"
         >
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col lg:flex-row gap-12">
               <motion.div variants={fadeInUp} className="lg:w-1/2 px-4 sm:px-0">
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
                   Our Journey To{" "}
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="text-[#FFEDB1]"
+                    className="text-yellow-600"
                   >
                     Educational Excellence
                   </motion.span>
                 </h2>
-                <p className="text-gray-400 mb-8">
+                <p className="text-gray-600 mb-8">
                   From our humble beginnings to becoming a leading EdTech
                   platform in Nigeria, we've remained committed to transforming
                   education through innovation and accessibility.
                 </p>
-                <button className="bg-[#FFEDB1] text-black px-6 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+                <button className="bg-yellow-400 text-black px-6 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
                   Join Our Journey
                 </button>
               </motion.div>
@@ -445,32 +441,32 @@ export default function About() {
                   <div className="absolute left-4 h-full w-0.5 bg-[#333]"></div>
                   <div className="space-y-8">
                     <div className="relative pl-8">
-                      <div className="absolute left-0 w-8 h-8 bg-[#FFEDB1] rounded-full -translate-x-1/2 flex items-center justify-center">
+                      <div className="absolute left-0 w-8 h-8 bg-yellow-400 rounded-full -translate-x-1/2 flex items-center justify-center">
                         <span className="text-black font-bold">1</span>
                       </div>
-                      <h3 className="text-white font-semibold">2021</h3>
-                      <p className="text-gray-400">Platform Launch</p>
+                      <h3 className="text-gray-900 font-semibold">2021</h3>
+                      <p className="text-gray-600">Platform Launch</p>
                     </div>
                     <div className="relative pl-8">
-                      <div className="absolute left-0 w-8 h-8 bg-[#FFEDB1] rounded-full -translate-x-1/2 flex items-center justify-center">
+                      <div className="absolute left-0 w-8 h-8 bg-yellow-400 rounded-full -translate-x-1/2 flex items-center justify-center">
                         <span className="text-black font-bold">2</span>
                       </div>
-                      <h3 className="text-white font-semibold">2022</h3>
-                      <p className="text-gray-400">Mobile App Release</p>
+                      <h3 className="text-gray-900 font-semibold">2022</h3>
+                      <p className="text-gray-600">Mobile App Release</p>
                     </div>
                     <div className="relative pl-8">
-                      <div className="absolute left-0 w-8 h-8 bg-[#FFEDB1] rounded-full -translate-x-1/2 flex items-center justify-center">
+                      <div className="absolute left-0 w-8 h-8 bg-yellow-400 rounded-full -translate-x-1/2 flex items-center justify-center">
                         <span className="text-black font-bold">3</span>
                       </div>
-                      <h3 className="text-white font-semibold">2023</h3>
-                      <p className="text-gray-400">50,000 Active Users</p>
+                      <h3 className="text-gray-900 font-semibold">2023</h3>
+                      <p className="text-gray-600">50,000 Active Users</p>
                     </div>
                     <div className="relative pl-8">
-                      <div className="absolute left-0 w-8 h-8 bg-[#FFEDB1] rounded-full -translate-x-1/2 flex items-center justify-center">
+                      <div className="absolute left-0 w-8 h-8 bg-yellow-400 rounded-full -translate-x-1/2 flex items-center justify-center">
                         <span className="text-black font-bold">4</span>
                       </div>
-                      <h3 className="text-white font-semibold">2024</h3>
-                      <p className="text-gray-400">Pan-Nigerian Expansion</p>
+                      <h3 className="text-gray-900 font-semibold">2024</h3>
+                      <p className="text-gray-600">Pan-Nigerian Expansion</p>
                     </div>
                   </div>
                 </div>
@@ -485,12 +481,12 @@ export default function About() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-6 sm:px-6 py-24 bg-[#1a1a1a] relative overflow-hidden"
+          className="px-6 sm:px-6 py-24 bg-white border border-gray-100 shadow-sm relative overflow-hidden"
         >
           {/* Background Decorative Elements */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#FFEDB1]/5 rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#FFEDB1]/5 rounded-full blur-3xl"></div>
+            <div className="absolute -top-40 -right-40 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+            <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/images/grid.svg')] opacity-5"></div>
           </div>
 
@@ -508,16 +504,16 @@ export default function About() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
               >
-                <span className="text-[#FFEDB1] text-sm font-medium tracking-wider uppercase mb-4 block">
+                <span className="text-yellow-600 text-sm font-medium tracking-wider uppercase mb-4 block">
                   Why Choose Us
                 </span>
-                <h2 className="text-3xl sm:text-4xl font-bold text-white mb-6">
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6">
                   Experience Excellence with{" "}
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="text-[#FFEDB1] relative"
+                    className="text-yellow-600 relative"
                   >
                     SabiDub
                     <svg
@@ -539,7 +535,7 @@ export default function About() {
                     </svg>
                   </motion.span>
                 </h2>
-                <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                <p className="text-gray-600 max-w-2xl mx-auto text-lg">
                   Discover why thousands of students and educators choose
                   SabiDub for their educational journey
                 </p>
@@ -605,11 +601,11 @@ export default function About() {
                   transition={{ duration: 0.5, delay: index * 0.2 }}
                   className="group"
                 >
-                  <div className="bg-[#222] rounded-2xl p-8 h-full transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl relative">
+                  <div className="bg-gray-50 rounded-2xl p-8 h-full transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl relative">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#FFEDB1] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
                     {/* Icon */}
-                    <div className="w-14 h-14 bg-[#FFEDB1] rounded-xl flex items-center justify-center mb-6 transform transition-transform group-hover:rotate-6">
+                    <div className="w-14 h-14 bg-yellow-400 rounded-xl flex items-center justify-center mb-6 transform transition-transform group-hover:rotate-6">
                       <svg
                         className="w-7 h-7 text-black"
                         fill="none"
@@ -621,17 +617,17 @@ export default function About() {
                     </div>
 
                     {/* Content */}
-                    <h3 className="text-xl font-semibold text-white mb-3 group-hover:text-[#FFEDB1] transition-colors">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-400 mb-6">{feature.description}</p>
+                    <p className="text-gray-600 mb-6">{feature.description}</p>
 
                     {/* Stats & Highlight */}
-                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-800">
-                      <div className="text-[#FFEDB1] font-semibold">
+                    <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-200">
+                      <div className="text-yellow-600 font-semibold">
                         {feature.stats}
                       </div>
-                      <span className="bg-[#FFEDB1]/10 text-[#FFEDB1] text-sm py-1 px-3 rounded-full">
+                      <span className="bg-yellow-400/10 text-yellow-600 text-sm py-1 px-3 rounded-full">
                         {feature.highlight}
                       </span>
                     </div>
@@ -650,7 +646,7 @@ export default function About() {
             >
               <Link
                 href="/contact"
-                className="inline-flex items-center gap-2 bg-[#FFEDB1] text-black px-6 py-3 rounded-lg hover:bg-[#ffdb82] transition-colors font-medium group"
+                className="inline-flex items-center gap-2 bg-yellow-400 text-black px-6 py-3 rounded-lg hover:bg-[#ffdb82] transition-colors font-medium group"
               >
                 Start Learning Today
                 <svg
@@ -677,17 +673,17 @@ export default function About() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-6 sm:px-6 py-16 bg-[#111]"
+          className="px-6 sm:px-6 py-16 bg-white"
         >
           <div className="max-w-7xl mx-auto">
             <motion.div variants={fadeInUp} className="text-center mb-12 px-4">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
                 Meet Our{" "}
                 <motion.span
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
-                  className="text-[#FFEDB1]"
+                  className="text-yellow-600"
                 >
                   Expert Team
                 </motion.span>
@@ -698,7 +694,7 @@ export default function About() {
               variants={staggerChildren}
               className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 px-4 sm:px-0"
             >
-              <div className="bg-[#1a1a1a] rounded-xl overflow-hidden group">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-xl overflow-hidden group">
                 <div className="relative h-64 overflow-hidden">
                   <Image
                     src="/images/team/ceo.jpg"
@@ -708,19 +704,19 @@ export default function About() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                   <div className="absolute bottom-4 left-4">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="text-gray-900 font-semibold text-lg">
                       Dr. Samuel Okonjo
                     </h3>
-                    <p className="text-[#FFEDB1]">CEO & Founder</p>
+                    <p className="text-yellow-600">CEO & Founder</p>
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-600 text-sm">
                     Former Education Policy Advisor with 15+ years experience in
                     EdTech and curriculum development.
                   </p>
                   <div className="flex space-x-4 mt-4">
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -729,7 +725,7 @@ export default function About() {
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                       </svg>
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -742,7 +738,7 @@ export default function About() {
                 </div>
               </div>
 
-              <div className="bg-[#1a1a1a] rounded-xl overflow-hidden group">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-xl overflow-hidden group">
                 <div className="relative h-64 overflow-hidden">
                   <Image
                     src="/images/team/cto.jpg"
@@ -752,19 +748,19 @@ export default function About() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                   <div className="absolute bottom-4 left-4">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="text-gray-900 font-semibold text-lg">
                       Amina Ibrahim
                     </h3>
-                    <p className="text-[#FFEDB1]">Chief Technology Officer</p>
+                    <p className="text-yellow-600">Chief Technology Officer</p>
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-600 text-sm">
                     Tech innovator with extensive experience in building
                     scalable educational platforms.
                   </p>
                   <div className="flex space-x-4 mt-4">
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -773,7 +769,7 @@ export default function About() {
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                       </svg>
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -786,7 +782,7 @@ export default function About() {
                 </div>
               </div>
 
-              <div className="bg-[#1a1a1a] rounded-xl overflow-hidden group">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-xl overflow-hidden group">
                 <div className="relative h-64 overflow-hidden">
                   <Image
                     src="/images/team/academic.jpg"
@@ -796,19 +792,19 @@ export default function About() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                   <div className="absolute bottom-4 left-4">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="text-gray-900 font-semibold text-lg">
                       Prof. Oluwaseun Adeleke
                     </h3>
-                    <p className="text-[#FFEDB1]">Academic Director</p>
+                    <p className="text-yellow-600">Academic Director</p>
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-600 text-sm">
                     Leading curriculum development with 20+ years of experience
                     in Nigerian education system.
                   </p>
                   <div className="flex space-x-4 mt-4">
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -817,7 +813,7 @@ export default function About() {
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                       </svg>
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -830,7 +826,7 @@ export default function About() {
                 </div>
               </div>
 
-              <div className="bg-[#1a1a1a] rounded-xl overflow-hidden group">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-xl overflow-hidden group">
                 <div className="relative h-64 overflow-hidden">
                   <Image
                     src="/images/team/product.jpg"
@@ -840,19 +836,19 @@ export default function About() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                   <div className="absolute bottom-4 left-4">
-                    <h3 className="text-white font-semibold text-lg">
+                    <h3 className="text-gray-900 font-semibold text-lg">
                       Chioma Nnamdi
                     </h3>
-                    <p className="text-[#FFEDB1]">Product Lead</p>
+                    <p className="text-yellow-600">Product Lead</p>
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gray-600 text-sm">
                     Passionate about creating intuitive educational products
                     that drive student engagement.
                   </p>
                   <div className="flex space-x-4 mt-4">
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -861,7 +857,7 @@ export default function About() {
                         <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                       </svg>
                     </a>
-                    <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                    <a href="#" className="text-gray-600 hover:text-yellow-600">
                       <svg
                         className="w-5 h-5"
                         fill="currentColor"
@@ -876,7 +872,7 @@ export default function About() {
             </motion.div>
 
             <div className="mt-12 text-center px-4 sm:px-0">
-              <button className="bg-[#FFEDB1] text-black px-8 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+              <button className="bg-yellow-400 text-black px-8 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
                 Join Our Team
               </button>
             </div>

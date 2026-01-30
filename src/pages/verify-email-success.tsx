@@ -67,9 +67,8 @@ export default function VerifyEmailSuccess() {
             opacity: "0.7",
           },
           {
-            transform: `translate(${Math.random() * 400 - 200}px, ${
-              window.innerHeight
-            }px)`,
+            transform: `translate(${Math.random() * 400 - 200}px, ${window.innerHeight
+              }px)`,
             opacity: "0",
           },
         ],
@@ -99,23 +98,23 @@ export default function VerifyEmailSuccess() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen bg-[#111] flex items-center justify-center px-4">
+      <main className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="max-w-md w-full">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="bg-[#1a1a1a] rounded-2xl p-8 text-center relative overflow-hidden"
+            className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 text-center relative overflow-hidden"
           >
             {/* Success Icon */}
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-20 h-20 bg-[#FFEDB1]/10 rounded-full mx-auto mb-6 flex items-center justify-center"
+              className="w-20 h-20 bg-yellow-600/10 rounded-full mx-auto mb-6 flex items-center justify-center"
             >
               <svg
-                className="w-12 h-12 text-[#FFEDB1]"
+                className="w-12 h-12 text-yellow-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -136,7 +135,7 @@ export default function VerifyEmailSuccess() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className="text-2xl font-bold text-white mb-4"
+              className="text-2xl font-bold text-gray-900 mb-4"
             >
               Email Verified Successfully!
             </motion.h1>
@@ -145,7 +144,7 @@ export default function VerifyEmailSuccess() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-gray-400 mb-8"
+              className="text-gray-600 mb-8"
             >
               Thank you for verifying your email address. Your account is now
               fully activated and you can access all features of SabiDub.
@@ -165,7 +164,7 @@ export default function VerifyEmailSuccess() {
               </Link>
               <Link
                 href="/"
-                className="block w-full bg-[#252525] text-white py-3 rounded-lg hover:bg-[#333] transition-colors"
+                className="block w-full bg-[#252525] text-gray-900 py-3 rounded-lg hover:bg-[#333] transition-colors"
               >
                 Back to Home
               </Link>
@@ -184,11 +183,11 @@ export default function VerifyEmailSuccess() {
             transition={{ delay: 0.6 }}
             className="mt-8 text-center"
           >
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-600 text-sm">
               Need help?{" "}
               <Link
                 href="/contact"
-                className="text-[#FFEDB1] hover:text-[#ffdb82] transition-colors"
+                className="text-yellow-600 hover:text-[#ffdb82] transition-colors"
               >
                 Contact Support
               </Link>

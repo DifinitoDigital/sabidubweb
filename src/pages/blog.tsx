@@ -79,14 +79,14 @@ export default function BlogPage() {
           page: currentPage.toString(),
           limit: '10'
         });
-        
+
         if (selectedCategory !== "All") {
           params.append('category', selectedCategory);
         }
 
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
         const response = await fetch(`${baseUrl}/blog/posts?${params.toString()}`);
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -123,20 +123,20 @@ export default function BlogPage() {
         <title>Blog - SabiDub</title>
         <meta name="description" content="Read the latest articles, tips, and news from SabiDub." />
       </Head>
-      <motion.main initial="initial" animate="animate" className="min-h-screen bg-[#111] relative overflow-x-hidden">
+      <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden">
         {/* Full Background Image */}
         <div className="fixed inset-0 -z-10 w-full h-full">
           <div className="absolute inset-0">
             <Image src="/images/backgroundw.png" alt="Blog Background" fill className="object-cover w-full h-full" priority />
-            <div className="absolute inset-0 bg-gradient-to-b from-[#111]/80 via-[#111]/90 to-[#111]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/90 to-white" />
           </div>
         </div>
         {/* App Bar / Navigation */}
-        <nav className="px-4 sm:px-6 py-6 sm:py-8 flex items-center justify-between max-w-7xl mx-auto relative z-[60] bg-[#111]">
+        <nav className="px-4 sm:px-6 py-6 sm:py-8 flex items-center justify-between max-w-7xl mx-auto relative z-[60] bg-white">
           <Link href="/" className="flex items-center relative z-[60]">
             <div className="relative w-40 h-12">
               <Image
-                src="/images/white.png"
+                src="/images/black.png"
                 alt="SabiDub Logo"
                 fill
                 className="object-contain"
@@ -145,18 +145,18 @@ export default function BlogPage() {
             </div>
           </Link>
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="text-white hover:text-[#FFEDB1] transition-colors">Home</Link>
-            <Link href="/about" className="text-gray-400 hover:text-[#FFEDB1] transition-colors">About</Link>
-            <Link href="/services" className="text-gray-400 hover:text-[#FFEDB1] transition-colors">Services</Link>
-            <Link href="/pricing" className="text-gray-400 hover:text-[#FFEDB1] transition-colors">Pricing</Link>
-            <Link href="/competition" className="text-gray-400 hover:text-[#FFEDB1] transition-colors">Competition</Link>
-            <Link href="/contact" className="text-gray-400 hover:text-[#FFEDB1] transition-colors">Contact</Link>
-            <button className="bg-[#FFEDB1] text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">Download App</button>
+            <Link href="/" className="text-gray-900 hover:text-yellow-600 transition-colors">Home</Link>
+            <Link href="/about" className="text-gray-600 hover:text-yellow-600 transition-colors">About</Link>
+            <Link href="/services" className="text-gray-600 hover:text-yellow-600 transition-colors">Services</Link>
+            <Link href="/pricing" className="text-gray-600 hover:text-yellow-600 transition-colors">Pricing</Link>
+            <Link href="/admission-checker" className="text-gray-600 hover:text-yellow-600 transition-colors">Admission Checker</Link>
+            <Link href="/contact" className="text-gray-600 hover:text-yellow-600 transition-colors">Contact</Link>
+            <button className="bg-yellow-400 text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">Download App</button>
           </div>
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-[#1a1a1a] rounded-lg hover:bg-[#252525] transition-colors relative z-[60]"
+            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-white border border-gray-100 shadow-sm rounded-lg hover:bg-gray-50 transition-colors relative z-[60]"
           >
             <span className={`w-5 h-0.5 bg-white mb-1 transition-transform ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""}`}></span>
             <span className={`w-5 h-0.5 bg-white transition-opacity ${isMenuOpen ? "opacity-0" : ""}`}></span>
@@ -165,36 +165,36 @@ export default function BlogPage() {
         </nav>
         {/* Sliding Menu - Mobile Only */}
         <div
-          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-[#1a1a1a] z-[50] transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-white border border-gray-100 shadow-sm z-[50] transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"}`}
         >
           <div className="p-6 h-full overflow-y-auto">
             <div className="flex flex-col space-y-6">
               <div className="flex items-center justify-between mb-8">
                 <div className="relative w-32 h-8">
                   <Image
-                    src="/images/white.png"
+                    src="/images/black.png"
                     alt="SabiDub Logo"
                     fill
                     className="object-contain"
                     priority
                   />
                 </div>
-                <button onClick={toggleMenu} className="text-gray-400 hover:text-white">
+                <button onClick={toggleMenu} className="text-gray-600 hover:text-gray-900">
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               </div>
               <div className="flex flex-col space-y-4">
-                <Link href="/" className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800" onClick={toggleMenu}>Home</Link>
-                <Link href="/about" className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800" onClick={toggleMenu}>About</Link>
-                <Link href="/services" className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800" onClick={toggleMenu}>Services</Link>
-                <Link href="/pricing" className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800" onClick={toggleMenu}>Pricing</Link>
-                <Link href="/competition" className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800" onClick={toggleMenu}>Competition</Link>
-                <Link href="/contact" className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800" onClick={toggleMenu}>Contact</Link>
+                <Link href="/" className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200" onClick={toggleMenu}>Home</Link>
+                <Link href="/about" className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200" onClick={toggleMenu}>About</Link>
+                <Link href="/services" className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200" onClick={toggleMenu}>Services</Link>
+                <Link href="/pricing" className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200" onClick={toggleMenu}>Pricing</Link>
+                <Link href="/admission-checker" className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200" onClick={toggleMenu}>Admission Checker</Link>
+                <Link href="/contact" className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200" onClick={toggleMenu}>Contact</Link>
               </div>
               <div className="mt-auto pt-6">
-                <button className="w-full bg-[#FFEDB1] text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">Download App</button>
+                <button className="w-full bg-yellow-400 text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">Download App</button>
               </div>
             </div>
           </div>
@@ -208,27 +208,27 @@ export default function BlogPage() {
           <div className="absolute inset-0 pointer-events-none select-none">
             <Image src="/images/backgroundw.png" alt="Blog Hero" fill className="object-cover opacity-10" />
           </div>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl sm:text-5xl font-bold text-white mb-4 relative z-10">SabiDub Blog</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-gray-400 max-w-2xl mx-auto mb-8 relative z-10">Insights, tips, and stories to empower your educational journey. Explore our latest articles and updates.</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 relative z-10">SabiDub Blog</motion.h1>
+          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-gray-600 max-w-2xl mx-auto mb-8 relative z-10">Insights, tips, and stories to empower your educational journey. Explore our latest articles and updates.</motion.p>
           {/* Featured Post */}
           {featured && (
             <motion.div variants={fadeInUp} initial="initial" animate="animate" className="max-w-3xl mx-auto mb-12 relative z-10">
-              <Link href={`/blog/${featured.slug}`} className="block group rounded-3xl overflow-hidden shadow-2xl border border-[#FFEDB1]/20 bg-[#1a1a1a] hover:scale-[1.01] transition-transform">
+              <Link href={`/blog/${featured.slug}`} className="block group rounded-3xl overflow-hidden shadow-2xl border border-yellow-400/20 bg-white border border-gray-100 shadow-sm hover:scale-[1.01] transition-transform">
                 <div className="relative w-full h-64 sm:h-80">
                   <Image src={featured.image} alt={featured.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#111] via-[#111]/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-6">
-                    <div className="text-xs text-[#FFEDB1] mb-2 uppercase tracking-wider font-semibold">{featured.category}</div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{featured.title}</h2>
-                    <p className="text-gray-300 mb-2 max-w-xl">{featured.excerpt}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                    <div className="text-xs text-yellow-600 mb-2 uppercase tracking-wider font-semibold">{featured.category}</div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 group-hover:text-yellow-600 transition-colors">{featured.title}</h2>
+                    <p className="text-gray-900 mb-2 max-w-xl">{featured.excerpt}</p>
+                    <div className="flex items-center gap-4 text-xs text-gray-600">
                       <span>By {featured.author.name}</span>
                       <span>• {featured.readingTime}</span>
                       <span>• {new Date(featured.publishedAt).toLocaleDateString()}</span>
                     </div>
                     <div className="flex gap-2 mt-2">
                       {featured.tags.map((tag) => (
-                        <span key={tag} className="bg-[#FFEDB1]/10 text-[#FFEDB1] px-2 py-1 rounded-full text-xs">{tag}</span>
+                        <span key={tag} className="bg-yellow-400/10 text-yellow-600 px-2 py-1 rounded-full text-xs">{tag}</span>
                       ))}
                     </div>
                   </div>
@@ -239,25 +239,25 @@ export default function BlogPage() {
         </section>
         {/* Trending Posts */}
         <section className="px-4 sm:px-6 pb-8 max-w-7xl mx-auto">
-          <h3 className="text-lg font-bold text-white mb-6">Trending</h3>
+          <h3 className="text-lg font-bold text-gray-900 mb-6">Trending</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
             {trending.map((post) => (
-              <Link href={`/blog/${post.slug}`} key={post.id} className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-800">
+              <Link href={`/blog/${post.slug}`} key={post.id} className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-200">
                 <div className="relative w-full h-48">
                   <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
                 </div>
                 <div className="p-6 flex-1 flex flex-col">
-                  <div className="text-xs text-[#FFEDB1] mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
-                  <h2 className="text-lg font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{post.title}</h2>
-                  <p className="text-gray-400 mb-2 flex-1">{post.excerpt}</p>
-                  <div className="flex items-center gap-4 text-xs text-gray-400">
+                  <div className="text-xs text-yellow-600 mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
+                  <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-yellow-600 transition-colors">{post.title}</h2>
+                  <p className="text-gray-600 mb-2 flex-1">{post.excerpt}</p>
+                  <div className="flex items-center gap-4 text-xs text-gray-600">
                     <span>By {post.author.name}</span>
                     <span>• {post.readingTime}</span>
                     <span>• {new Date(post.publishedAt).toLocaleDateString()}</span>
                   </div>
                   <div className="flex gap-2 mt-2">
                     {post.tags.map((tag) => (
-                      <span key={tag} className="bg-[#FFEDB1]/10 text-[#FFEDB1] px-2 py-1 rounded-full text-xs">{tag}</span>
+                      <span key={tag} className="bg-yellow-400/10 text-yellow-600 px-2 py-1 rounded-full text-xs">{tag}</span>
                     ))}
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function BlogPage() {
                   setSelectedCategory(cat);
                   setCurrentPage(1); // Reset to first page when changing category
                 }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border focus:outline-none focus:ring-2 focus:ring-[#FFEDB1]/30 ${selectedCategory === cat ? "bg-[#FFEDB1] text-black border-[#FFEDB1]" : "bg-[#1a1a1a] text-white border-gray-700 hover:bg-[#252525]"}`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border focus:outline-none focus:ring-2 focus:ring-yellow-400/30 ${selectedCategory === cat ? "bg-yellow-400 text-black border-yellow-400" : "bg-white border border-gray-100 shadow-sm text-gray-900 border-gray-200 hover:bg-gray-50"}`}
               >
                 {cat}
               </button>
@@ -285,20 +285,20 @@ export default function BlogPage() {
           {/* Loading State */}
           {loading && (
             <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#FFEDB1]"></div>
-              <p className="text-gray-400 mt-4">Loading posts...</p>
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400"></div>
+              <p className="text-gray-600 mt-4">Loading posts...</p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
             <div className="text-center py-12">
-              <div className="bg-[#1a1a1a] rounded-lg p-6 border border-red-500/20">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-lg p-6 border border-red-500/20">
                 <p className="text-red-400 mb-2 font-medium">Error Loading Posts</p>
-                <p className="text-gray-400 text-sm mb-4">{error}</p>
-                <button 
-                  onClick={() => window.location.reload()} 
-                  className="bg-[#FFEDB1] text-black px-4 py-2 rounded-md hover:bg-[#ffdb82] transition-colors text-sm"
+                <p className="text-gray-600 text-sm mb-4">{error}</p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="bg-yellow-400 text-black px-4 py-2 rounded-md hover:bg-[#ffdb82] transition-colors text-sm"
                 >
                   Try Again
                 </button>
@@ -311,23 +311,23 @@ export default function BlogPage() {
             <>
               <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" variants={{ animate: { transition: { staggerChildren: 0.15 } } }} initial="initial" animate="animate">
                 {filteredPosts.map((post, idx) => (
-                  <motion.div key={post.id} variants={fadeInUp} className="bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-800">
+                  <motion.div key={post.id} variants={fadeInUp} className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-200">
                     <Link href={`/blog/${post.slug}`} className="block">
                       <div className="relative w-full h-56">
                         <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
                       </div>
                       <div className="p-6 flex-1 flex flex-col">
-                        <div className="text-xs text-[#FFEDB1] mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
-                        <h2 className="text-xl font-bold text-white mb-2 group-hover:text-[#FFEDB1] transition-colors">{post.title}</h2>
-                        <p className="text-gray-400 mb-2 flex-1">{post.excerpt}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-400">
+                        <div className="text-xs text-yellow-600 mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
+                        <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-yellow-600 transition-colors">{post.title}</h2>
+                        <p className="text-gray-600 mb-2 flex-1">{post.excerpt}</p>
+                        <div className="flex items-center gap-4 text-xs text-gray-600">
                           <span>By {post.author.name}</span>
                           <span>• {post.readingTime}</span>
                           <span>• {new Date(post.publishedAt).toLocaleDateString()}</span>
                         </div>
                         <div className="flex gap-2 mt-2">
                           {post.tags.map((tag) => (
-                            <span key={tag} className="bg-[#FFEDB1]/10 text-[#FFEDB1] px-2 py-1 rounded-full text-xs">{tag}</span>
+                            <span key={tag} className="bg-yellow-400/10 text-yellow-600 px-2 py-1 rounded-full text-xs">{tag}</span>
                           ))}
                         </div>
                       </div>
@@ -342,17 +342,17 @@ export default function BlogPage() {
                   <button
                     onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-md bg-[#1a1a1a] text-white border border-gray-700 hover:bg-[#252525] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 rounded-md bg-white border border-gray-100 shadow-sm text-gray-900 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Previous
                   </button>
-                  <span className="text-gray-400 px-4">
+                  <span className="text-gray-600 px-4">
                     Page {currentPage} of {totalPages}
                   </span>
                   <button
                     onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                     disabled={currentPage === totalPages}
-                    className="px-4 py-2 rounded-md bg-[#1a1a1a] text-white border border-gray-700 hover:bg-[#252525] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="px-4 py-2 rounded-md bg-white border border-gray-100 shadow-sm text-gray-900 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     Next
                   </button>
@@ -362,7 +362,7 @@ export default function BlogPage() {
               {/* No Posts Message */}
               {filteredPosts.length === 0 && !loading && !error && (
                 <div className="text-center py-12">
-                  <p className="text-gray-400">No posts found in this category.</p>
+                  <p className="text-gray-600">No posts found in this category.</p>
                 </div>
               )}
             </>
@@ -370,17 +370,17 @@ export default function BlogPage() {
         </section>
         {/* Call to Action */}
         <section className="px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
-          <div className="bg-[#1a1a1a] rounded-2xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-lg border border-[#FFEDB1]/10">
+          <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-lg border border-yellow-400/10">
             <div>
-              <h3 className="text-2xl font-bold text-white mb-2">Stay Updated!</h3>
-              <p className="text-gray-400 mb-4">Subscribe to our newsletter for the latest blog updates, tips, and platform news.</p>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Stay Updated!</h3>
+              <p className="text-gray-600 mb-4">Subscribe to our newsletter for the latest blog updates, tips, and platform news.</p>
               <form className="flex flex-col sm:flex-row gap-3">
-                <input type="email" placeholder="Your email address" className="px-4 py-3 rounded-lg bg-[#252525] text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-[#FFEDB1]/20" />
-                <button type="submit" className="bg-[#FFEDB1] text-black px-6 py-3 rounded-lg font-medium hover:bg-[#ffdb82] transition-colors">Subscribe</button>
+                <input type="email" placeholder="Your email address" className="px-4 py-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/20" />
+                <button type="submit" className="bg-yellow-400 text-black px-6 py-3 rounded-lg font-medium hover:bg-[#ffdb82] transition-colors">Subscribe</button>
               </form>
             </div>
             <div className="w-40 h-40 relative hidden md:block">
-              <Image src="/images/white.png" alt="Newsletter" fill className="object-contain opacity-80" />
+              <Image src="/images/black.png" alt="Newsletter" fill className="object-contain opacity-80" />
             </div>
           </div>
         </section>

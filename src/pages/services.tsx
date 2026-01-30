@@ -60,14 +60,14 @@ export default function Services() {
       <motion.main
         initial="initial"
         animate="animate"
-        className="min-h-screen bg-[#111]"
+        className="min-h-screen bg-white"
       >
         {/* Navigation */}
         <nav className="px-4 sm:px-6 py-6 sm:py-8 flex items-center justify-between max-w-7xl mx-auto relative z-50">
           <Link href="/" className="flex items-center">
             <div className="relative w-40 h-12">
               <Image
-                src="/images/white.png"
+                src="/images/black.png"
                 alt="SabiDub Logo"
                 fill
                 className="object-contain"
@@ -80,41 +80,41 @@ export default function Services() {
           <div className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Home
             </Link>
             <Link
               href="/about"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               About
             </Link>
             <Link
               href="/services"
-              className="text-white hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-900 hover:text-yellow-600 transition-colors"
             >
               Services
             </Link>
             <Link
               href="/pricing"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Pricing
             </Link>
             <Link
-              href="/competition"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              href="/admission-checker"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
-              Competition
+              Admission Checker
             </Link>
             <Link
               href="/contact"
-              className="text-gray-400 hover:text-[#FFEDB1] transition-colors"
+              className="text-gray-600 hover:text-yellow-600 transition-colors"
             >
               Contact
             </Link>
-            <button className="bg-[#FFEDB1] text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+            <button className="bg-yellow-400 text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
               Download App
             </button>
           </div>
@@ -122,38 +122,34 @@ export default function Services() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-[#1a1a1a] rounded-lg hover:bg-[#252525] transition-colors relative z-50"
+            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-white border border-gray-100 shadow-sm rounded-lg hover:bg-gray-50 transition-colors relative z-50"
           >
             <span
-              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${
-                isMenuOpen ? "rotate-45 translate-y-1.5" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""
+                }`}
             ></span>
             <span
-              className={`w-5 h-0.5 bg-white transition-opacity ${
-                isMenuOpen ? "opacity-0" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white transition-opacity ${isMenuOpen ? "opacity-0" : ""
+                }`}
             ></span>
             <span
-              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${
-                isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-              }`}
+              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
+                }`}
             ></span>
           </button>
         </nav>
 
         {/* Mobile Menu */}
         <div
-          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-[#1a1a1a] z-40 transform transition-transform duration-300 ease-in-out ${
-            isMenuOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-white border border-gray-100 shadow-sm z-40 transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+            }`}
         >
           <div className="p-6 h-full overflow-y-auto">
             <div className="flex flex-col space-y-6">
               <div className="flex items-center justify-end mb-8">
                 <button
                   onClick={toggleMenu}
-                  className="text-gray-400 hover:text-white"
+                  className="text-gray-600 hover:text-gray-900"
                 >
                   <svg
                     className="w-6 h-6"
@@ -174,54 +170,54 @@ export default function Services() {
               <div className="flex flex-col space-y-4">
                 <Link
                   href="/"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Home
                 </Link>
                 <Link
                   href="/about"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   About
                 </Link>
                 <Link
                   href="/services"
-                  className="text-white hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-900 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Services
                 </Link>
                 <Link
                   href="/pricing"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Pricing
                 </Link>
                 <Link
-                  href="/competition"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  href="/admission-checker"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
-                  Competition
+                  Admission Checker
                 </Link>
                 <Link
                   href="/contact"
-                  className="text-gray-400 hover:text-[#FFEDB1] transition-colors py-2 border-b border-gray-800"
+                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
                   onClick={toggleMenu}
                 >
                   Contact
                 </Link>
               </div>
 
-              <button className="w-full bg-[#FFEDB1] text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
+              <button className="w-full bg-yellow-400 text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
                 Download App
               </button>
 
               <div className="mt-6 flex items-center justify-center space-x-4">
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -230,7 +226,7 @@ export default function Services() {
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -239,7 +235,7 @@ export default function Services() {
                     <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
                   </svg>
                 </a>
-                <a href="#" className="text-gray-400 hover:text-[#FFEDB1]">
+                <a href="#" className="text-gray-600 hover:text-yellow-600">
                   <svg
                     className="w-6 h-6"
                     fill="currentColor"
@@ -267,20 +263,20 @@ export default function Services() {
           className="px-4 sm:px-6 pt-16 sm:pt-20 pb-16 sm:pb-24 max-w-7xl mx-auto"
         >
           <motion.div variants={fadeInUp} className="text-center mb-12">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">
               Student Management{" "}
               <motion.span
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-[#FFEDB1]"
+                className="text-yellow-600"
               >
                 Portal
               </motion.span>
             </h1>
             <motion.p
               variants={fadeIn}
-              className="text-gray-400 max-w-2xl mx-auto mb-8"
+              className="text-gray-600 max-w-2xl mx-auto mb-8"
             >
               Comprehensive analytics and management tools for educational
               institutions
@@ -290,47 +286,47 @@ export default function Services() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-white font-semibold">Total Students</h3>
-                  <span className="text-[#FFEDB1] text-2xl font-bold">
+                  <h3 className="text-gray-900 font-semibold">Total Students</h3>
+                  <span className="text-yellow-600 text-2xl font-bold">
                     2,847
                   </span>
                 </div>
                 <div className="flex items-center text-sm">
                   <span className="text-green-400">↑ 12%</span>
-                  <span className="text-gray-400 ml-2">vs last month</span>
+                  <span className="text-gray-600 ml-2">vs last month</span>
                 </div>
               </motion.div>
 
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-white font-semibold">
+                  <h3 className="text-gray-900 font-semibold">
                     Average Performance
                   </h3>
-                  <span className="text-[#FFEDB1] text-2xl font-bold">78%</span>
+                  <span className="text-yellow-600 text-2xl font-bold">78%</span>
                 </div>
                 <div className="flex items-center text-sm">
                   <span className="text-green-400">↑ 5%</span>
-                  <span className="text-gray-400 ml-2">improvement</span>
+                  <span className="text-gray-600 ml-2">improvement</span>
                 </div>
               </motion.div>
 
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-white font-semibold">Active Courses</h3>
-                  <span className="text-[#FFEDB1] text-2xl font-bold">24</span>
+                  <h3 className="text-gray-900 font-semibold">Active Courses</h3>
+                  <span className="text-yellow-600 text-2xl font-bold">24</span>
                 </div>
                 <div className="flex items-center text-sm">
-                  <span className="text-[#FFEDB1]">●</span>
-                  <span className="text-gray-400 ml-2">
+                  <span className="text-yellow-600">●</span>
+                  <span className="text-gray-600 ml-2">
                     All running smoothly
                   </span>
                 </div>
@@ -340,26 +336,26 @@ export default function Services() {
             {/* Weekly Activity Chart */}
             <motion.div
               variants={fadeInUp}
-              className="bg-[#1a1a1a] p-6 rounded-xl mb-12"
+              className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl mb-12"
             >
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-white font-semibold">Student Engagement</h3>
+                <h3 className="text-gray-900 font-semibold">Student Engagement</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-[#FFEDB1]"></span>
-                    <span className="text-sm text-gray-400">
+                    <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
+                    <span className="text-sm text-gray-600">
                       Active Students
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-[#4CAF50]"></span>
-                    <span className="text-sm text-gray-400">
+                    <span className="text-sm text-gray-600">
                       Completion Rate
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-3 rounded-full bg-[#2196F3]"></span>
-                    <span className="text-sm text-gray-400">Participation</span>
+                    <span className="text-sm text-gray-600">Participation</span>
                   </div>
                 </div>
               </div>
@@ -396,12 +392,11 @@ export default function Services() {
                         initial={{ height: 0 }}
                         animate={{ height: item.height }}
                         transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className={`w-full rounded-t-lg ${
-                          item.highlight ? "bg-[#FFEDB1]" : "bg-gray-700"
-                        }`}
+                        className={`w-full rounded-t-lg ${item.highlight ? "bg-yellow-400" : "bg-gray-700"
+                          }`}
                         style={{ height: item.height }}
                       ></motion.div>
-                      <span className="text-xs text-gray-400">{item.day}</span>
+                      <span className="text-xs text-gray-600">{item.day}</span>
                     </div>
                   ))}
 
@@ -468,7 +463,7 @@ export default function Services() {
                   </svg>
 
                   {/* Y-axis Labels */}
-                  <div className="absolute -left-16 top-0 h-full flex flex-col justify-between text-xs text-gray-400">
+                  <div className="absolute -left-16 top-0 h-full flex flex-col justify-between text-xs text-gray-600">
                     <span>100%</span>
                     <span>75%</span>
                     <span>50%</span>
@@ -480,21 +475,21 @@ export default function Services() {
 
               {/* Legend - Additional Metrics */}
               <div className="mt-4 grid grid-cols-3 gap-4">
-                <div className="bg-[#252525] p-3 rounded-lg">
-                  <div className="text-sm text-gray-400">Average Time</div>
-                  <div className="text-lg text-[#FFEDB1] font-semibold">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="text-sm text-gray-600">Average Time</div>
+                  <div className="text-lg text-yellow-600 font-semibold">
                     45 mins
                   </div>
                 </div>
-                <div className="bg-[#252525] p-3 rounded-lg">
-                  <div className="text-sm text-gray-400">Peak Hours</div>
-                  <div className="text-lg text-[#FFEDB1] font-semibold">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="text-sm text-gray-600">Peak Hours</div>
+                  <div className="text-lg text-yellow-600 font-semibold">
                     2PM - 4PM
                   </div>
                 </div>
-                <div className="bg-[#252525] p-3 rounded-lg">
-                  <div className="text-sm text-gray-400">Total Sessions</div>
-                  <div className="text-lg text-[#FFEDB1] font-semibold">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <div className="text-sm text-gray-600">Total Sessions</div>
+                  <div className="text-lg text-yellow-600 font-semibold">
                     1,247
                   </div>
                 </div>
@@ -505,9 +500,9 @@ export default function Services() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
-                <h3 className="text-white font-semibold mb-6">
+                <h3 className="text-gray-900 font-semibold mb-6">
                   Course Completion Rates
                 </h3>
                 <div className="space-y-4">
@@ -519,15 +514,15 @@ export default function Services() {
                   ].map((item, index) => (
                     <div key={index} className="space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">{item.course}</span>
-                        <span className="text-[#FFEDB1]">{item.rate}</span>
+                        <span className="text-gray-600">{item.course}</span>
+                        <span className="text-yellow-600">{item.rate}</span>
                       </div>
                       <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: item.rate }}
                           transition={{ duration: 0.5, delay: index * 0.1 }}
-                          className="h-full bg-[#FFEDB1] rounded-full"
+                          className="h-full bg-yellow-400 rounded-full"
                         ></motion.div>
                       </div>
                     </div>
@@ -537,30 +532,30 @@ export default function Services() {
 
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#1a1a1a] p-6 rounded-xl"
+                className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl"
               >
-                <h3 className="text-white font-semibold mb-6">
+                <h3 className="text-gray-900 font-semibold mb-6">
                   Student Distribution
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { label: "Secondary", value: "45%", color: "#FFEDB1" },
+                    { label: "Secondary", value: "45%", color: "#FACC15" },
                     { label: "University", value: "35%", color: "#4CAF50" },
                     { label: "Professional", value: "15%", color: "#2196F3" },
                     { label: "Others", value: "5%", color: "#9E9E9E" },
                   ].map((item, index) => (
                     <div
                       key={index}
-                      className="text-center p-4 bg-[#252525] rounded-lg"
+                      className="text-center p-4 bg-gray-50 rounded-lg"
                     >
                       <div
                         className="w-12 h-12 mx-auto mb-2 rounded-full"
                         style={{ backgroundColor: item.color }}
                       ></div>
-                      <div className="text-white font-semibold">
+                      <div className="text-gray-900 font-semibold">
                         {item.value}
                       </div>
-                      <div className="text-sm text-gray-400">{item.label}</div>
+                      <div className="text-sm text-gray-600">{item.label}</div>
                     </div>
                   ))}
                 </div>
@@ -572,10 +567,10 @@ export default function Services() {
               variants={fadeIn}
               className="text-left max-w-3xl mx-auto"
             >
-              <h2 className="text-2xl font-bold text-white mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
                 Comprehensive Student Management System
               </h2>
-              <p className="text-gray-400 mb-6">
+              <p className="text-gray-600 mb-6">
                 Our advanced student management portal provides educational
                 institutions with powerful tools to track, analyze, and improve
                 student performance. The system offers real-time analytics,
@@ -584,10 +579,10 @@ export default function Services() {
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-[#FFEDB1] font-semibold mb-3">
+                  <h3 className="text-yellow-600 font-semibold mb-3">
                     Key Features
                   </h3>
-                  <ul className="space-y-2 text-gray-400">
+                  <ul className="space-y-2 text-gray-600">
                     <li>• Real-time performance tracking</li>
                     <li>• Automated attendance monitoring</li>
                     <li>• Course progress analytics</li>
@@ -595,10 +590,10 @@ export default function Services() {
                   </ul>
                 </div>
                 <div>
-                  <h3 className="text-[#FFEDB1] font-semibold mb-3">
+                  <h3 className="text-yellow-600 font-semibold mb-3">
                     Benefits
                   </h3>
-                  <ul className="space-y-2 text-gray-400">
+                  <ul className="space-y-2 text-gray-600">
                     <li>• Improved student engagement</li>
                     <li>• Enhanced learning outcomes</li>
                     <li>• Streamlined administration</li>
@@ -613,18 +608,18 @@ export default function Services() {
         {/* Main Services */}
         <section className="px-4 sm:px-6 py-16">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 text-center mb-12">
               Workflow Automation Features
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Left Side - Workflow Steps */}
-              <div className="bg-[#1a1a1a] rounded-xl p-8 border border-gray-800">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-xl p-8 border border-gray-200">
                 <div className="space-y-8">
                   {/* Schedule Event */}
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[#252525] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="w-6 h-6 text-[#FFEDB1]"
+                        className="w-6 h-6 text-yellow-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -638,10 +633,10 @@ export default function Services() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-medium mb-1">
+                      <h3 className="text-gray-900 font-medium mb-1">
                         Schedule new event
                       </h3>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-gray-600 text-sm">
                         Add event to Google Calendar
                       </p>
                       <div className="mt-2 flex items-center">
@@ -654,9 +649,9 @@ export default function Services() {
 
                   {/* Create Meeting */}
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[#252525] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="w-6 h-6 text-[#FFEDB1]"
+                        className="w-6 h-6 text-yellow-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -670,10 +665,10 @@ export default function Services() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-medium mb-1">
+                      <h3 className="text-gray-900 font-medium mb-1">
                         Create meeting in Zoom
                       </h3>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-gray-600 text-sm">
                         Plan and set up Zoom Meeting
                       </p>
                       <div className="mt-2 flex items-center">
@@ -686,9 +681,9 @@ export default function Services() {
 
                   {/* Add Delay */}
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[#252525] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="w-6 h-6 text-[#FFEDB1]"
+                        className="w-6 h-6 text-yellow-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -702,19 +697,19 @@ export default function Services() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-medium mb-1">Add Delay</h3>
-                      <p className="text-gray-400 text-sm">Time: 30 minutes</p>
+                      <h3 className="text-gray-900 font-medium mb-1">Add Delay</h3>
+                      <p className="text-gray-600 text-sm">Time: 30 minutes</p>
                       <div className="mt-2 flex items-center">
-                        <span className="text-xs text-gray-400">Path 2</span>
+                        <span className="text-xs text-gray-600">Path 2</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Create Note */}
                   <div className="flex items-start space-x-4">
-                    <div className="w-10 h-10 bg-[#252525] rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
                       <svg
-                        className="w-6 h-6 text-[#FFEDB1]"
+                        className="w-6 h-6 text-yellow-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -728,10 +723,10 @@ export default function Services() {
                       </svg>
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-white font-medium mb-1">
+                      <h3 className="text-gray-900 font-medium mb-1">
                         Create note in Google Docs
                       </h3>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-gray-600 text-sm">
                         Initiate new Google Docs note
                       </p>
                     </div>
@@ -740,23 +735,23 @@ export default function Services() {
               </div>
 
               {/* Right Side - Workflow Preview */}
-              <div className="bg-[#1a1a1a] rounded-xl p-8 border border-gray-800">
+              <div className="bg-white border border-gray-100 shadow-sm rounded-xl p-8 border border-gray-200">
                 <div className="mb-6">
-                  <h3 className="text-xl font-semibold text-white mb-4">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">
                     Workflow Preview
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-600">
                     Visualize and manage your automated workflows with our
                     intuitive interface.
                   </p>
                 </div>
                 <div className="space-y-4">
-                  <div className="bg-[#252525] rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-[#333] rounded-full flex items-center justify-center">
                           <svg
-                            className="w-4 h-4 text-[#FFEDB1]"
+                            className="w-4 h-4 text-yellow-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -769,17 +764,17 @@ export default function Services() {
                             />
                           </svg>
                         </div>
-                        <span className="text-white">Active Workflows</span>
+                        <span className="text-gray-900">Active Workflows</span>
                       </div>
-                      <span className="text-[#FFEDB1]">12</span>
+                      <span className="text-yellow-600">12</span>
                     </div>
                   </div>
-                  <div className="bg-[#252525] rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-[#333] rounded-full flex items-center justify-center">
                           <svg
-                            className="w-4 h-4 text-[#FFEDB1]"
+                            className="w-4 h-4 text-yellow-600"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -792,9 +787,9 @@ export default function Services() {
                             />
                           </svg>
                         </div>
-                        <span className="text-white">Completed Tasks</span>
+                        <span className="text-gray-900">Completed Tasks</span>
                       </div>
-                      <span className="text-[#FFEDB1]">48</span>
+                      <span className="text-yellow-600">48</span>
                     </div>
                   </div>
                 </div>
@@ -808,16 +803,16 @@ export default function Services() {
           <div className="container mx-auto">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8">
               <div className="lg:col-span-1">
-                <h3 className="text-2xl font-bold text-white mb-4">
+                <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   Advanced Management Tools
                 </h3>
-                <p className="text-gray-400 mb-6">
+                <p className="text-gray-600 mb-6">
                   Our comprehensive suite of management tools helps streamline
                   your educational institution's operations.
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-2 gap-3">
-                  <div className="bg-[#1a1a1a] p-4 rounded-xl hover:bg-[#252525] transition-colors duration-300">
-                    <h4 className="text-[#FFEDB1] font-semibold mb-2 flex items-center">
+                  <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl hover:bg-gray-50 transition-colors duration-300">
+                    <h4 className="text-yellow-600 font-semibold mb-2 flex items-center">
                       <svg
                         className="w-5 h-5 mr-2"
                         fill="none"
@@ -833,12 +828,12 @@ export default function Services() {
                       </svg>
                       Materials
                     </h4>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Digital resource management and distribution
                     </p>
                   </div>
-                  <div className="bg-[#1a1a1a] p-4 rounded-xl hover:bg-[#252525] transition-colors duration-300">
-                    <h4 className="text-[#FFEDB1] font-semibold mb-2 flex items-center">
+                  <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl hover:bg-gray-50 transition-colors duration-300">
+                    <h4 className="text-yellow-600 font-semibold mb-2 flex items-center">
                       <svg
                         className="w-5 h-5 mr-2"
                         fill="none"
@@ -854,12 +849,12 @@ export default function Services() {
                       </svg>
                       Community
                     </h4>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Foster collaboration and communication
                     </p>
                   </div>
-                  <div className="bg-[#1a1a1a] p-4 rounded-xl hover:bg-[#252525] transition-colors duration-300">
-                    <h4 className="text-[#FFEDB1] font-semibold mb-2 flex items-center">
+                  <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl hover:bg-gray-50 transition-colors duration-300">
+                    <h4 className="text-yellow-600 font-semibold mb-2 flex items-center">
                       <svg
                         className="w-5 h-5 mr-2"
                         fill="none"
@@ -875,12 +870,12 @@ export default function Services() {
                       </svg>
                       Notifications
                     </h4>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Real-time alerts and announcements
                     </p>
                   </div>
-                  <div className="bg-[#1a1a1a] p-4 rounded-xl hover:bg-[#252525] transition-colors duration-300">
-                    <h4 className="text-[#FFEDB1] font-semibold mb-2 flex items-center">
+                  <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-xl hover:bg-gray-50 transition-colors duration-300">
+                    <h4 className="text-yellow-600 font-semibold mb-2 flex items-center">
                       <svg
                         className="w-5 h-5 mr-2"
                         fill="none"
@@ -902,7 +897,7 @@ export default function Services() {
                       </svg>
                       Settings
                     </h4>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-600 text-sm">
                       Customizable system configuration
                     </p>
                   </div>
@@ -910,11 +905,11 @@ export default function Services() {
               </div>
 
               <div className="lg:col-span-2 space-y-4">
-                <div className="bg-[#1a1a1a] rounded-xl p-6">
+                <div className="bg-white border border-gray-100 shadow-sm rounded-xl p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h4 className="text-white font-semibold flex items-center">
+                    <h4 className="text-gray-900 font-semibold flex items-center">
                       <svg
-                        className="w-5 h-5 text-[#FFEDB1] mr-2"
+                        className="w-5 h-5 text-yellow-600 mr-2"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -929,9 +924,9 @@ export default function Services() {
                       System Overview
                     </h4>
                     <div className="flex space-x-2">
-                      <button className="bg-[#252525] p-2 rounded-lg hover:bg-[#333] transition-colors">
+                      <button className="bg-gray-50 p-2 rounded-lg hover:bg-[#333] transition-colors">
                         <svg
-                          className="w-4 h-4 text-[#FFEDB1]"
+                          className="w-4 h-4 text-yellow-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -944,9 +939,9 @@ export default function Services() {
                           />
                         </svg>
                       </button>
-                      <button className="bg-[#252525] p-2 rounded-lg hover:bg-[#333] transition-colors">
+                      <button className="bg-gray-50 p-2 rounded-lg hover:bg-[#333] transition-colors">
                         <svg
-                          className="w-4 h-4 text-[#FFEDB1]"
+                          className="w-4 h-4 text-yellow-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -962,37 +957,37 @@ export default function Services() {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-[#252525] rounded-lg p-4">
+                    <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex justify-between items-center mb-4">
-                        <div className="text-sm text-gray-400">
+                        <div className="text-sm text-gray-600">
                           System Health
                         </div>
-                        <div className="text-[#FFEDB1]">98%</div>
+                        <div className="text-yellow-600">98%</div>
                       </div>
-                      <div className="h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
-                        <div className="h-full w-[98%] bg-[#FFEDB1] rounded-full"></div>
+                      <div className="h-2 bg-white border border-gray-100 shadow-sm rounded-full overflow-hidden">
+                        <div className="h-full w-[98%] bg-yellow-400 rounded-full"></div>
                       </div>
                     </div>
-                    <div className="bg-[#252525] rounded-lg p-4">
+                    <div className="bg-gray-50 rounded-lg p-4">
                       <div className="flex justify-between items-center mb-4">
-                        <div className="text-sm text-gray-400">
+                        <div className="text-sm text-gray-600">
                           Storage Used
                         </div>
-                        <div className="text-[#FFEDB1]">64%</div>
+                        <div className="text-yellow-600">64%</div>
                       </div>
-                      <div className="h-2 bg-[#1a1a1a] rounded-full overflow-hidden">
-                        <div className="h-full w-[64%] bg-[#FFEDB1] rounded-full"></div>
+                      <div className="h-2 bg-white border border-gray-100 shadow-sm rounded-full overflow-hidden">
+                        <div className="h-full w-[64%] bg-yellow-400 rounded-full"></div>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="bg-[#1a1a1a] rounded-xl p-4">
+                  <div className="bg-white border border-gray-100 shadow-sm rounded-xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-8 h-8 bg-[#252525] rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center">
                         <svg
-                          className="w-4 h-4 text-[#FFEDB1]"
+                          className="w-4 h-4 text-yellow-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1005,21 +1000,21 @@ export default function Services() {
                           />
                         </svg>
                       </div>
-                      <h5 className="text-white font-medium">Quick Actions</h5>
+                      <h5 className="text-gray-900 font-medium">Quick Actions</h5>
                     </div>
-                    <button className="w-full bg-[#252525] text-white py-2 px-3 rounded-lg hover:bg-[#333] transition-colors text-sm mb-2">
+                    <button className="w-full bg-gray-50 text-gray-900 py-2 px-3 rounded-lg hover:bg-[#333] transition-colors text-sm mb-2">
                       Add New User
                     </button>
-                    <button className="w-full bg-[#252525] text-white py-2 px-3 rounded-lg hover:bg-[#333] transition-colors text-sm">
+                    <button className="w-full bg-gray-50 text-gray-900 py-2 px-3 rounded-lg hover:bg-[#333] transition-colors text-sm">
                       Generate Report
                     </button>
                   </div>
 
-                  <div className="bg-[#1a1a1a] rounded-xl p-4">
+                  <div className="bg-white border border-gray-100 shadow-sm rounded-xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-8 h-8 bg-[#252525] rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center">
                         <svg
-                          className="w-4 h-4 text-[#FFEDB1]"
+                          className="w-4 h-4 text-yellow-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1032,21 +1027,21 @@ export default function Services() {
                           />
                         </svg>
                       </div>
-                      <h5 className="text-white font-medium">Performance</h5>
+                      <h5 className="text-gray-900 font-medium">Performance</h5>
                     </div>
-                    <div className="text-2xl font-bold text-white mb-1">
+                    <div className="text-2xl font-bold text-gray-900 mb-1">
                       94.8%
                     </div>
-                    <div className="text-[#FFEDB1] text-sm">
+                    <div className="text-yellow-600 text-sm">
                       ↑ 2.1% vs last week
                     </div>
                   </div>
 
-                  <div className="bg-[#1a1a1a] rounded-xl p-4">
+                  <div className="bg-white border border-gray-100 shadow-sm rounded-xl p-4">
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-8 h-8 bg-[#252525] rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center">
                         <svg
-                          className="w-4 h-4 text-[#FFEDB1]"
+                          className="w-4 h-4 text-yellow-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1059,12 +1054,12 @@ export default function Services() {
                           />
                         </svg>
                       </div>
-                      <h5 className="text-white font-medium">Response Time</h5>
+                      <h5 className="text-gray-900 font-medium">Response Time</h5>
                     </div>
-                    <div className="text-2xl font-bold text-white mb-1">
+                    <div className="text-2xl font-bold text-gray-900 mb-1">
                       1.2s
                     </div>
-                    <div className="text-[#FFEDB1] text-sm">
+                    <div className="text-yellow-600 text-sm">
                       ↓ 0.3s improvement
                     </div>
                   </div>
@@ -1080,7 +1075,7 @@ export default function Services() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="px-4 sm:px-6 py-16 bg-[#1a1a1a]"
+          className="px-4 sm:px-6 py-16 bg-white border border-gray-100 shadow-sm"
         >
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -1091,18 +1086,18 @@ export default function Services() {
                 variants={fadeInUp}
                 className="flex flex-col justify-center"
               >
-                <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
                   Student{" "}
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.3 }}
-                    className="text-[#FFEDB1]"
+                    className="text-yellow-600"
                   >
                     Management
                   </motion.span>
                 </h2>
-                <p className="text-gray-400 mb-8">
+                <p className="text-gray-600 mb-8">
                   Efficiently manage student records, track attendance, and
                   monitor performance with our comprehensive management system.
                 </p>
@@ -1110,7 +1105,7 @@ export default function Services() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-[#FFEDB1] text-black px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#ffdb82] transition-colors"
+                    className="bg-yellow-400 text-black px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#ffdb82] transition-colors"
                   >
                     <svg
                       className="w-5 h-5"
@@ -1130,7 +1125,7 @@ export default function Services() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="bg-[#222] text-white px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#333] transition-colors"
+                    className="bg-gray-50 text-gray-900 px-6 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[#333] transition-colors"
                   >
                     <svg
                       className="w-5 h-5"
@@ -1152,9 +1147,9 @@ export default function Services() {
 
               <motion.div
                 variants={fadeInUp}
-                className="bg-[#222] rounded-xl p-6"
+                className="bg-gray-50 rounded-xl p-6"
               >
-                <h3 className="text-lg font-semibold text-white mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">
                   Recent Students
                 </h3>
                 <motion.div variants={staggerChildren} className="space-y-4">
@@ -1166,21 +1161,21 @@ export default function Services() {
                     <motion.div
                       key={index}
                       variants={fadeInUp}
-                      className="flex items-center justify-between p-4 bg-[#1a1a1a] rounded-lg"
+                      className="flex items-center justify-between p-4 bg-white border border-gray-100 shadow-sm rounded-lg"
                     >
                       <div>
-                        <div className="text-white font-medium">
+                        <div className="text-gray-900 font-medium">
                           {student.name}
                         </div>
-                        <div className="text-sm text-gray-400">
+                        <div className="text-sm text-gray-600">
                           {student.id}
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-[#FFEDB1]">
+                        <div className="text-yellow-600">
                           {student.attendance}
                         </div>
-                        <div className="text-sm text-gray-400">Attendance</div>
+                        <div className="text-sm text-gray-600">Attendance</div>
                       </div>
                     </motion.div>
                   ))}
@@ -1202,10 +1197,10 @@ export default function Services() {
             variants={fadeInUp}
             className="container mx-auto relative z-10"
           >
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-6">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
               Ready to Start Your Learning Journey?
             </h2>
-            <p className="text-gray-400 mb-8">
+            <p className="text-gray-600 mb-8">
               Join thousands of students already benefiting from our
               comprehensive educational services.
             </p>
@@ -1219,7 +1214,7 @@ export default function Services() {
               >
                 <Link
                   href="/pricing"
-                  className="bg-[#FFEDB1] text-black px-8 py-3 rounded-xl font-medium hover:bg-[#ffdb82] transition-all duration-300 inline-block"
+                  className="bg-yellow-400 text-black px-8 py-3 rounded-xl font-medium hover:bg-[#ffdb82] transition-all duration-300 inline-block"
                 >
                   View Pricing
                 </Link>
@@ -1230,7 +1225,7 @@ export default function Services() {
               >
                 <Link
                   href="/contact"
-                  className="bg-transparent border border-[#FFEDB1] text-[#FFEDB1] px-8 py-3 rounded-xl font-medium hover:bg-[#FFEDB1] hover:text-black transition-all duration-300 inline-block"
+                  className="bg-transparent border border-yellow-400 text-yellow-600 px-8 py-3 rounded-xl font-medium hover:bg-yellow-400 hover:text-black transition-all duration-300 inline-block"
                 >
                   Contact Us
                 </Link>
