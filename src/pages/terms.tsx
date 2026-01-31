@@ -14,7 +14,7 @@ export default function Terms() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-h-screen bg-white relative">
+      <main className="min-h-screen bg-white relative pt-20">
         <Navbar />
 
         {/* Terms and Conditions Content */}

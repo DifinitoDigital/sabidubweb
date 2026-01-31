@@ -178,7 +178,7 @@ export default function About() {
                     className="col-span-2 relative h-64 sm:h-80 rounded-2xl overflow-hidden group"
                   >
                     <Image
-                      src="/images/IMG_5562.jpg"
+                      src="/images/IMG_5562.JPG"
                       alt="Students Learning"
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -206,7 +206,7 @@ export default function About() {
                     className="relative h-48 rounded-2xl overflow-hidden group"
                   >
                     <Image
-                      src="/images/IMG_5569.jpg"
+                      src="/images/IMG_5569.JPG"
                       alt="Virtual Classroom"
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -302,7 +302,7 @@ export default function About() {
               className="relative w-full h-[400px] sm:h-[600px] mb-20 rounded-2xl overflow-hidden bg-gray-100"
             >
               <Image
-                src="/images/IMG_5599.jpg"
+                src="/images/IMG_5599.JPG"
                 alt="Educational Vision"
                 fill
                 className="object-cover"

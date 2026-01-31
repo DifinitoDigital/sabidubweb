@@ -34,6 +34,12 @@ interface BlogPost {
   author: Author;
 }
 
+const fadeInUp = {
+  initial: { opacity: 0, y: 30 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 },
+};
+
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
 
@@ -87,7 +93,7 @@ export default function Home() {
           {/* Background Image & Overlays */}
           <div className="absolute inset-0">
             <Image
-              src="/images/IMG_5609.jpg"
+              src="/images/IMG_5609.JPG"
               alt="Education Background"
               fill
               className="object-cover opacity-60"
@@ -400,9 +406,9 @@ export default function Home() {
 
 
         {/* Vision Section - Expanded Hero */}
-        <section className="py-12 bg-white overflow-hidden">
+        <section className="py-8 sm:py-12 bg-white overflow-hidden">
           <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="relative w-full h-[600px] rounded-[48px] overflow-hidden group shadow-3xl">
+            <div className="relative w-full h-[400px] sm:h-[500px] md:h-[600px] rounded-[32px] sm:rounded-[48px] overflow-hidden group shadow-3xl">
               <Image
                 src="/images/IMG_5713.JPG"
                 fill
@@ -410,14 +416,14 @@ export default function Home() {
                 alt="SabiDub Vision"
               />
               {/* Overlay with Content */}
-              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-8 text-center">
-                <div className="bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] text-white font-bold uppercase tracking-widest border border-white/20 mb-6">
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-6 sm:p-8 text-center">
+                <div className="bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] text-white font-bold uppercase tracking-widest border border-white/20 mb-4 sm:mb-6">
                   Our Vision
                 </div>
-                <h2 className="text-4xl sm:text-5xl md:text-7xl font-neonderthaw text-white tracking-tight leading-tight">
+                <h2 className="text-3xl sm:text-5xl md:text-7xl font-neonderthaw text-white tracking-tight leading-tight">
                   Prevent academic hurdle.
                 </h2>
-                <p className="mt-6 text-white/80 max-w-xl text-lg font-medium leading-relaxed">
+                <p className="mt-4 sm:mt-6 text-white/80 max-w-xl text-base sm:text-lg font-medium leading-relaxed">
                   Empowering Nigerian students through holistic wellness and academic excellence.
                   Your journey to success starts here.
                 </p>
@@ -444,7 +450,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
 
               {/* Card 1: Pathways */}
-              <div className="md:col-span-4 bg-[#F8F9FA] rounded-[40px] p-10 flex flex-col h-[480px] overflow-hidden relative border border-gray-100/50">
+              <div className="md:col-span-4 bg-[#F8F9FA] rounded-[40px] p-8 sm:p-10 flex flex-col min-h-[420px] md:h-[480px] overflow-hidden relative border border-gray-100/50">
                 <div className="relative z-10">
                   <h3 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Pathways</h3>
                   <p className="text-gray-500 text-base leading-relaxed max-w-[280px]">
@@ -474,7 +480,7 @@ export default function Home() {
               </div>
 
               {/* Card 2: 1 vs 1 */}
-              <div className="md:col-span-4 bg-[#F8F9FA] rounded-[40px] p-10 flex flex-col h-[480px] overflow-hidden border border-gray-100/50">
+              <div className="md:col-span-4 bg-[#F8F9FA] rounded-[40px] p-8 sm:p-10 flex flex-col min-h-[420px] md:h-[480px] overflow-hidden border border-gray-100/50">
                 <div>
                   <h3 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">1 vs 1</h3>
                   <p className="text-gray-500 text-base leading-relaxed">
@@ -519,9 +525,9 @@ export default function Home() {
               </div>
 
               {/* Card 3: Discovery (Tall) */}
-              <div className="md:col-span-4 md:row-span-2 bg-[#F8F9FA] rounded-[40px] pt-12 overflow-hidden border border-gray-100/50 flex flex-col h-[984px]">
-                <div className="px-10 text-center">
-                  <div className="flex items-center justify-between mb-20 bg-white shadow-sm px-4 py-3 rounded-2xl border border-gray-100">
+              <div className="md:col-span-4 md:row-span-2 bg-[#F8F9FA] rounded-[40px] pt-12 overflow-hidden border border-gray-100/50 flex flex-col min-h-[600px] md:h-[984px]">
+                <div className="px-6 sm:px-10 text-center">
+                  <div className="flex items-center justify-between mb-10 sm:mb-20 bg-white shadow-sm px-4 py-3 rounded-2xl border border-gray-100">
                     <span className="font-black text-gray-900 text-sm flex items-center gap-2">
                       <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white text-[10px]">
                         <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -560,7 +566,7 @@ export default function Home() {
                 </div>
 
                 {/* Topographic Waves Visual - Complex Green Style */}
-                <div className="mt-auto relative h-[610px] w-full">
+                <div className="mt-auto relative h-[300px] sm:h-[400px] md:h-[610px] w-full">
                   <div className="absolute inset-0 z-0">
                     <Image src="/images/backgroundw.png" alt="Waves" fill className="object-cover object-bottom" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#40916C]/10 to-transparent"></div>
@@ -576,18 +582,14 @@ export default function Home() {
               </div>
 
               {/* Card 4: New-packed (Wide) */}
-              <div className="md:col-span-8 bg-gradient-to-br from-[#E9C46A]/30 via-[#40916C]/20 to-[#AFF8C8]/40 rounded-[40px] p-12 overflow-hidden border border-gray-100/30 h-[480px] relative">
+              <div className="md:col-span-8 bg-gradient-to-br from-[#E9C46A]/30 via-[#40916C]/20 to-[#AFF8C8]/40 rounded-[40px] p-8 sm:p-12 overflow-hidden border border-gray-100/30 min-h-[480px] md:h-[480px] relative">
                 <div className="grid grid-cols-1 md:grid-cols-2 h-full relative z-10">
                   <div className="flex flex-col justify-between py-4">
                     <div>
-                      <h3 className="text-6xl font-black text-[#014751] mb-8 leading-[1.1] tracking-tighter">New-packed<br />education</h3>
+                      <h3 className="text-4xl sm:text-5xl md:text-6xl font-black text-[#014751] mb-6 sm:mb-8 leading-[1.1] tracking-tighter">New-packed<br />education</h3>
                       <p className="text-[#014751]/80 text-xl leading-relaxed max-w-[340px]">
                         Your personal hub for insights and analytics. <span className="font-bold text-[#014751]">Visualize</span> your progress identify...
                       </p>
-                    </div>
-                    <div className="flex gap-4 mt-12">
-                      <button className="px-8 py-4 bg-[#014751] text-white rounded-2xl font-bold text-base shadow-xl hover:scale-105 transition-all">All Courses</button>
-                      <button className="px-8 py-4 bg-white text-[#014751] rounded-2xl font-bold text-base shadow-lg hover:scale-105 transition-all border border-gray-100">Join us</button>
                     </div>
                   </div>
 
@@ -642,6 +644,102 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Partners Section */}
+        <section className="px-4 sm:px-6 py-24 bg-white relative z-10 border-t border-gray-100">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight" suppressHydrationWarning>Backed by strong global partners</h2>
+              <p className="text-gray-500 max-w-2xl text-lg leading-relaxed">
+                SabiDub is supported by notable investors as well as some of the best education and technology companies on the planet.
+              </p>
+            </div>
+
+            <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+                <div className="h-12 relative mb-10 flex items-center">
+                  <Image src="/images/difinito.png" alt="Difinito" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                </div>
+                <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
+                  SabiDub is a visionary platform that bridges the gap for Nigerian students. We are proud to support their efforts in enhancing educational accessibility.
+                </p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">D</div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Founder</h4>
+                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Hamman Dlama</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.1 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+                <div className="h-12 relative mb-10 flex items-center">
+                  <Image src="/images/thevoice2u.png" alt="Voice2u" width={140} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                </div>
+                <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
+                  The future of education is digital. SabiDub is at the forefront of this change, and we are excited to be part of their journey in transforming student lives.
+                </p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">V</div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">CEO</h4>
+                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Voice2u</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+                <div className="h-12 relative mb-10 flex items-center">
+                  <Image src="/images/facesta.png" alt="Facesta" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                </div>
+                <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
+                  SabiDub is redefining how students prepare for their future. We are proud to be part of this transformation in the Nigerian educational ecosystem.
+                </p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                    <Image src="/images/jnr.jpg" alt="CEO" fill className="object-cover" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Facesta</h4>
+                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">CEO & Founder</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.3 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+                <div className="h-12 relative mb-10 flex items-center">
+                  <Image src="/images/melab.png" alt="Facesta" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                </div>
+                <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
+                  The innovation SabiDub brings to the table is exactly what the education sector needs. Their commitment to student success is unparalleled.
+                </p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">M</div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Founder/CEO</h4>
+                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751] leading-tight">Abafoni Jesse Jackson</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.4 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+                <div className="h-12 relative mb-10 flex items-center">
+                  <span className="font-black text-gray-900 text-3xl tracking-tighter grayscale group-hover:grayscale-0 transition-all">Venndoor</span>
+                </div>
+                <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
+                  SabiDub&apos;s ecosystem is perfectly positioned to capture the next wave of digital transformation in African education. We believe in their vision.
+                </p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">V</div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Founder/CEO</h4>
+                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Ijeaku Valentine Kelechi</p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
         {/* Blog/Featured Articles Section */}
         <section className="py-20 bg-gray-50/50 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -678,44 +776,48 @@ export default function Home() {
                   className="flex gap-6 pb-8"
                 >
                   {featuredPosts.map((post, index) => (
-                    <motion.div
-                      key={post.id}
-                      className="flex-shrink-0 w-[90vw] sm:w-[600px] h-[450px] sm:h-[550px] rounded-[20px] p-8 sm:p-12 relative overflow-hidden flex flex-col justify-between group"
-                    >
-                      {/* Background Image */}
-                      <div className="absolute inset-0 z-0">
-                        <Image
-                          src={post.image || "/images/placeholder.png"}
-                          alt={post.title}
-                          fill
-                          className="object-cover"
-                        />
-                        {/* Dark Overlay for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50"></div>
-                      </div>
-                      {/* Decorative Elements */}
-                      <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700 z-[1]" />
-                      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-black/10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700 z-[1]" />
-
-                      <div className="relative z-10">
-                        <span className="text-sm font-black uppercase tracking-widest text-[#AFF8C8]">{post.category}</span>
-                        <h3 className="mt-4 text-2xl sm:text-3xl font-bold text-white leading-tight line-clamp-2">{post.title}</h3>
-                        <p className="mt-3 text-white/90 text-sm line-clamp-3 max-w-[300px]">{post.excerpt}</p>
-                      </div>
-
-                      <div className="relative z-10 flex items-end justify-between">
-                        <div>
-                          <p className="text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4">
-                            By {post.author.name} • {post.readingTime || '5 min read'}
-                          </p>
-                          <Link href={`/blog/${post.slug}`}>
-                            <button className="px-8 py-3 bg-white text-[#0F2830] rounded-full font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-white/20">
-                              Read Article
-                            </button>
-                          </Link>
+                    <Link key={post.id} href={`/blog/${post.slug}`}>
+                      <motion.div
+                        className="flex-shrink-0 w-[90vw] sm:w-[600px] h-[500px] sm:h-[600px] rounded-[40px] relative overflow-hidden flex flex-col justify-end group shadow-2xl cursor-pointer"
+                      >
+                        {/* Background Image */}
+                        <div className="absolute inset-0 z-0 transition-transform duration-1000 group-hover:scale-110">
+                          <Image
+                            src={post.image || "/images/placeholder.png"}
+                            alt={post.title}
+                            fill
+                            className="object-cover"
+                          />
                         </div>
-                      </div>
-                    </motion.div>
+
+                        {/* Dynamic Glassmorphism Overlay */}
+                        <div className="relative z-10 mx-6 mb-6">
+                          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 p-6 sm:p-10 rounded-[32px] overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+                            {/* Label/Category */}
+                            <div className="relative z-10">
+                              <span className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] mb-2 sm:mb-3 block">Featured</span>
+                              <h3 className="text-xl sm:text-3xl font-bold text-white leading-[1.2] mb-3 tracking-tight">
+                                {post.title}
+                              </h3>
+                              <p className="text-white/80 text-xs sm:text-sm line-clamp-2 max-w-2xl leading-relaxed mb-4">
+                                {post.excerpt}
+                              </p>
+                              <div className="flex items-center gap-2 group/link">
+                                <span className="text-white text-[10px] font-bold uppercase tracking-widest">Read more</span>
+                                <div className="p-1 rounded-full bg-white/10 group-hover/link:bg-white group-hover/link:rotate-45 transition-all duration-300">
+                                  <svg className="w-2.5 h-2.5 text-white group-hover/link:text-gray-900 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Inner Decorative Blob for glass effect */}
+                            <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+                          </div>
+                        </div>
+                      </motion.div>
+                    </Link>
                   ))}
                 </motion.div>
               ) : (
@@ -725,14 +827,7 @@ export default function Home() {
               )}
 
               {/* Drag Indicator Overlay */}
-              {!loadingPosts && featuredPosts.length > 1 && (
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/20 backdrop-blur-md px-6 py-3 rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity pointer-events-none">
-                  <div className="flex gap-1">
-                    {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/50" />)}
-                  </div>
-                  <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Hold and Drag</span>
-                </div>
-              )}
+
             </div>
           </div>
         </section>
@@ -888,7 +983,7 @@ export default function Home() {
 
         {/* Add Footer at the bottom of main */}
         <Footer />
-      </main >
+      </main>
     </>
   );
 }

@@ -14,7 +14,7 @@ export default function Privacy() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="min-h-screen bg-white relative">
+      <main className="min-h-screen bg-white relative pt-20">
         <Navbar />
 
         {/* Privacy Policy Content */}
@@ -76,7 +76,7 @@ export default function Privacy() {
 
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Data Retention</h2>
-              <p className="text-gray-600">We retain personal information only as long as necessary to provide our Services or comply with legal obligations. Usage data (e.g., analytics) is retained for up to 5 years to improve platform performance. You may request deletion of your account by contacting hello@definito.digital.</p>
+              <p className="text-gray-600">We retain personal information only as long as necessary to provide our Services or comply with legal obligations. Usage data (e.g., analytics) is retained for up to 5 years to improve platform performance. You may request deletion of your account by contacting isabidub@gmail.com.</p>
             </div>
 
             <div>
@@ -88,7 +88,7 @@ export default function Privacy() {
                 <li>Request a copy of your data in a portable format.</li>
                 <li>Withdraw consent for location or analytics data collection (though this may limit some features, like personalized learning).</li>
               </ul>
-              <p className="text-gray-600 mt-4">To exercise these rights, contact us at hello@definito.digital. We will respond within 24 hours, as per our support metrics.</p>
+              <p className="text-gray-600 mt-4">To exercise these rights, contact us at isabidub@gmail.com. We will respond within 24 hours, as per our support metrics.</p>
             </div>
 
             <div>
@@ -115,9 +115,9 @@ export default function Privacy() {
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Us</h2>
               <p className="text-gray-600">For questions or concerns about this Privacy Policy, contact:</p>
               <ul className="list-none text-gray-600 space-y-2 mt-4">
-                <li>Email: hello@definito.digital</li>
+                <li>Email: isabidub@gmail.com</li>
                 <li>Phone: +234-810-911-7784</li>
-                <li>Address: SabiDub Headquarters, Abuja, Nigeria</li>
+                <li>Address: Expansion Extension Layout, G/Lada, Abuja, Nigeria</li>
               </ul>
             </div>
           </div>

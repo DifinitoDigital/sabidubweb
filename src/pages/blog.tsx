@@ -115,8 +115,8 @@ export default function BlogPage() {
   }, [selectedCategory, currentPage]);
 
   const filteredPosts = posts;
-  const featured = posts.find((p) => p.isFeatured);
-  const trending = posts.filter((p) => !p.isFeatured).slice(0, 2);
+  const featured = posts.find((p) => p.isFeatured) || posts[0];
+  const trending = posts.filter((p) => !p.isFeatured && p.id !== featured?.id).slice(0, 2);
 
   return (
     <>
@@ -124,199 +124,185 @@ export default function BlogPage() {
         <title>Blog - SabiDub</title>
         <meta name="description" content="Read the latest articles, tips, and news from SabiDub." />
       </Head>
-      <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden">
-        {/* Full Background Image */}
-        <div className="fixed inset-0 -z-10 w-full h-full">
-          <div className="absolute inset-0">
-            <Image src="/images/backgroundw.png" alt="Blog Background" fill className="object-cover w-full h-full" priority />
-            <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-white/90 to-white" />
-          </div>
-        </div>
-
+      <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden pt-24">
         <Navbar />
-        {/* Hero Section */}
-        <section className="px-4 sm:px-6 pt-32 pb-12 max-w-7xl mx-auto text-center relative">
-          <div className="absolute inset-0 pointer-events-none select-none">
-            <Image src="/images/backgroundw.png" alt="Blog Hero" fill className="object-cover opacity-10" />
-          </div>
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 relative z-10">SabiDub Blog</motion.h1>
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-gray-600 max-w-2xl mx-auto mb-8 relative z-10">Insights, tips, and stories to empower your educational journey. Explore our latest articles and updates.</motion.p>
-          {/* Featured Post */}
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+          {/* Featured Post - Large Style per reference */}
           {featured && (
-            <motion.div variants={fadeInUp} initial="initial" animate="animate" className="max-w-3xl mx-auto mb-12 relative z-10">
-              <Link href={`/blog/${featured.slug}`} className="block group rounded-3xl overflow-hidden shadow-2xl border border-[#014751]/20 bg-white border border-gray-100 shadow-sm hover:scale-[1.01] transition-transform">
-                <div className="relative w-full h-64 sm:h-80">
-                  <Image src={featured.image} alt={featured.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-6">
-                    <div className="text-xs text-[#014751] mb-2 uppercase tracking-wider font-semibold">{featured.category}</div>
-                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 group-hover:text-[#014751] transition-colors">{featured.title}</h2>
-                    <p className="text-gray-900 mb-2 max-w-xl">{featured.excerpt}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-600">
-                      <span>By {featured.author.name}</span>
-                      <span>• {featured.readingTime}</span>
-                      <span>• {new Date(featured.publishedAt).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      {featured.tags.map((tag) => (
-                        <span key={tag} className="bg-[#014751]/10 text-[#014751] px-2 py-1 rounded-full text-xs">{tag}</span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          )}
-        </section>
-        {/* Trending Posts */}
-        <section className="px-4 sm:px-6 pb-8 max-w-7xl mx-auto">
-          <h3 className="text-lg font-bold text-gray-900 mb-6">Trending</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-12">
-            {trending.map((post) => (
-              <Link href={`/blog/${post.slug}`} key={post.id} className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-200">
-                <div className="relative w-full h-48">
-                  <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" />
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <div className="text-xs text-[#014751] mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
-                  <h2 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-[#014751] transition-colors">{post.title}</h2>
-                  <p className="text-gray-600 mb-2 flex-1">{post.excerpt}</p>
-                  <div className="flex items-center gap-4 text-xs text-gray-600">
-                    <span>By {post.author.name}</span>
-                    <span>• {post.readingTime}</span>
-                    <span>• {new Date(post.publishedAt).toLocaleDateString()}</span>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    {post.tags.map((tag) => (
-                      <span key={tag} className="bg-[#014751]/10 text-[#014751] px-2 py-1 rounded-full text-xs">{tag}</span>
-                    ))}
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-        {/* Category Filter & All Posts */}
-        <section className="px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
-          <div className="flex flex-wrap gap-3 justify-center mb-10">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => {
-                  setSelectedCategory(cat);
-                  setCurrentPage(1); // Reset to first page when changing category
-                }}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors border focus:outline-none focus:ring-2 focus:ring-[#014751]/30 ${selectedCategory === cat ? "bg-[#014751] text-white border-[#014751]" : "bg-white border border-gray-100 shadow-sm text-white border-gray-200 hover:bg-gray-50"}`}
+            <Link href={`/blog/${featured.slug}`}>
+              <motion.div
+                variants={fadeInUp}
+                initial="initial"
+                animate="animate"
+                className="relative w-full h-[500px] sm:h-[650px] rounded-[50px] overflow-hidden mb-24 group shadow-3xl cursor-pointer"
               >
-                {cat}
-              </button>
-            ))}
-          </div>
+                <Image
+                  src={featured.image || "/images/placeholder.png"}
+                  alt={featured.title}
+                  fill
+                  className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                  priority
+                />
 
-          {/* Loading State */}
-          {loading && (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#014751]"></div>
-              <p className="text-gray-600 mt-4">Loading posts...</p>
-            </div>
-          )}
-
-          {/* Error State */}
-          {error && (
-            <div className="text-center py-12">
-              <div className="bg-white border border-gray-100 shadow-sm rounded-lg p-6 border border-red-500/20">
-                <p className="text-red-400 mb-2 font-medium">Error Loading Posts</p>
-                <p className="text-gray-600 text-sm mb-4">{error}</p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="bg-[#014751] text-white px-4 py-2 rounded-md hover:bg-[#013b43] transition-colors text-sm"
-                >
-                  Try Again
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Posts Grid */}
-          {!loading && !error && (
-            <>
-              <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10" variants={{ animate: { transition: { staggerChildren: 0.15 } } }} initial="initial" animate="animate">
-                {filteredPosts.map((post, idx) => (
-                  <motion.div key={post.id} variants={fadeInUp} className="bg-white border border-gray-100 shadow-sm rounded-2xl overflow-hidden shadow-lg hover:scale-[1.03] transition-transform flex flex-col group border border-gray-200">
-                    <Link href={`/blog/${post.slug}`} className="block">
-                      <div className="relative w-full h-56">
-                        <Image src={post.image} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, 33vw" />
+                {/* Refined Glassmorphism Overlay */}
+                <div className="absolute inset-x-6 bottom-6 sm:inset-x-12 sm:bottom-12">
+                  <div className="bg-white/10 backdrop-blur-3xl border border-white/20 p-6 sm:p-10 rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+                    <div className="relative z-10">
+                      <span className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] mb-2 sm:mb-3 block">Featured</span>
+                      <h2 className="text-2xl sm:text-4xl font-bold text-white mb-3 sm:mb-4 leading-[1.2] tracking-tight max-w-5xl">
+                        {featured.title}
+                      </h2>
+                      <p className="text-white/80 text-xs sm:text-sm line-clamp-2 max-w-4xl leading-relaxed mb-6">
+                        {featured.excerpt}
+                      </p>
+                      <div className="flex items-center gap-2 group/link">
+                        <span className="text-white text-xs font-bold uppercase tracking-widest">Read more</span>
+                        <div className="p-1.5 rounded-full bg-white/10 group-hover/link:bg-white group-hover/link:rotate-45 transition-all duration-300">
+                          <svg className="w-3 h-3 text-white group-hover/link:text-gray-900 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
+                          </svg>
+                        </div>
                       </div>
-                      <div className="p-6 flex-1 flex flex-col">
-                        <div className="text-xs text-[#014751] mb-2 uppercase tracking-wider font-semibold">{post.category}</div>
-                        <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-[#014751] transition-colors">{post.title}</h2>
-                        <p className="text-gray-600 mb-2 flex-1">{post.excerpt}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-600">
-                          <span>By {post.author.name}</span>
-                          <span>• {post.readingTime}</span>
-                          <span>• {new Date(post.publishedAt).toLocaleDateString()}</span>
+                    </div>
+                    {/* Decorative element inside glass */}
+                    <div className="absolute -right-32 -bottom-32 w-96 h-96 bg-white/5 rounded-full blur-[100px] pointer-events-none" />
+                  </div>
+                </div>
+              </motion.div>
+            </Link>
+          )}
+
+          {/* Recent Posts Section */}
+          <div className="mb-12">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-black text-gray-900">Recent blog posts</h2>
+              <Link href="/blog" className="px-4 py-2 bg-[#F0F7FF] text-[#014751] rounded-lg text-xs font-bold hover:bg-[#E0F0FF] transition-all">
+                View all posts
+              </Link>
+            </div>
+
+            {/* Loading State */}
+            {loading && (
+              <div className="flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#014751]"></div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <div className="bg-red-50 p-6 rounded-2xl text-center">
+                <p className="text-red-600 font-bold mb-4">{error}</p>
+                <button onClick={() => window.location.reload()} className="bg-[#014751] text-white px-6 py-2 rounded-full text-sm">Retry</button>
+              </div>
+            )}
+
+            {/* Posts Grid */}
+            {!loading && !error && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
+                {posts.filter(p => p.id !== featured?.id).map((post) => (
+                  <motion.div
+                    key={post.id}
+                    variants={fadeInUp}
+                    className="group relative flex flex-col"
+                  >
+                    <Link href={`/blog/${post.slug}`} className="block">
+                      <div className="relative w-full aspect-[4/3] rounded-[32px] overflow-hidden mb-6 shadow-sm border border-gray-100">
+                        <Image
+                          src={post.image || "/images/placeholder.png"}
+                          alt={post.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        {/* Hover Overlay with Button */}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm">
+                          <div className="flex items-center gap-2 bg-white/90 px-6 py-2.5 rounded-full text-gray-900 font-black text-xs shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            Read more
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
+                            </svg>
+                          </div>
                         </div>
-                        <div className="flex gap-2 mt-2">
-                          {post.tags.map((tag) => (
-                            <span key={tag} className="bg-[#014751]/10 text-[#014751] px-2 py-1 rounded-full text-xs">{tag}</span>
-                          ))}
+                      </div>
+
+                      <div>
+                        <div className="flex items-center gap-3 mb-3">
+                          <span className="text-xs font-black uppercase tracking-widest text-[#014751] bg-[#014751]/5 px-3 py-1 rounded-full">{post.category}</span>
+                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{post.readingTime} read</span>
                         </div>
+                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#014751] transition-colors leading-tight">{post.title}</h3>
+                        <p className="text-gray-500 text-sm line-clamp-2">{post.excerpt}</p>
                       </div>
                     </Link>
                   </motion.div>
                 ))}
-              </motion.div>
+              </div>
+            )}
 
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex justify-center items-center gap-2 mt-12">
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-md bg-white border border-gray-100 shadow-sm text-gray-900 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Previous
-                  </button>
-                  <span className="text-gray-600 px-4">
-                    Page {currentPage} of {totalPages}
-                  </span>
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 rounded-md bg-white border border-gray-100 shadow-sm text-gray-900 border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Next
-                  </button>
+            {/* Pagination */}
+            {!loading && totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-16 pb-20">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <div className="flex gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-12 h-12 rounded-full font-bold text-sm transition-all ${currentPage === page ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "hover:bg-gray-50 text-gray-600"}`}
+                    >
+                      {page}
+                    </button>
+                  ))}
                 </div>
-              )}
-
-              {/* No Posts Message */}
-              {filteredPosts.length === 0 && !loading && !error && (
-                <div className="text-center py-12">
-                  <p className="text-gray-600">No posts found in this category.</p>
-                </div>
-              )}
-            </>
-          )}
-        </section>
-        {/* Call to Action */}
-        <section className="px-4 sm:px-6 pb-20 max-w-7xl mx-auto">
-          <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-lg border border-[#014751]/10">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Stay Updated!</h3>
-              <p className="text-gray-600 mb-4">Subscribe to our newsletter for the latest blog updates, tips, and platform news.</p>
-              <form className="flex flex-col sm:flex-row gap-3">
-                <input type="email" placeholder="Your email address" className="px-4 py-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#014751]/20" />
-                <button type="submit" className="bg-[#014751] text-white px-6 py-3 rounded-lg font-medium hover:bg-[#013b43] transition-colors">Subscribe</button>
-              </form>
-            </div>
-            <div className="w-40 h-40 relative hidden md:block">
-              <Image src="/images/black.png" alt="Newsletter" fill className="object-contain opacity-80" />
-            </div>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </div>
+            )}
           </div>
-        </section>
-        <Footer />
+
+          {/* Newsletter Box */}
+          <section className="mt-12">
+            <div className="bg-[#0F2830] rounded-[40px] p-12 sm:p-20 relative overflow-hidden">
+              <div className="relative z-10 flex flex-col items-center text-center max-w-3xl mx-auto">
+                <div className="w-16 h-16 bg-[#AFF8C8]/10 rounded-2xl flex items-center justify-center mb-8">
+                  <svg className="w-8 h-8 text-[#AFF8C8]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l9 6 9-6" />
+                  </svg>
+                </div>
+                <h2 className="text-3xl sm:text-5xl font-black text-white mb-6">Stay ahead of the curve</h2>
+                <p className="text-gray-400 text-lg mb-10 leading-relaxed">Join 5,000+ students and educators receiving our weekly newsletter on the future of Nigerian education.</p>
+                <form className="w-full max-w-md flex flex-col sm:flex-row gap-4">
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
+                    className="flex-1 px-6 py-4 rounded-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#AFF8C8]/30 transition-all font-medium"
+                  />
+                  <button className="px-10 py-4 bg-[#AFF8C8] text-[#014751] rounded-full font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-xl shadow-[#AFF8C8]/10">
+                    Subscribe
+                  </button>
+                </form>
+              </div>
+              {/* Decorative blobs */}
+              <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-[#AFF8C8]/5 rounded-full blur-[120px]" />
+              <div className="absolute bottom-[-10%] right-[-5%] w-80 h-80 bg-white/5 rounded-full blur-[100px]" />
+            </div>
+          </section>
+        </div>
+
+        <Footer showAppDownload={false} />
       </motion.main>
     </>
   );
-} 
+}
