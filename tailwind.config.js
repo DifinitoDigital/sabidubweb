@@ -13,6 +13,7 @@ module.exports = {
       fontFamily: {
         'league-script': ['var(--font-league-script)', 'cursive'],
         'neonderthaw': ['var(--font-neonderthaw)', 'cursive'],
+        'grey-qo': ['var(--font-grey-qo)', 'cursive'],
       },
     },
   },

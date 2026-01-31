@@ -8,11 +8,17 @@ const manrope = Manrope({
   weight: ['300', '400', '500', '600', '700', '800',],
 });
 
-import { Neonderthaw } from 'next/font/google';
+import { Neonderthaw, Grey_Qo } from 'next/font/google';
 const neonderthaw = Neonderthaw({
   subsets: ['latin'],
   weight: ['400'],
   variable: '--font-neonderthaw',
+});
+
+const greyQo = Grey_Qo({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-grey-qo',
 });
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -28,7 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:image" content="/images/black.png" />
         <meta property="og:type" content="website" />
       </Head>
-      <main className={`${manrope.className} ${neonderthaw.variable}`}>
+      <main className={`${manrope.className} ${neonderthaw.variable} ${greyQo.variable}`}>
         <Component {...pageProps} />
       </main>
     </>

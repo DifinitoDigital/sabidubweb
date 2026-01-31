@@ -241,22 +241,24 @@ export default function Pricing() {
 
             <div className="mt-8 flex flex-col items-center gap-6">
               {/* Billing Toggle */}
-              <div className="bg-gray-100 p-1.5 rounded-full inline-flex items-center relative">
-                <div className="relative z-10 grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => setIsYearly(false)}
-                    className={`px-6 py-2 rounded-full text-xs font-bold transition-all ${!isYearly ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900'}`}
-                  >
-                    Monthly
-                  </button>
-                  <button
-                    onClick={() => setIsYearly(true)}
-                    className={`px-6 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${isYearly ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900'}`}
-                  >
-                    Annual <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${isYearly ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>-20%</span>
-                  </button>
+              {schoolType !== "admission" && (
+                <div className="bg-gray-100 p-1.5 rounded-full inline-flex items-center relative">
+                  <div className="relative z-10 grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setIsYearly(false)}
+                      className={`px-6 py-2 rounded-full text-xs font-bold transition-all ${!isYearly ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900'}`}
+                    >
+                      Monthly
+                    </button>
+                    <button
+                      onClick={() => setIsYearly(true)}
+                      className={`px-6 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${isYearly ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900'}`}
+                    >
+                      Annual <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${isYearly ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>-20%</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* School Type Toggle */}
               <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
@@ -291,9 +293,11 @@ export default function Pricing() {
                         <span className="text-4xl lg:text-5xl font-bold text-gray-900">
                           {formatPrice(plan.price)}
                         </span>
-                        <span className="text-xs text-gray-400 ml-2 font-medium">
-                          per {isYearly ? 'year' : 'month'}
-                        </span>
+                        {schoolType !== "admission" && (
+                          <span className="text-xs text-gray-400 ml-2 font-medium">
+                            per {isYearly ? 'year' : 'month'}
+                          </span>
+                        )}
                       </div>
 
                       {/* Additional Fields */}
@@ -310,7 +314,14 @@ export default function Pricing() {
                       </div>
                     </div>
 
-                    <button className="w-full py-4 bg-[#014751] hover:bg-[#013b43] text-white rounded-xl text-xs font-bold uppercase transition-all shadow-lg shadow-[#014751]/10 mb-8 active:scale-95">
+                    <button
+                      onClick={() => {
+                        if (schoolType === "admission") {
+                          router.push("/admission-checker");
+                        }
+                      }}
+                      className="w-full py-4 bg-[#014751] hover:bg-[#013b43] text-white rounded-xl text-xs font-bold uppercase transition-all shadow-lg shadow-[#014751]/10 mb-8 active:scale-95"
+                    >
                       Get started
                     </button>
 
@@ -333,43 +344,93 @@ export default function Pricing() {
               )}
             </div>
 
-            {/* Enterprise / Bottom Card */}
-            <div className="mt-8 bg-white rounded-2xl border border-gray-100 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-              {/* Subtle background glow */}
-              <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-50/50 rounded-full blur-3xl group-hover:bg-indigo-100/40 transition-colors"></div>
+            {/* Comparison Table */}
+            {allPlans.length > 0 && (
+              <div className="mt-16 md:mt-24">
+                <div className="text-center mb-12">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Compare all features</h2>
+                  <p className="text-gray-500">Detailed breakdown of what's included in each plan</p>
+                </div>
 
-              <div className="max-w-2xl relative z-10">
-                <span className="text-indigo-600 font-black text-[10px] uppercase tracking-[0.2em] mb-3 block">Enterprise</span>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
-                  For organizations to operate with scalability, control, and security
-                </h3>
-                <div className="flex flex-wrap gap-x-10 gap-y-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-indigo-50 flex items-center justify-center">
-                      <LuCheck className="w-3 h-3 text-indigo-600" />
-                    </div>
-                    <span className="text-sm text-gray-500 font-semibold">SAML SSO</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-indigo-50 flex items-center justify-center">
-                      <LuCheck className="w-3 h-3 text-indigo-600" />
-                    </div>
-                    <span className="text-sm text-gray-500 font-semibold">Dedicated Success Manager</span>
-                  </div>
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-indigo-50 flex items-center justify-center">
-                      <LuCheck className="w-3 h-3 text-indigo-600" />
-                    </div>
-                    <span className="text-sm text-gray-500 font-semibold">Advanced Analytics</span>
+                <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_20px_40px_rgba(0,0,0,0.04)] overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse min-w-[700px]">
+                      <thead>
+                        <tr className="bg-gray-900 text-white">
+                          <th className="p-6 text-xs font-bold uppercase tracking-wider w-[30%]">Features</th>
+                          {allPlans.slice(0, 3).map(plan => (
+                            <th key={plan.id} className="p-6 text-center w-[23%]">
+                              <span className="text-lg font-bold block mb-1">{plan.name}</span>
+                              <span className="text-white/60 text-xs font-normal">
+                                {formatPrice(plan.price)}
+                                {schoolType !== "admission" && <span>/{isYearly ? 'yr' : 'mo'}</span>}
+                              </span>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {(() => {
+                          const uniqueFeatures = Array.from(new Set(
+                            allPlans.slice(0, 3).flatMap(p =>
+                              (p.features || []).map(f => typeof f === 'string' ? f : f.name)
+                            )
+                          )).sort();
+
+                          const featureRows = uniqueFeatures.map((featureName, idx) => (
+                            <tr key={idx} className="group hover:bg-gray-50 transition-colors">
+                              <td className="p-5 text-sm font-medium text-gray-700 bg-white group-hover:bg-gray-50 sticky left-0 md:static border-r border-gray-100 md:border-none shadow-[2px_0_5px_rgba(0,0,0,0.05)] md:shadow-none">{featureName}</td>
+                              {allPlans.slice(0, 3).map(plan => {
+                                const hasFeature = (plan.features || []).some(f =>
+                                  (typeof f === 'string' ? f : f.name) === featureName
+                                );
+                                return (
+                                  <td key={plan.id} className="p-5 text-center">
+                                    {hasFeature ? (
+                                      <div className="flex justify-center">
+                                        <div className="w-6 h-6 rounded-full bg-[#014751] flex items-center justify-center text-white">
+                                          <LuCheck className="w-3.5 h-3.5" strokeWidth={3} />
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-300">-</span>
+                                    )}
+                                  </td>
+                                )
+                              })}
+                            </tr>
+                          ));
+
+                          return (
+                            <>
+                              {featureRows}
+                              {/* Buttons Row */}
+                              <tr className="bg-white">
+                                <td className="p-5 border-t border-gray-100"></td>
+                                {allPlans.slice(0, 3).map(plan => (
+                                  <td key={plan.id} className="p-5 text-center border-t border-gray-100">
+                                    <button
+                                      onClick={() => {
+                                        if (schoolType === "admission") {
+                                          router.push("/admission-checker");
+                                        }
+                                      }}
+                                      className="w-full py-3 bg-white text-gray-900 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 rounded-xl text-xs font-bold uppercase transition-all whitespace-nowrap"
+                                    >
+                                      Get started
+                                    </button>
+                                  </td>
+                                ))}
+                              </tr>
+                            </>
+                          );
+                        })()}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
-              <div className="shrink-0 relative z-10 w-full md:w-auto">
-                <button className="w-full md:w-auto px-10 py-5 bg-white hover:bg-gray-50 text-gray-900 border border-gray-200 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all shadow-[0_10px_30px_rgba(0,0,0,0.05)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.08)] active:scale-95">
-                  Contact Sales
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </section>
         <Footer />

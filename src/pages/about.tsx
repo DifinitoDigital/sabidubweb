@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
+import { LuTrophy, LuBookOpen } from "react-icons/lu";
 
 // Animation variants
 const fadeInUp = {
@@ -186,7 +187,12 @@ export default function About() {
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                          <span className="text-2xl">📖</span>
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                            <path d="M2.5 7.5V20.5C2.5 20.7761 2.72386 21 3 21H11.5V6H3C2.72386 6 2.5 6.22386 2.5 6.5V7.5Z" fill="white" fillOpacity="0.8" />
+                            <path d="M12.5 6H21C21.2761 6 21.5 6.22386 21.5 6.5V20.5C21.5 20.7761 21.2761 21 21 21H12.5V6Z" fill="white" fillOpacity="0.8" />
+                            <path d="M12 21V6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+                            <path d="M3 6L12 7.5L21 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
                         </div>
                         <span className="text-white font-semibold text-lg">Interactive Learning</span>
                       </div>
@@ -232,7 +238,14 @@ export default function About() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-[#FFEDB1] rounded-xl flex items-center justify-center">
-                      <span className="text-2xl">🏆</span>
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 6H17V12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12V6Z" fill="#F59E0B" />
+                        <path d="M7 6H5C3.89543 6 3 6.89543 3 8V10C3 11.1046 3.89543 12 5 12H7" stroke="#B45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M17 12H19C20.1046 12 21 11.1046 21 10V8C21 6.89543 20.1046 6 19 6H17" stroke="#B45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M12 17V21M12 21H9M12 21H15" stroke="#B45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M7 6H17V12C17 14.7614 14.7614 17 12 17C9.23858 17 7 14.7614 7 12V6Z" stroke="#B45309" strokeWidth="2" strokeLinejoin="round" />
+                        <path d="M12 9V6" stroke="#B45309" strokeWidth="2" strokeLinecap="round" />
+                      </svg>
                     </div>
                     <div>
                       <div className="font-bold text-gray-900">Award Winning</div>
@@ -345,7 +358,46 @@ export default function About() {
           </div>
         </motion.section>
 
-        {/* Timeline Section */}
+        {/* Founder Section */}
+        <section className="relative w-full min-h-[550px] lg:min-h-[700px] bg-white overflow-hidden flex items-end pb-10 lg:pb-20">
+          {/* Background Image with Heavy White Gradient */}
+          <div className="absolute inset-x-0 top-0 bottom-0 z-0 flex justify-center">
+            <div className="relative w-full h-full max-w-6xl">
+              <Image
+
+                src="/images/founder.png"
+                alt="Hamman Dlama Kwaji"
+                fill
+                className="object-contain object-top"
+                priority
+              />
+              {/* Deep White Gradient Overlay */}
+              <div className="absolute inset-x-0 bottom-0 h-[80%] lg:h-[50%] bg-gradient-to-t from-white via-white/90 to-transparent z-10" />
+            </div>
+          </div>
+
+          <div className="max-w-5xl mx-auto px-6 relative z-20 w-full">
+            <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 lg:gap-8">
+              {/* Left Column - Headline */}
+              <div className="lg:w-5/12 text-left">
+                <div className="inline-flex items-center gap-2 mb-0 lg:mb-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">FOUNDER / CEO</span>
+                </div>
+                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-tight font-grey-qo">
+                  Hamman Dlama Kwaji
+                </h2>
+              </div>
+
+              {/* Right Column - Bio */}
+              <div className="lg:w-5/12 flex flex-col items-start lg:items-end text-left lg:text-right">
+                <p className="text-gray-500 text-sm leading-relaxed font-medium">
+                  A visionary leader dedicated to transforming education in Nigeria. Hamman combines technical expertise with a passion for student success to bridge the critical gap between secondary and tertiary learning.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
 
         <Footer />
