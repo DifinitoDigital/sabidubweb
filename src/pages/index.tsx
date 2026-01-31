@@ -707,7 +707,7 @@ export default function Home() {
 
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.3 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
-                  <Image src="/images/melab.png" alt="Facesta" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                  <Image src="/images/MELAB.png" alt="Facesta" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
                   The innovation SabiDub brings to the table is exactly what the education sector needs. Their commitment to student success is unparalleled.
