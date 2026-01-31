@@ -160,8 +160,8 @@ export default function Pricing() {
     return billingMatch && typeMatch;
   });
 
-  // Get all plans and sort by price (highest to lowest)
-  const allPlans = [...filteredPlans].sort((a, b) => b.price - a.price);
+  // Get all plans and sort by price (lowest to highest: Basic -> Standard -> Premium)
+  const allPlans = [...filteredPlans].sort((a, b) => a.price - b.price);
 
   // Helper to format price
   const formatPrice = (price: number) => {
@@ -261,23 +261,21 @@ export default function Pricing() {
               )}
 
               {/* School Type Toggle */}
-              {(hasSchoolPlans && hasAdmissionPlans) && (
-                <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
-                  {(["school", "admission"] as SchoolType[]).map((type) => {
-                    const available = type === "school" ? hasSchoolPlans : hasAdmissionPlans;
-                    if (!available) return null;
-                    return (
-                      <button
-                        key={type}
-                        onClick={() => setSchoolType(type)}
-                        className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${schoolType === type ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
-                      >
-                        {type === "admission" ? "Admission Checker" : "School"}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
+                {(["school", "admission"] as SchoolType[]).map((type) => {
+                  const available = type === "school" ? hasSchoolPlans : hasAdmissionPlans;
+                  if (!available) return null;
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => setSchoolType(type)}
+                      className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${schoolType === type ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
+                    >
+                      {type === "admission" ? "Admission Checker" : "School"}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
 
