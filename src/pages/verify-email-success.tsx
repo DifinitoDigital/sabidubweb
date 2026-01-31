@@ -114,7 +114,7 @@ export default function VerifyEmailSuccess() {
               className="w-20 h-20 bg-yellow-600/10 rounded-full mx-auto mb-6 flex items-center justify-center"
             >
               <svg
-                className="w-12 h-12 text-yellow-600"
+                className="w-12 h-12 text-[#014751]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -158,7 +158,7 @@ export default function VerifyEmailSuccess() {
             >
               <Link
                 href="/dashboard"
-                className="block w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors font-medium"
+                className="block w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#013b43] transition-colors font-medium"
               >
                 Go to Dashboard
               </Link>
@@ -187,7 +187,7 @@ export default function VerifyEmailSuccess() {
               Need help?{" "}
               <Link
                 href="/contact"
-                className="text-yellow-600 hover:text-[#ffdb82] transition-colors"
+                className="text-[#014751] hover:text-[#ffdb82] transition-colors"
               >
                 Contact Support
               </Link>

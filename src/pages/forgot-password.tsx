@@ -63,7 +63,7 @@ export default function ForgotPassword() {
               className="w-20 h-20 bg-yellow-600/10 rounded-full mx-auto mb-6 flex items-center justify-center"
             >
               <svg
-                className="w-12 h-12 text-yellow-600"
+                className="w-12 h-12 text-[#014751]"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -129,7 +129,7 @@ export default function ForgotPassword() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#ffdb82] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#013b43] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center justify-center gap-2">
@@ -161,7 +161,7 @@ export default function ForgotPassword() {
               Need help?{' '}
               <Link
                 href="/contact"
-                className="text-yellow-600 hover:text-[#ffdb82] transition-colors"
+                className="text-[#014751] hover:text-[#ffdb82] transition-colors"
               >
                 Contact Support
               </Link>

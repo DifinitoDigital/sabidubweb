@@ -240,11 +240,11 @@ export default function BlogPostView() {
             <div className="lg:col-span-2">
               <div className="mb-12">
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">{post.title}</h2>
-                <p className="text-gray-300 text-xl leading-relaxed mb-6 max-w-3xl font-light">{post.excerpt}</p>
+                <p className="text-gray-700 text-xl leading-relaxed mb-6 max-w-3xl font-light">{post.excerpt}</p>
                 <div className="w-20 h-1 bg-yellow-400 rounded-full"></div>
               </div>
               <article className="prose prose-invert max-w-none">
-                <div className="text-gray-300 text-lg leading-relaxed space-y-4">
+                <div className="text-gray-700 text-lg leading-relaxed space-y-4">
                   {post.content.split('\n').map((line, i) => {
                     if (line.startsWith('### ')) {
                       return (
@@ -256,7 +256,7 @@ export default function BlogPostView() {
                       return <div key={i} className="h-2"></div>;
                     } else {
                       return (
-                        <p key={i} className="text-gray-300 leading-7">
+                        <p key={i} className="text-gray-700 leading-7">
                           {line}
                         </p>
                       );
@@ -276,7 +276,7 @@ export default function BlogPostView() {
             {/* Sidebar */}
             <aside className="lg:col-span-1 space-y-8">
               {/* Author Info */}
-              <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 border border-gray-200/50 shadow-xl text-center">
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl p-8 border border-gray-200/50 text-center">
                 <div className="flex flex-col items-center mb-6">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-yellow-400/20 mb-4">
                     <Image
@@ -420,7 +420,7 @@ export default function BlogPostView() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {related.map((rel) => (
-              <Link href={`/blog/${rel.slug}`} key={rel.id} className="bg-gradient-to-br from-white to-gray-50 rounded-3xl overflow-hidden shadow-xl hover:scale-[1.02] transition-all duration-300 flex flex-col group border border-gray-200/50">
+              <Link href={`/blog/${rel.slug}`} key={rel.id} className="bg-gradient-to-br from-white to-gray-50 rounded-3xl overflow-hidden hover:scale-[1.02] transition-all duration-300 flex flex-col group border border-gray-200/50">
                 <div className="relative w-full h-56">
                   <Image
                     src={rel.image || "/images/2149156427.jpg"}

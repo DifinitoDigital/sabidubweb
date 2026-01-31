@@ -2,13 +2,16 @@ import React, { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Footer from '../components/Footer';
+import Navbar from '../components/Navbar'; // Added import
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Inter } from 'next/font/google';
 import {
     LuCheck,
     LuX,
     LuInfo,
+
     LuSchool,
     LuGraduationCap,
     LuSearch,
@@ -27,6 +30,9 @@ import {
     LuLockOpen,
     LuShoppingCart
 } from 'react-icons/lu';
+
+const inter = Inter({ subsets: ['latin'] });
+
 
 // --- Type Definitions ---
 type Grade = 'A1' | 'B2' | 'B3' | 'C4' | 'C5' | 'C6';
@@ -54,7 +60,7 @@ const Select = ({ value, onChange, options, placeholder }: { value: string, onCh
         <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 appearance-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-colors font-medium text-sm"
+            className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 appearance-none focus:outline-none focus:border-[#014751] focus:ring-1 focus:ring-[#014751] transition-colors font-medium text-sm"
         >
             {placeholder && <option value="">{placeholder}</option>}
             {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -70,7 +76,7 @@ const GradeSelect = ({ value, onChange }: { value: Grade, onChange: (val: Grade)
         <select
             value={value}
             onChange={(e) => onChange(e.target.value as Grade)}
-            className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-3 py-3 appearance-none focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 text-center font-bold text-sm"
+            className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-3 py-3 appearance-none focus:outline-none focus:border-[#014751] focus:ring-1 focus:ring-[#014751] text-center font-bold text-sm"
         >
             {Object.keys(GRADE_VALUES).map(g => <option key={g} value={g}>{g}</option>)}
         </select>
@@ -115,6 +121,7 @@ export default function AdmissionChecker() {
         { id: '4', name: '', grade: 'C6' },
         { id: '5', name: '', grade: 'C6' }
     ]);
+    const [utmeSubjects, setUtmeSubjects] = useState<string[]>(['English Language', '', '', '']);
     const [jambScore, setJambScore] = useState<number | ''>('');
     const [targetCourseName, setTargetCourseName] = useState<string>('');
     const [targetUniName, setTargetUniName] = useState<string>('');
@@ -311,6 +318,7 @@ export default function AdmissionChecker() {
             const body = {
                 jambScore: Number(jambScore),
                 subjects: subjects.filter(s => s.name).map(s => ({ name: s.name, grade: s.grade })),
+                utmeSubjects: utmeSubjects.filter(s => s && s.trim()),
                 targetInstitutionId: selectedInstitutionId || undefined,
                 targetDepartmentId: targetDepartmentId || undefined,
                 targetCourseName: targetCourseName || undefined,
@@ -355,7 +363,41 @@ export default function AdmissionChecker() {
             setPreviewData(null);
 
             if (data.preview) {
-                setIsPaid(false); // New data needs new payment
+                if (data.isPaid) {
+                    const payId = data.paymentId || data.previewId;
+                    if (payId) {
+                        try {
+                            const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${payId}`);
+                            if (resultsRes.ok) {
+                                const fullResData = await resultsRes.json();
+                                if (fullResData.unlocked) {
+                                    setResults(fullResData.results || []);
+                                    setJambScore(fullResData.jambScore || '');
+                                    const rSubjs = Array.isArray(fullResData.subjects) ? fullResData.subjects : [];
+                                    if (rSubjs.length > 0) {
+                                        setSubjects(rSubjs.map((s: any) => ({
+                                            id: Math.random().toString(36).substr(2, 9),
+                                            name: s.name,
+                                            grade: s.grade
+                                        })));
+                                    }
+                                    setIsPaid(true);
+                                    setPreviewData(null);
+                                    setSavedPaymentId(payId);
+                                    setUsageInfo({
+                                        viewCount: fullResData.viewCount,
+                                        totalViews: fullResData.totalViews || 3,
+                                        viewsRemaining: fullResData.viewsRemaining,
+                                        expiresAt: fullResData.expiresAt,
+                                        planName: fullResData.planName
+                                    });
+                                    return;
+                                }
+                            }
+                        } catch (err) { console.error("Auto-fetch results failed:", err); }
+                    }
+                }
+                setIsPaid(!!data.isPaid);
                 setPreviewData(data);
             } else if (data.unlocked || !data.preview) {
                 // If it returned full results (either unlockedSession or free results)
@@ -397,7 +439,56 @@ export default function AdmissionChecker() {
     };
 
     const handleUnlock = async () => {
-        if (!previewData?.paymentId) return;
+        const payId = previewData?.paymentId || previewData?.previewId;
+        if (!payId) return;
+
+        // If backend says we already have a valid payment, just fetch results directly
+        if (previewData.isPaid) {
+            setIsUnlocking(true);
+            try {
+                const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${payId}`);
+                if (!resultsRes.ok) throw new Error('Failed to fetch results');
+
+                const fullData = await resultsRes.json();
+                if (fullData.unlocked) {
+                    setResults(fullData.results || []);
+                    setJambScore(fullData.jambScore || '');
+
+                    // Handle subjects carefully
+                    const rawSubjects = Array.isArray(fullData.subjects) ? fullData.subjects : [];
+                    if (rawSubjects.length > 0) {
+                        setSubjects(rawSubjects.map((s: any) => ({
+                            id: Math.random().toString(36).substr(2, 9),
+                            name: s.name,
+                            grade: s.grade
+                        })));
+                    }
+
+                    setIsPaid(true);
+                    setPreviewData(null);
+                    setSavedPaymentId(payId);
+
+                    setUsageInfo({
+                        viewCount: fullData.viewCount,
+                        totalViews: fullData.totalViews || 3,
+                        viewsRemaining: fullData.viewsRemaining,
+                        expiresAt: fullData.expiresAt,
+                        planName: fullData.planName
+                    });
+
+                    showToast("Report unlocked successfully!", "success");
+                    return;
+                } else {
+                    throw new Error(fullData.message || 'Payment required');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Could not unlock report. Please try again.", "error");
+            } finally {
+                setIsUnlocking(false);
+            }
+            return;
+        }
 
         const planToUse = previewData.plans?.find((p: any) => p.id === selectedPlanId) || previewData.plans?.[0] || { id: previewData.planId, price: previewData.amount };
 
@@ -411,11 +502,11 @@ export default function AdmissionChecker() {
                     amount: planToUse.price,
                     payerType: 'ADMISSION_CHECK',
                     planId: planToUse.id,
-                    profileId: previewData.paymentId,
+                    profileId: payId,
                     // Extra data for on-the-fly creation
                     jambScore: previewData.isNewCheck ? Number(jambScore) : undefined,
                     subjects: previewData.isNewCheck ? subjects : undefined,
-                    results: previewData.isNewCheck ? previewData.results : undefined,
+                    results: previewData.results ? previewData.results : undefined,
                 })
             });
 
@@ -443,10 +534,30 @@ export default function AdmissionChecker() {
 
         setIsResuming(true);
         try {
-            const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${resumePaymentId.trim()}`);
+            const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${resumePaymentId.trim()}?mode=resume`);
             if (!resultsRes.ok) throw new Error('Failed to fetch results');
 
             const fullData = await resultsRes.json();
+
+            if (fullData.resumed) {
+                // Resume Mode: Populate inputs but don't show results or increment count yet
+                setJambScore(fullData.jambScore || '');
+                if (fullData.subjects) {
+                    setSubjects(fullData.subjects.map((s: any) => ({
+                        id: Math.random().toString(36).substr(2, 9),
+                        name: s.name,
+                        grade: s.grade
+                    })));
+                }
+                setSavedPaymentId(resumePaymentId.trim());
+                setResumePaymentId('');
+                setIsPaid(false); // Ensure we don't think it's 'paid/unlocked' until they check -> unlock
+                setPreviewData(null);
+                setResults(null);
+                showToast("Session resumed! Click 'Check Eligibility' to continue.", "info");
+                return;
+            }
+
             if (fullData.unlocked) {
                 setResults(fullData.results);
                 setJambScore(fullData.jambScore || '');
@@ -470,7 +581,32 @@ export default function AdmissionChecker() {
                 setResumePaymentId('');
             } else if (fullData.preview) {
                 // Resume a pending/failed payment
-                setIsPaid(false);
+                if (fullData.isPaid) {
+                    const rId = resumePaymentId.trim();
+                    try {
+                        const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${rId}`);
+                        if (resultsRes.ok) {
+                            const fData = await resultsRes.json();
+                            if (fData.unlocked) {
+                                setResults(fData.results || []);
+                                setJambScore(fData.jambScore || '');
+                                const rSubjs = Array.isArray(fData.subjects) ? fData.subjects : [];
+                                if (rSubjs.length > 0) {
+                                    setSubjects(rSubjs.map((s: any) => ({ id: Math.random().toString(36).substr(2, 9), name: s.name, grade: s.grade })));
+                                }
+                                setIsPaid(true); setPreviewData(null); setSavedPaymentId(rId);
+                                setUsageInfo({
+                                    viewCount: fData.viewCount, totalViews: fData.totalViews || 3,
+                                    viewsRemaining: fData.viewsRemaining, expiresAt: fData.expiresAt, planName: fData.planName
+                                });
+                                setResumePaymentId(''); showToast("Session resumed and unlocked!", "success");
+                                return;
+                            }
+                        }
+                    } catch (err) { console.error("Resume auto-unlock failed:", err); }
+                }
+
+                setIsPaid(!!fullData.isPaid);
                 setPreviewData(fullData);
                 setJambScore(fullData.jambScore || '');
                 if (fullData.subjects) {
@@ -503,8 +639,16 @@ export default function AdmissionChecker() {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 20;
 
-        // Helper to load image and get ratio
+        // Colors
+        const primaryColor = [1, 71, 81] as [number, number, number]; // Sabidub Teal
+        const secondaryColor = [33, 33, 33] as [number, number, number]; // Dark Gray
+        const accentColor = [255, 255, 255] as [number, number, number]; // White
+        const tableHeadColor = [250, 250, 250] as [number, number, number]; // Light Gray for headers
+        const textColor = [60, 60, 60] as [number, number, number];
+
+        // Helper to load image
         const loadImage = (url: string): Promise<{ data: string, ratio: number }> => {
             return new Promise((resolve, reject) => {
                 const img = new Image();
@@ -526,90 +670,187 @@ export default function AdmissionChecker() {
         };
 
         try {
-            // Header Background
-            doc.setFillColor(242, 201, 76); // Sabidub Yellow
-            doc.rect(0, 0, pageWidth, 50, 'F');
+            // --- HEADER ---
+            // Top Bar
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, pageWidth, 6, 'F');
 
-            // Add Logo with aspect ratio correction
+            // Logo
             try {
                 const logo = await loadImage('/images/black.png');
-                const logoWidth = 40;
+                const logoWidth = 35;
                 const logoHeight = logoWidth / logo.ratio;
-                doc.addImage(logo.data, 'PNG', (pageWidth / 2) - (logoWidth / 2), 10, logoWidth, logoHeight);
+                doc.addImage(logo.data, 'PNG', margin, 15, logoWidth, logoHeight);
             } catch (e) {
-                console.warn("Could not load logo for PDF", e);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(24);
+                doc.setTextColor(...secondaryColor);
+                doc.text('SABIDUB', margin, 25);
             }
 
+            // Title
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(20);
-            doc.setTextColor(0, 0, 0);
-            doc.text('ADMISSION ELIGIBILITY REPORT', pageWidth / 2, 32, { align: 'center' });
+            doc.setFontSize(22);
+            doc.setTextColor(...secondaryColor);
+            doc.text('Admission Eligibility Report', pageWidth - margin, 25, { align: 'right' });
 
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'medium');
-            doc.text('Official Academic Suitability Analysis', pageWidth / 2, 40, { align: 'center' });
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Official Academic Analysis', pageWidth - margin, 31, { align: 'right' });
 
-            // Metadata Section
-            doc.setFontSize(11);
-            doc.setTextColor(50, 50, 50);
-            doc.text(`JAMB Score: ${jambScore}`, 20, 65);
-            doc.text(`Payment ID: ${savedPaymentId}`, pageWidth - 20, 65, { align: 'right' });
-            doc.text(`Date Generated: ${new Date().toLocaleDateString()}`, 20, 72);
+            // Line Separator
+            doc.setDrawColor(230, 230, 230);
+            doc.setLineWidth(0.5);
+            doc.line(margin, 40, pageWidth - margin, 40);
 
-            // Subject Combination Table
+            // --- INFO GRID ---
+            const infoY = 50;
+            // No strict 3-column grid anymore to avoid overlap
+
+            // Box 1: JAMB (Left Aligned)
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(150, 150, 150);
+            doc.text('JAMB UTME SCORE', margin, infoY);
+            doc.setFontSize(16);
+            doc.setTextColor(...secondaryColor);
+            doc.text(String(jambScore || 'N/A'), margin, infoY + 8);
+
+            // Box 2: Payment ID (Offset to avoid JAMB, but give plenty of space)
+            const refX = margin + 50;
+            doc.setFontSize(10);
+            doc.setTextColor(150, 150, 150);
+            doc.text('PAYMENT REFERENCE', refX, infoY);
+            doc.setFontSize(12);
+            doc.setTextColor(...secondaryColor);
+            doc.text(savedPaymentId || 'N/A', refX, infoY + 8);
+
+            // Box 3: Date (Right Aligned)
+            doc.setFontSize(10);
+            doc.setTextColor(150, 150, 150);
+            doc.text('GENERATED ON', pageWidth - margin, infoY, { align: 'right' });
+            doc.setFontSize(12);
+            doc.setTextColor(...secondaryColor);
+            doc.text(new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), pageWidth - margin, infoY + 8, { align: 'right' });
+
+            // --- SUBJECTS TABLE ---
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...secondaryColor);
+            doc.text('O\'Level Subjects', margin, 75);
+
             const subjectRows = subjects.filter(s => s.name).map(s => [s.name, s.grade]);
+
             autoTable(doc, {
                 startY: 80,
-                head: [['O\'Level Subject', 'Grade']],
+                head: [['Subject', 'Grade']],
                 body: subjectRows,
-                theme: 'striped',
-                headStyles: { fillColor: [40, 40, 40] },
-                margin: { left: 20, right: 20 }
+                theme: 'grid',
+                styles: {
+                    font: 'helvetica',
+                    fontSize: 10,
+                    cellPadding: 6,
+                    lineColor: [240, 240, 240],
+                    lineWidth: 0.1,
+                },
+                headStyles: {
+                    fillColor: tableHeadColor,
+                    textColor: secondaryColor,
+                    fontStyle: 'bold',
+                    lineColor: [230, 230, 230],
+                    lineWidth: 0.1,
+                },
+                bodyStyles: {
+                    textColor: textColor,
+                },
+                alternateRowStyles: {
+                    fillColor: [255, 255, 255]
+                },
+                columnStyles: {
+                    0: { cellWidth: 'auto' },
+                    1: { cellWidth: 40, fontStyle: 'bold', halign: 'center' }
+                },
+                margin: { left: margin, right: margin }
             });
 
-            // Results Section Title
-            const finalY = (doc as any).lastAutoTable.finalY + 15;
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Recommended Institutions & Courses', 20, finalY);
+            // --- RESULTS TABLE ---
+            let finalY = (doc as any).lastAutoTable.finalY + 15;
 
-            // Results Table
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...secondaryColor);
+            doc.text('Admission Analysis Results', margin, finalY);
+
             const resultRows = results.map(r => [
                 r.university,
                 r.course,
                 r.chance,
-                r.reason.replace(/✅|⚠️|❌/g, '') // Remove emojis
+                r.reason.replace(/✅|⚠️|❌/g, '').trim()
             ]);
 
             autoTable(doc, {
                 startY: finalY + 5,
-                head: [['Institution', 'Program', 'Chance', 'Reason/Eligibility']],
+                head: [['Institution', 'Program', 'Chance', 'Analysis']],
                 body: resultRows,
                 theme: 'grid',
-                headStyles: { fillColor: [40, 40, 40] },
-                columnStyles: {
-                    0: { fontStyle: 'bold', cellWidth: 40 },
-                    1: { cellWidth: 35 },
-                    2: { cellWidth: 20 },
-                    3: { fontSize: 8 }
+                styles: {
+                    font: 'helvetica',
+                    fontSize: 9,
+                    cellPadding: 6,
+                    lineColor: [240, 240, 240],
+                    lineWidth: 0.1,
+                    overflow: 'linebreak'
                 },
-                margin: { left: 20, right: 20 }
+                headStyles: {
+                    fillColor: tableHeadColor,
+                    textColor: secondaryColor,
+                    fontStyle: 'bold',
+                    lineColor: [230, 230, 230],
+                    lineWidth: 0.1,
+                },
+                columnStyles: {
+                    0: { fontStyle: 'bold', cellWidth: 50 }, // Inst
+                    1: { cellWidth: 45 }, // Prog
+                    2: { cellWidth: 25, halign: 'center', fontStyle: 'bold' }, // Chance
+                    3: { cellWidth: 'auto' } // Reason
+                },
+                didParseCell: function (data) {
+                    // Custom styling for Chance column
+                    if (data.section === 'body' && data.column.index === 2) {
+                        const chance = data.cell.raw as string;
+                        if (chance === 'High') {
+                            data.cell.styles.textColor = [34, 197, 94] as [number, number, number]; // Green
+                        } else if (chance === 'Medium') {
+                            data.cell.styles.textColor = [1, 71, 81] as [number, number, number]; // Teal
+                        } else {
+                            data.cell.styles.textColor = [239, 68, 68] as [number, number, number]; // Red
+                        }
+                    }
+                },
+                margin: { left: margin, right: margin }
             });
 
-            // Disclaimer
-            const finalResultsY = (doc as any).lastAutoTable.finalY + 20;
+            // --- FOOTER ---
+            const footerY = pageHeight - 30;
+
+            // Disclaimer box
+            doc.setFillColor(250, 250, 250);
+            doc.setDrawColor(240, 240, 240);
+            doc.rect(margin, footerY, pageWidth - (margin * 2), 20, 'FD');
+
+            doc.setFontSize(7);
+            doc.setTextColor(120, 120, 120);
+            doc.setFont('helvetica', 'normal');
+            const disclaimer = 'DISCLAIMER: This report is an estimation based on past admission trends and available data. It does not guarantee admission. Final decisions are made by the respective institutions and governing bodies.';
+            doc.text(disclaimer, margin + 4, footerY + 8, { maxWidth: pageWidth - (margin * 2) - 8 });
+
+            // Bottom Branding
             doc.setFontSize(8);
-            doc.setFont('helvetica', 'italic');
-            doc.setTextColor(150, 150, 150);
-            doc.text('Disclaimer: This report is an eligibility analysis based on available institutional cut-off marks and requirements. Final admission is at the discretion of the tertiary institution.', 20, finalResultsY, { maxWidth: pageWidth - 40 });
-
-            // Branding Footer
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
             doc.setTextColor(180, 180, 180);
-            doc.text('POWERED BY DIFINITO', pageWidth / 2, pageHeight - 15, { align: 'center' });
+            doc.text('© Sabidub Education. All rights reserved.', pageWidth / 2, pageHeight - 5, { align: 'center' });
 
-            doc.save(`Sabidub_Report_${savedPaymentId || 'Check'}.pdf`);
+            doc.save(`Sabidub_Eligibility_${savedPaymentId || 'Report'}.pdf`);
             showToast("PDF generated successfully!", "success");
         } catch (err) {
             console.error("PDF Generation Error:", err);
@@ -618,32 +859,26 @@ export default function AdmissionChecker() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
+        <div className={`min-h-screen bg-gray-50 text-gray-900 ${inter.className}`}>
             <Head>
                 <title>Admission Checker | SabiDub</title>
             </Head>
 
-            <nav className="px-6 py-6 flex items-center justify-between max-w-7xl mx-auto">
-                <div className="flex items-center gap-2">
-                    <img src="/images/black.png" alt="SabiDub" className="h-8 w-auto object-contain" />
-                </div>
-                <div className="flex gap-4">
-                    <a href="/" className="px-4 py-2 text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors">Home</a>
-                    <a href="/pricing" className="px-4 py-2 text-sm font-bold text-gray-600 hover:text-gray-900 transition-colors">Pricing</a>
-                </div>
-            </nav>
 
-            <main className="max-w-7xl mx-auto px-6 py-10">
+            <Navbar />
+
+
+            <main className="max-w-7xl mx-auto px-6 pt-32 pb-10">
 
                 {/* Modern Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
                     <div className="space-y-2">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/10 text-yellow-600 text-xs font-bold uppercase tracking-wider mb-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#014751]/10 text-[#014751] text-xs font-bold uppercase tracking-wider mb-2">
                             <LuInfo className="w-5 h-5" />
                             Admission Criteria
                         </div>
                         <h1 className="text-4xl font-black tracking-tight text-gray-900">
-                            Check <span className="text-yellow-500">Eligibility</span>
+                            Check <span className="text-[#014751]">Eligibility</span>
                         </h1>
                         <p className="max-w-xl text-sm font-medium text-gray-500">
                             Enter your academic credentials to analyze your admission chances instantly.
@@ -661,12 +896,12 @@ export default function AdmissionChecker() {
                                 value={resumePaymentId}
                                 onChange={(e) => setResumePaymentId(e.target.value)}
                                 placeholder="Enter Payment ID"
-                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#014751]"
                             />
                             <button
                                 onClick={handleResumeCheck}
                                 disabled={isResuming || !resumePaymentId.trim()}
-                                className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black rounded-lg text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                                className="px-4 py-2 bg-[#014751] hover:bg-[#013b43] text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                             >
                                 {isResuming ? 'Loading...' : 'Resume'}
                             </button>
@@ -719,11 +954,11 @@ export default function AdmissionChecker() {
                     >
                         <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 relative overflow-hidden">
                             {/* Background Accent */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#014751]/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
 
                             <div className="relative z-10 space-y-8">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-yellow-400 flex items-center justify-center shadow-lg shadow-yellow-400/20 text-black">
+                                    <div className="w-12 h-12 rounded-2xl bg-[#014751] flex items-center justify-center shadow-lg shadow-[#014751]/20 text-white">
                                         <LuGraduationCap className="w-6 h-6" />
                                     </div>
                                     <div>
@@ -742,7 +977,7 @@ export default function AdmissionChecker() {
                                                     key={type}
                                                     onClick={() => toggleExam(type)}
                                                     className={`relative py-3 px-2 text-xs font-black uppercase tracking-wider rounded-xl border transition-all flex items-center justify-center gap-1.5 ${selectedExams.includes(type)
-                                                        ? 'bg-yellow-400 text-black border-yellow-400 shadow-sm'
+                                                        ? 'bg-[#014751] text-white border-[#014751] shadow-sm'
                                                         : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'
                                                         }`}
                                                 >
@@ -769,18 +1004,39 @@ export default function AdmissionChecker() {
                                                 value={jambScore}
                                                 onChange={(e) => setJambScore(Number(e.target.value))}
                                                 placeholder="e.g. 260"
-                                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 font-mono text-lg font-bold placeholder-gray-300"
+                                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-[#014751] focus:ring-1 focus:ring-[#014751] font-mono text-lg font-bold placeholder-gray-300"
                                             />
                                             <div className="absolute right-4 top-3.5 text-xs font-bold text-gray-400 pointer-events-none">/ 400</div>
                                         </div>
                                     </div>
+
+                                    {/* UTME Subjects */}
+                                    <div>
+                                        <InputLabel>UTME Subject Combination (4 Subjects)</InputLabel>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {utmeSubjects.map((sub, idx) => (
+                                                <Select
+                                                    key={idx}
+                                                    value={sub}
+                                                    onChange={(val) => {
+                                                        const newSubs = [...utmeSubjects];
+                                                        newSubs[idx] = val;
+                                                        setUtmeSubjects(newSubs);
+                                                    }}
+                                                    options={subjectsList}
+                                                    placeholder={idx === 0 ? 'English Language' : `Subject ${idx + 1}`}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+
 
                                     {/* Subjects */}
                                     <div>
                                         <div className="flex justify-between items-center mb-2">
                                             <InputLabel>Subject Combination</InputLabel>
                                             {subjects.length < 9 && (
-                                                <button onClick={addSubject} className="text-[10px] font-black uppercase tracking-widest text-yellow-600 hover:text-yellow-700 transition-colors">
+                                                <button onClick={addSubject} className="text-[10px] font-black uppercase tracking-widest text-[#014751] hover:text-[#013b43] transition-colors">
                                                     + Add Subject
                                                 </button>
                                             )}
@@ -818,7 +1074,24 @@ export default function AdmissionChecker() {
                                     </div>
 
                                     {/* Selectors */}
+                                    {/* Selectors */}
                                     <div className="pt-4 border-t border-gray-100 space-y-4">
+                                        <div>
+                                            <InputLabel>Preferred Institution (Optional)</InputLabel>
+                                            <Select
+                                                value={targetUniName}
+                                                onChange={(val) => {
+                                                    setTargetUniName(val);
+                                                    const inst = institutions.find(i => i.name === val);
+                                                    setSelectedInstitutionId(inst?.id || '');
+                                                    // Reset course when institution changes
+                                                    setTargetCourseName('');
+                                                    setTargetDepartmentId('');
+                                                }}
+                                                options={institutions.map(i => i.name)}
+                                                placeholder="All Institutions"
+                                            />
+                                        </div>
                                         <div>
                                             <InputLabel>Preferred Course</InputLabel>
                                             <Select
@@ -836,22 +1109,6 @@ export default function AdmissionChecker() {
                                                 placeholder="Select Preferred Course"
                                             />
                                         </div>
-                                        <div>
-                                            <InputLabel>Preferred Institution (Optional)</InputLabel>
-                                            <Select
-                                                value={targetUniName}
-                                                onChange={(val) => {
-                                                    setTargetUniName(val);
-                                                    const inst = institutions.find(i => i.name === val);
-                                                    setSelectedInstitutionId(inst?.id || '');
-                                                    // Reset course when institution changes
-                                                    setTargetCourseName('');
-                                                    setTargetDepartmentId('');
-                                                }}
-                                                options={institutions.map(i => i.name)}
-                                                placeholder="All Institutions"
-                                            />
-                                        </div>
                                     </div>
 
                                     <button
@@ -859,7 +1116,7 @@ export default function AdmissionChecker() {
                                         disabled={!jambScore || !targetCourseName || isChecking}
                                         className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 ${!jambScore || !targetCourseName || isChecking
                                             ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : 'bg-yellow-400 hover:bg-yellow-500 text-black shadow-yellow-400/25 active:scale-95'
+                                            : 'bg-[#014751] hover:bg-[#013b43] text-white shadow-[#014751]/25 active:scale-95'
                                             }`}
                                     >
                                         {isChecking ? (
@@ -896,7 +1153,7 @@ export default function AdmissionChecker() {
                             </motion.div>
                         )}
 
-                        {previewData && !isPaid && (
+                        {previewData && (
                             <motion.div
                                 initial="hidden"
                                 animate="visible"
@@ -904,151 +1161,169 @@ export default function AdmissionChecker() {
                                 className="h-full min-h-[500px] flex flex-col items-center justify-center text-center p-6 sm:p-12 bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-[2.5rem] relative overflow-hidden"
                             >
                                 {/* Background Decorations */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-yellow-400/10 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#014751]/10 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
                                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/5 rounded-full -ml-32 -mb-32 blur-3xl pointer-events-none" />
 
-                                <div className="relative z-10 w-full max-w-lg">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 bg-yellow-400 text-black text-[10px] font-black rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-yellow-400/20">
-                                        <LuZap className="w-3 h-3" />
-                                        Analysis Ready
+                                <div className="relative z-10 w-full max-w-5xl">
+                                    <div className="w-full max-w-md mx-auto mb-8">
+                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#014751] text-white text-[10px] font-black rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-[#014751]/20">
+                                            <LuZap className="w-3 h-3" />
+                                            Analysis Ready
+                                        </div>
+
+                                        <div className="w-16 h-16 bg-gray-900 rounded-3xl flex items-center justify-center mb-5 mx-auto shadow-2xl rotate-3 transform group-hover:rotate-0 transition-transform">
+                                            <LuLock className="w-7 h-7 text-[#014751]" />
+                                        </div>
+
+                                        <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight leading-tight">
+                                            {previewData.isRenewal ? 'Renew Access' : previewData.isRetry ? 'Payment Failed' : 'Results Found!'}
+                                        </h2>
+
+                                        {/* Status Badge */}
+                                        {(previewData.isRenewal || previewData.isRetry) && (
+                                            <div className={`mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider ${previewData.isRenewal ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-red-50 text-red-600 border border-red-100'
+                                                }`}>
+                                                {previewData.isRenewal ? 'Views Subscription Ended' : 'Transaction Declined'}
+                                            </div>
+                                        )}
+
+                                        <p className="text-gray-500 font-medium mb-6 leading-relaxed px-4 text-sm">
+                                            {previewData.message || (previewData.totalHigh + previewData.totalMedium > 0
+                                                ? `We found ${previewData.totalHigh + previewData.totalMedium} opportunities for your profile.`
+                                                : "Analyzing your profile completed. No matches found.")}
+                                        </p>
+
+                                        <div className="mb-6 inline-flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ID:</span>
+                                            <code className="text-xs font-mono font-black text-gray-900">{previewData.paymentId || previewData.previewId}</code>
+                                        </div>
+
+                                        {/* Warning about JAMB score lock */}
+                                        <div className="mb-6 p-4 bg-amber-50/50 border border-amber-100 rounded-2xl text-left shadow-sm">
+                                            <div className="flex items-start gap-3">
+                                                <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                                                    <LuInfo className="w-4 h-4 text-amber-600" />
+                                                </div>
+                                                <div>
+                                                    <p className="text-[10px] font-black text-amber-900 uppercase tracking-[0.1em] mb-0.5">Security Notice</p>
+                                                    <p className="text-[11px] text-amber-700/80 font-semibold leading-relaxed">
+                                                        Results are tied to Score <span className="text-amber-900 font-black">{jambScore}</span>.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-3 w-full mb-6">
+                                            <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 group hover:border-green-200 transition-all">
+                                                <div className="w-8 h-8 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-2 mx-auto">
+                                                    <LuCheck className="w-4 h-4" strokeWidth={3} />
+                                                </div>
+                                                <div className="text-2xl font-black text-gray-900 mb-0">{previewData.totalHigh}</div>
+                                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">High Chance</div>
+                                            </div>
+                                            <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 group hover:border-[#014751]/20 transition-all">
+                                                <div className="w-8 h-8 rounded-xl bg-[#014751]/5 text-[#014751] flex items-center justify-center mb-2 mx-auto">
+                                                    <LuInfo className="w-4 h-4" />
+                                                </div>
+                                                <div className="text-2xl font-black text-gray-900 mb-0">{previewData.totalMedium}</div>
+                                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Medium Chance</div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="w-16 h-16 bg-gray-900 rounded-3xl flex items-center justify-center mb-5 mx-auto shadow-2xl rotate-3 transform group-hover:rotate-0 transition-transform">
-                                        <LuLock className="w-7 h-7 text-yellow-400" />
-                                    </div>
+                                    {/* Plan Selection */}
+                                    {/* Pricing Table Section */}
+                                    {previewData.plans && previewData.plans.length > 0 && (
+                                        <div className="w-full max-w-4xl mb-8">
+                                            <div className="mb-8">
+                                                <h2 className="text-3xl font-black text-gray-900 mb-2">Our pricing</h2>
+                                                <p className="text-gray-500 font-medium text-sm">Choose the best plan for your admission success</p>
 
-                                    <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight leading-tight">
-                                        {previewData.isRenewal ? 'Renew Access' : previewData.isRetry ? 'Payment Failed' : 'Results Found!'}
-                                    </h2>
+                                                {/* Toggle Mockup */}
+                                                <div className="mt-6 flex justify-center">
+                                                    <div className="bg-gray-100 p-1 rounded-full inline-flex items-center relative">
+                                                        <div className="px-4 py-1.5 rounded-full bg-gray-900 text-white text-xs font-bold shadow-sm z-10">One-time</div>
+                                                        <div className="px-4 py-1.5 rounded-full text-gray-500 text-xs font-medium">Bundle</div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                    {/* Status Badge */}
-                                    {(previewData.isRenewal || previewData.isRetry) && (
-                                        <div className={`mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider ${previewData.isRenewal ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-red-50 text-red-600 border border-red-100'
-                                            }`}>
-                                            {previewData.isRenewal ? 'Views Subscription Ended' : 'Transaction Declined'}
+                                            <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100 text-left">
+                                                {previewData.plans.map((p: any) => (
+                                                    <div key={p.id} className={`flex-1 p-8 flex flex-col relative ${selectedPlanId === p.id ? 'bg-[#014751]/10' : ''}`}>
+                                                        {selectedPlanId === p.id && (
+                                                            <div className="absolute top-0 left-0 right-0 h-1 bg-[#014751]"></div>
+                                                        )}
+                                                        <div className="mb-4">
+                                                            <h3 className="font-black text-lg text-gray-900 mb-1">{p.name}</h3>
+                                                            <p className="text-xs text-gray-500 font-medium">Essential tools for admission success</p>
+                                                        </div>
+
+                                                        <div className="mb-6">
+                                                            <div className="flex items-baseline">
+                                                                <span className="text-3xl font-black text-gray-900">₦{p.price}</span>
+                                                                <span className="text-xs text-gray-400 ml-1 font-medium">/check</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <button
+                                                            onClick={() => setSelectedPlanId(p.id)}
+                                                            className={`w-full py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all mb-8 ${selectedPlanId === p.id
+                                                                ? 'bg-gray-900 text-white shadow-lg ring-2 ring-[#014751] ring-offset-2'
+                                                                : 'bg-black text-white hover:bg-gray-800'
+                                                                }`}
+                                                        >
+                                                            {selectedPlanId === p.id ? 'Selected' : 'Select'}
+                                                        </button>
+
+                                                        <div className="space-y-3 flex-1">
+                                                            {(p.features && p.features.length > 0 ? p.features : ['Admission Probability', 'Course Recommendations', 'O\'Level Analysis']).map((feat: string, i: number) => (
+                                                                <div key={i} className="flex items-start gap-3">
+                                                                    <LuCheck className="w-4 h-4 text-gray-900 shrink-0 mt-0.5" />
+                                                                    <span className="text-xs text-gray-600 font-medium">{feat}</span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     )}
 
-                                    <p className="text-gray-500 font-medium mb-6 leading-relaxed px-4 text-sm">
-                                        {previewData.message || (previewData.totalHigh + previewData.totalMedium > 0
-                                            ? `We found ${previewData.totalHigh + previewData.totalMedium} opportunities for your profile.`
-                                            : "Analyzing your profile completed. No matches found.")}
-                                    </p>
-
-                                    <div className="mb-6 inline-flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-                                        <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ID:</span>
-                                        <code className="text-xs font-mono font-black text-gray-900">{previewData.paymentId}</code>
+                                    <div className="w-full max-w-sm mx-auto mb-4">
+                                        <input
+                                            id="paymentEmail"
+                                            type="email"
+                                            value={userEmail}
+                                            onChange={(e) => setUserEmail(e.target.value)}
+                                            placeholder="Email Address (Optional)"
+                                            className="w-full px-5 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-[#014751] rounded-xl text-sm font-black transition-all text-center placeholder:text-gray-300 placeholder:uppercase placeholder:tracking-widest"
+                                        />
                                     </div>
 
-                                    {/* Warning about JAMB score lock */}
-                                    <div className="mb-6 p-4 bg-amber-50/50 border border-amber-100 rounded-2xl text-left shadow-sm">
-                                        <div className="flex items-start gap-3">
-                                            <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                                                <LuInfo className="w-4 h-4 text-amber-600" />
-                                            </div>
-                                            <div>
-                                                <p className="text-[10px] font-black text-amber-900 uppercase tracking-[0.1em] mb-0.5">Security Notice</p>
-                                                <p className="text-[11px] text-amber-700/80 font-semibold leading-relaxed">
-                                                    Results are tied to Score <span className="text-amber-900 font-black">{jambScore}</span>.
-                                                </p>
-                                            </div>
-                                        </div>
+                                    <button
+                                        onClick={handleUnlock}
+                                        disabled={isUnlocking}
+                                        className={`w-full max-w-sm mx-auto py-3.5 rounded-xl font-black uppercase tracking-[0.15em] transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 ${selectedPlanId ? 'bg-[#014751] text-white shadow-[#014751]/20 hover:bg-[#013b43]' : 'bg-gray-900 text-white shadow-gray-900/10'
+                                            }`}
+                                    >
+                                        {isUnlocking ? (
+                                            <>
+                                                <LuActivity className="w-5 h-5 animate-spin" />
+                                                {previewData.isPaid ? 'Unlocking...' : 'Encrypting...'}
+                                            </>
+                                        ) : (
+                                            <>
+                                                {previewData.isPaid ? <LuBookOpen className="w-5 h-5" /> : <LuShoppingCart className="w-5 h-5" />}
+                                                {previewData.isPaid ? 'View Full Report' : previewData.isRenewal ? 'Renew Access' : previewData.isRetry ? 'Retry Setup' : 'Unlock Access'}
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <div className="mt-4 flex items-center justify-center gap-4 text-[9px] font-black text-gray-400 uppercase tracking-widest">
+                                        <div className="flex items-center gap-1.5"><LuLock className="w-3 h-3 text-green-500" /> SECURE</div>
+                                        <div className="flex items-center gap-1.5"><LuZap className="w-3 h-3 text-[#014751]" /> INSTANT</div>
                                     </div>
-
-                                    <div className="grid grid-cols-2 gap-3 w-full mb-6">
-                                        <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 group hover:border-green-200 transition-all">
-                                            <div className="w-8 h-8 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-2 mx-auto">
-                                                <LuCheck className="w-4 h-4" strokeWidth={3} />
-                                            </div>
-                                            <div className="text-2xl font-black text-gray-900 mb-0">{previewData.totalHigh}</div>
-                                            <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">High Chance</div>
-                                        </div>
-                                        <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 group hover:border-yellow-200 transition-all">
-                                            <div className="w-8 h-8 rounded-xl bg-yellow-50 text-yellow-600 flex items-center justify-center mb-2 mx-auto">
-                                                <LuInfo className="w-4 h-4" />
-                                            </div>
-                                            <div className="text-2xl font-black text-gray-900 mb-0">{previewData.totalMedium}</div>
-                                            <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Medium Chance</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Plan Selection */}
-                                {previewData.plans && previewData.plans.length > 0 && (
-                                    <div className="w-full max-w-sm flex flex-col gap-3 mb-4">
-                                        <div className="flex items-center gap-4">
-                                            <div className="h-px bg-gray-100 flex-1"></div>
-                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-                                                Select Plan
-                                            </label>
-                                            <div className="h-px bg-gray-100 flex-1"></div>
-                                        </div>
-                                        <div className="grid grid-cols-1 gap-2">
-                                            {previewData.plans.map((p: any) => (
-                                                <button
-                                                    key={p.id}
-                                                    onClick={() => setSelectedPlanId(p.id)}
-                                                    className={`p-3.5 rounded-xl border-2 transition-all flex items-center justify-between text-left group relative ${selectedPlanId === p.id
-                                                        ? 'border-yellow-400 bg-white shadow-xl shadow-yellow-200/40 scale-[1.01]'
-                                                        : 'border-gray-50 bg-gray-50/50 hover:border-gray-200 hover:bg-white'
-                                                        }`}
-                                                >
-                                                    {selectedPlanId === p.id && (
-                                                        <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1.5 h-6 bg-yellow-400 rounded-full"></div>
-                                                    )}
-                                                    <div className="flex-1">
-                                                        <div className="flex items-center gap-2 mb-0.5">
-                                                            <span className="font-black text-xs text-gray-900 leading-none">{p.name}</span>
-                                                            {p.isRecommended && (
-                                                                <span className="bg-gray-900 text-yellow-400 text-[7px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-widest shadow-lg">Best</span>
-                                                            )}
-                                                        </div>
-                                                        <div className="text-[9px] text-gray-400 font-bold tracking-tight line-clamp-1">
-                                                            {p.features?.slice(0, 2).join(' • ') || 'Premium Analysis'}
-                                                        </div>
-                                                    </div>
-                                                    <div className="text-right ml-4">
-                                                        <div className="text-lg font-black text-gray-900 leading-none">₦{p.price}</div>
-                                                    </div>
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className="w-full max-w-sm mb-4">
-                                    <input
-                                        id="paymentEmail"
-                                        type="email"
-                                        value={userEmail}
-                                        onChange={(e) => setUserEmail(e.target.value)}
-                                        placeholder="Email Address (Optional)"
-                                        className="w-full px-5 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-yellow-400 rounded-xl text-sm font-black transition-all text-center placeholder:text-gray-300 placeholder:uppercase placeholder:tracking-widest"
-                                    />
-                                </div>
-
-                                <button
-                                    onClick={handleUnlock}
-                                    disabled={isUnlocking}
-                                    className={`w-full max-w-sm py-3.5 rounded-xl font-black uppercase tracking-[0.15em] transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 ${selectedPlanId ? 'bg-yellow-400 text-black shadow-yellow-400/20 hover:bg-yellow-500' : 'bg-gray-900 text-white shadow-gray-900/10'
-                                        }`}
-                                >
-                                    {isUnlocking ? (
-                                        <>
-                                            <LuActivity className="w-5 h-5 animate-spin" />
-                                            Encrypting...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <LuShoppingCart className="w-5 h-5" />
-                                            {previewData.isRenewal ? 'Renew Access' : previewData.isRetry ? 'Retry Setup' : 'Unlock Access'}
-                                        </>
-                                    )}
-                                </button>
-
-                                <div className="mt-4 flex items-center justify-center gap-4 text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                                    <div className="flex items-center gap-1.5"><LuLock className="w-3 h-3 text-green-500" /> SECURE</div>
-                                    <div className="flex items-center gap-1.5"><LuZap className="w-3 h-3 text-yellow-500" /> INSTANT</div>
                                 </div>
                             </motion.div>
                         )}
@@ -1060,10 +1335,10 @@ export default function AdmissionChecker() {
                                 className="h-full min-h-[500px] flex flex-col items-center justify-center p-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-200/50"
                             >
                                 <div className="relative w-24 h-24 mb-8">
-                                    <div className="absolute inset-0 border-4 border-yellow-400/20 rounded-full"></div>
-                                    <div className="absolute inset-0 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="absolute inset-0 border-4 border-[#014751]/20 rounded-full"></div>
+                                    <div className="absolute inset-0 border-4 border-[#014751] border-t-transparent rounded-full animate-spin"></div>
                                     <div className="absolute inset-0 flex items-center justify-center">
-                                        <LuActivity className="w-8 h-8 text-yellow-500 animate-pulse" />
+                                        <LuActivity className="w-8 h-8 text-[#014751] animate-pulse" />
                                     </div>
                                 </div>
                                 <h3 className="text-xl font-black text-gray-900 mb-2 uppercase tracking-tight">Crunching Data</h3>
@@ -1078,7 +1353,7 @@ export default function AdmissionChecker() {
                                     <div className="absolute right-0 top-0 opacity-10 -mr-4 -mt-4">
                                         <LuSearch className="w-24 h-24" />
                                     </div>
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-yellow-400 mb-3">Analysis Profile</h4>
+                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#014751] mb-3">Analysis Profile</h4>
                                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                                         <div className="flex items-center gap-4">
                                             <div>
@@ -1091,7 +1366,7 @@ export default function AdmissionChecker() {
                                             <div className="flex flex-wrap gap-1.5 sm:gap-2">
                                                 {subjects.filter(s => s.name).map((s, i) => (
                                                     <span key={i} className="px-2 py-1 bg-white/5 rounded text-[9px] sm:text-[10px] font-bold text-gray-300 whitespace-nowrap">
-                                                        {s.name} <span className="text-yellow-400 ml-1">{s.grade}</span>
+                                                        {s.name} <span className="text-[#014751] ml-1">{s.grade}</span>
                                                     </span>
                                                 ))}
                                             </div>
@@ -1140,7 +1415,7 @@ export default function AdmissionChecker() {
                                                     onClick={generatePDF}
                                                     className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl hover:bg-black transition-all text-sm font-black uppercase tracking-widest shadow-lg shadow-gray-200"
                                                 >
-                                                    <LuBookOpen className="w-4 h-4 text-yellow-400" />
+                                                    <LuBookOpen className="w-4 h-4 text-[#014751]" />
                                                     <span>Download PDF Report</span>
                                                 </button>
                                             </div>
@@ -1155,11 +1430,11 @@ export default function AdmissionChecker() {
                                         variants={fadeIn}
                                         transition={{ duration: 0.5, delay: idx * 0.1 }}
                                         onClick={() => setSelectedResult(result)}
-                                        className="cursor-pointer bg-white rounded-xl border border-gray-100 hover:border-yellow-200 hover:shadow-md transition-all duration-300 relative group overflow-hidden w-full"
+                                        className="cursor-pointer bg-white rounded-xl border border-gray-100 hover:border-[#014751]/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden w-full"
                                     >
                                         {/* Status Strip (Left side) */}
                                         <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${result.chance === 'High' ? 'bg-green-500' :
-                                            result.chance === 'Medium' ? 'bg-yellow-500' : 'bg-red-500'
+                                            result.chance === 'Medium' ? 'bg-[#014751]' : 'bg-red-500'
                                             }`} />
 
                                         <div className="p-4 pl-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
@@ -1167,7 +1442,7 @@ export default function AdmissionChecker() {
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                                                     <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${result.chance === 'High' ? 'bg-green-500/10 text-green-500' :
-                                                        result.chance === 'Medium' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-red-500/10 text-red-500'
+                                                        result.chance === 'Medium' ? 'bg-[#014751]/10 text-[#014751]' : 'bg-red-500/10 text-red-500'
                                                         }`}>
                                                         {result.chance} Chance
                                                     </span>
@@ -1177,19 +1452,24 @@ export default function AdmissionChecker() {
                                                         </span>
                                                     )}
                                                     {result.admissionStage && (
-                                                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest bg-gray-100 text-gray-600">
+                                                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest bg-gray-100 text-gray-600 border border-gray-200">
                                                             {result.admissionStage}
                                                         </span>
                                                     )}
+                                                    {result.aggregateScore && (
+                                                        <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-blue-600 text-white shadow-sm">
+                                                            Aggregate: {result.aggregateScore}%
+                                                        </span>
+                                                    )}
                                                 </div>
-                                                <h3 className="text-base font-black uppercase tracking-tight text-gray-900 group-hover:text-yellow-600 transition-colors mb-0.5">
+                                                <h3 className="text-base font-black uppercase tracking-tight text-gray-900 group-hover:text-[#014751] transition-colors mb-0.5">
                                                     {result.university}
                                                 </h3>
                                                 <p className="text-xs font-medium text-gray-500">{result.course}</p>
 
                                                 <div className="mt-2 flex items-start gap-1.5 text-[11px] text-gray-600 leading-snug">
                                                     <div className={`mt-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${result.chance === 'High' ? 'bg-green-500/10 text-green-500' :
-                                                        result.chance === 'Medium' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-red-500/10 text-red-500'
+                                                        result.chance === 'Medium' ? 'bg-[#014751]/10 text-[#014751]' : 'bg-red-500/10 text-red-500'
                                                         }`}>
                                                         {result.chance === 'High' ? <LuCheck className="w-2 h-2" strokeWidth={3} /> :
                                                             result.chance === 'Medium' ? <LuInfo className="w-2 h-2" strokeWidth={3} /> :
@@ -1261,7 +1541,7 @@ export default function AdmissionChecker() {
                                         <div>
                                             <div className="flex items-center gap-2 mb-3">
                                                 <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${selectedResult.chance === 'High' ? 'bg-green-500/10 text-green-500' :
-                                                    selectedResult.chance === 'Medium' ? 'bg-yellow-500/10 text-yellow-600' : 'bg-red-500/10 text-red-500'
+                                                    selectedResult.chance === 'Medium' ? 'bg-[#014751]/10 text-[#014751]' : 'bg-red-500/10 text-red-500'
                                                     }`}>
                                                     {selectedResult.chance} Probability
                                                 </span>
@@ -1277,15 +1557,15 @@ export default function AdmissionChecker() {
 
                                         {/* Status Card */}
                                         <div className={`p-6 rounded-3xl ${selectedResult.chance === 'High' ? 'bg-green-50 border border-green-100' :
-                                            selectedResult.chance === 'Medium' ? 'bg-yellow-50 border border-yellow-100' : 'bg-red-50 border border-red-100'
+                                            selectedResult.chance === 'Medium' ? 'bg-[#014751]/5 border border-[#014751]/20' : 'bg-red-50 border border-red-100'
                                             }`}>
                                             <h3 className={`text-sm font-black uppercase tracking-widest mb-4 ${selectedResult.chance === 'High' ? 'text-green-800' :
-                                                selectedResult.chance === 'Medium' ? 'text-yellow-800' : 'text-red-800'
+                                                selectedResult.chance === 'Medium' ? 'text-[#014751]' : 'text-red-800'
                                                 }`}>Analysis Report</h3>
 
                                             <div className="flex items-start gap-4">
                                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${selectedResult.chance === 'High' ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' :
-                                                    selectedResult.chance === 'Medium' ? 'bg-yellow-500 text-white shadow-lg shadow-yellow-500/30' : 'bg-red-500 text-white shadow-lg shadow-red-500/30'
+                                                    selectedResult.chance === 'Medium' ? 'bg-[#014751] text-white shadow-lg shadow-[#014751]/30' : 'bg-red-500 text-white shadow-lg shadow-red-500/30'
                                                     }`}>
                                                     {selectedResult.chance === 'High' ? <LuCheck className="w-5 h-5" strokeWidth={3} /> :
                                                         selectedResult.chance === 'Medium' ? <LuInfo className="w-5 h-5" strokeWidth={3} /> :
@@ -1306,13 +1586,13 @@ export default function AdmissionChecker() {
                                                         <div>
                                                             <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Faculty</h4>
                                                             <div className="flex items-center gap-2">
-                                                                <LuSchool className="text-yellow-500" />
+                                                                <LuSchool className="text-[#014751]" />
                                                                 <span className="font-bold text-gray-900">{selectedResult.faculty || 'N/A'}</span>
                                                             </div>
                                                         </div>
                                                         <div className="h-px bg-gray-100" />
                                                         <div>
-                                                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Required Subjects ({selectedResult.requiredSubjects?.length || 0})</h4>
+                                                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Required O&apos;Level Subjects ({selectedResult.requiredSubjects?.length || 0})</h4>
                                                             <div className="flex flex-wrap gap-2">
                                                                 {(selectedResult.requiredSubjects || []).map((sub: string) => (
                                                                     <span key={sub} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">
@@ -1323,13 +1603,59 @@ export default function AdmissionChecker() {
                                                                     <span className="text-xs text-gray-400 italic">No specific subjects listed</span>
                                                                 )}
                                                             </div>
+                                                            {selectedResult.missingSubjects && selectedResult.missingSubjects.length > 0 && (
+                                                                <div className="mt-2 p-3 bg-red-50 rounded-xl border border-red-100">
+                                                                    <div className="flex items-center gap-1.5 text-red-600 text-[10px] font-black uppercase tracking-widest mb-1.5">
+                                                                        <LuX className="w-3 h-3" />
+                                                                        Missing O&apos;Level Subjects
+                                                                    </div>
+                                                                    <div className="flex flex-wrap gap-1.5">
+                                                                        {selectedResult.missingSubjects.map((sub: string) => (
+                                                                            <span key={sub} className="text-[11px] font-bold text-red-700">
+                                                                                • {sub}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
                                                         </div>
+                                                        <div className="h-px bg-gray-100" />
+                                                        <div>
+                                                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">UTME Subjects Requirement</h4>
+                                                            <div className="flex flex-wrap gap-2">
+                                                                {(selectedResult.requiredUtmeSubjects || []).map((sub: string) => (
+                                                                    <span key={sub} className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg text-xs font-bold">
+                                                                        {sub}
+                                                                    </span>
+                                                                ))}
+                                                                {(!selectedResult.requiredUtmeSubjects || selectedResult.requiredUtmeSubjects.length === 0) && (
+                                                                    <span className="text-xs text-gray-400 italic">No specific UTME subjects listed</span>
+                                                                )}
+                                                            </div>
+                                                            {selectedResult.missingUtmeSubjects && selectedResult.missingUtmeSubjects.length > 0 && (
+                                                                <div className="mt-2 p-3 bg-red-50 rounded-xl border border-red-100">
+                                                                    <div className="flex items-center gap-1.5 text-red-600 text-[10px] font-black uppercase tracking-widest mb-1.5">
+                                                                        <LuX className="w-3 h-3" />
+                                                                        Missing UTME Subjects
+                                                                    </div>
+                                                                    <div className="flex flex-wrap gap-1.5">
+                                                                        {selectedResult.missingUtmeSubjects.map((sub: string) => (
+                                                                            <span key={sub} className="text-[11px] font-bold text-red-700">
+                                                                                • {sub}
+                                                                            </span>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+
+
                                                         {selectedResult.postUtmeRequired && (
                                                             <>
                                                                 <div className="h-px bg-gray-100" />
-                                                                <div className="p-5 bg-yellow-50 rounded-2xl border border-yellow-100 shadow-sm">
+                                                                <div className="p-5 bg-[#014751]/5 rounded-2xl border border-yellow-100 shadow-sm">
                                                                     <div className="flex items-center gap-2 mb-3">
-                                                                        <div className="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center">
+                                                                        <div className="w-6 h-6 rounded-full bg-[#014751] flex items-center justify-center">
                                                                             <LuInfo className="w-3.5 h-3.5 text-black" />
                                                                         </div>
                                                                         <h4 className="text-xs font-black uppercase tracking-widest text-yellow-900">Post-UTME Audit</h4>
@@ -1339,18 +1665,18 @@ export default function AdmissionChecker() {
                                                                         This university conducts Post-UTME. Your current results qualify you to apply, but your final admission depends on your Post-UTME score.
                                                                     </p>
 
-                                                                    <div className="space-y-3 bg-white/50 p-3 rounded-xl border border-yellow-200/50">
-                                                                        {selectedResult.postUtmeInfo?.minScore && (
+                                                                    <div className="space-y-3 bg-white/50 p-3 rounded-xl border border-[#014751]/20/50">
+                                                                        {selectedResult.postUtmeInfo?.minUtmeScore && (
                                                                             <div className="flex items-center justify-between">
-                                                                                <span className="text-[10px] font-black text-yellow-800/60 uppercase tracking-widest">Min Score</span>
-                                                                                <span className="text-sm font-black text-yellow-900">{selectedResult.postUtmeInfo.minScore}</span>
+                                                                                <span className="text-[10px] font-black text-yellow-800/60 uppercase tracking-widest">Min JAMB Scored</span>
+                                                                                <span className="text-sm font-black text-yellow-900">{selectedResult.postUtmeInfo.minUtmeScore}</span>
                                                                             </div>
                                                                         )}
                                                                         {selectedResult.postUtmeInfo?.fee && (
                                                                             <div className="flex items-center justify-between">
                                                                                 <div className="flex flex-col">
                                                                                     <span className="text-[10px] font-black text-yellow-800/60 uppercase tracking-widest leading-none">Registration Fee</span>
-                                                                                    <span className="text-[8px] font-bold text-yellow-600 uppercase mt-1">Paid to School</span>
+                                                                                    <span className="text-[8px] font-bold text-[#014751] uppercase mt-1">Paid to School</span>
                                                                                 </div>
                                                                                 <span className="text-sm font-black text-gray-900">₦{selectedResult.postUtmeInfo.fee}</span>
                                                                             </div>
@@ -1363,7 +1689,7 @@ export default function AdmissionChecker() {
                                                                         )}
                                                                     </div>
 
-                                                                    <div className="mt-4 pt-3 border-t border-yellow-200/30">
+                                                                    <div className="mt-4 pt-3 border-t border-[#014751]/20/30">
                                                                         <p className="text-[10px] font-bold text-yellow-700/70 italic text-center">
                                                                             * Note: All registration fees are paid directly to the institution's official portal, not to SabiDub.
                                                                         </p>
@@ -1377,7 +1703,7 @@ export default function AdmissionChecker() {
                                                                 <div>
                                                                     <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Course Duration</h4>
                                                                     <div className="flex items-center gap-2">
-                                                                        <LuBookOpen className="text-yellow-500" />
+                                                                        <LuBookOpen className="text-[#014751]" />
                                                                         <span className="font-bold text-gray-900">{selectedResult.courseDuration} Years</span>
                                                                     </div>
                                                                 </div>

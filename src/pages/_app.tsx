@@ -1,6 +1,19 @@
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import Head from 'next/head';
+import { Manrope } from 'next/font/google';
+
+const manrope = Manrope({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700', '800',],
+});
+
+import { Neonderthaw } from 'next/font/google';
+const neonderthaw = Neonderthaw({
+  subsets: ['latin'],
+  weight: ['400'],
+  variable: '--font-neonderthaw',
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
@@ -15,7 +28,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:image" content="/images/black.png" />
         <meta property="og:type" content="website" />
       </Head>
-      <Component {...pageProps} />
+      <main className={`${manrope.className} ${neonderthaw.variable}`}>
+        <Component {...pageProps} />
+      </main>
     </>
   );
 }

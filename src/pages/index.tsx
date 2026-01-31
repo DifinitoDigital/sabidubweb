@@ -1,21 +1,71 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+import { motion } from "framer-motion";
+
+interface Author {
+  id: string;
+  name: string;
+  email: string;
+  profilePicture: string;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  image: string;
+  category: string;
+  tags: string[];
+  readingTime: string;
+  isPublished: boolean;
+  isFeatured: boolean;
+  viewCount: number;
+  likeCount: number;
+  commentCount: number;
+  publishedAt: string;
+  createdAt: string;
+  updatedAt: string;
+  author: Author;
+}
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   const [userName, setUserName] = useState("Guest");
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? -1 : index);
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const response = await fetch(`${baseUrl}/blog/posts?limit=5`);
+        if (response.ok) {
+          const data = await response.json();
+          setFeaturedPosts(data.posts);
+        }
+      } catch (error) {
+        console.error("Error fetching blog posts:", error);
+      } finally {
+        setLoadingPosts(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+
 
   return (
     <>
@@ -29,271 +79,86 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="min-h-screen bg-white relative">
-        {/* Navigation */}
-        <nav className="px-4 sm:px-6 py-6 sm:py-8 flex items-center justify-between max-w-7xl mx-auto relative z-[60] bg-white">
-          <Link href="/" className="flex items-center relative z-[60]">
-            <div className="relative w-40 h-12">
-              <Image
-                src="/images/black.png"
-                alt="SabiDub Logo"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-          </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/"
-              className="text-gray-900 hover:text-yellow-600 transition-colors"
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className="text-gray-600 hover:text-yellow-600 transition-colors"
-            >
-              About
-            </Link>
-            <Link
-              href="/services"
-              className="text-gray-600 hover:text-yellow-600 transition-colors"
-            >
-              Services
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-gray-600 hover:text-yellow-600 transition-colors"
-            >
-              Pricing
-            </Link>
-            <Link
-              href="/admission-checker"
-              className="text-gray-600 hover:text-yellow-600 transition-colors"
-            >
-              Admission Checker
-            </Link>
-            <Link
-              href="/pricing"
-              className="text-gray-600 hover:text-yellow-600 transition-colors"
-            >
-              Contact
-            </Link>
-            <button className="bg-yellow-400 text-black px-4 py-2 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
-              Download App
-            </button>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <button
-            onClick={toggleMenu}
-            className="md:hidden flex flex-col items-center justify-center w-10 h-10 bg-white border border-gray-100 shadow-sm rounded-lg hover:bg-[#252525] transition-colors relative z-[60]"
-          >
-            <span
-              className={`w-5 h-0.5 bg-white mb-1 transition-transform ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""
-                }`}
-            ></span>
-            <span
-              className={`w-5 h-0.5 bg-white transition-opacity ${isMenuOpen ? "opacity-0" : ""
-                }`}
-            ></span>
-            <span
-              className={`w-5 h-0.5 bg-white mt-1 transition-transform ${isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""
-                }`}
-            ></span>
-          </button>
-        </nav>
-
-        {/* Sliding Menu - Mobile Only */}
-        <div
-          className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-white border border-gray-100 shadow-sm z-[50] transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"
-            }`}
-        >
-          <div className="p-6 h-full overflow-y-auto">
-            <div className="flex flex-col space-y-6">
-              <div className="flex items-center justify-between mb-8">
-                <div className="relative w-32 h-8">
-                  <Image
-                    src="/images/black.png"
-                    alt="SabiDub Logo"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-                <button
-                  onClick={toggleMenu}
-                  className="text-gray-600 hover:text-gray-900"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="flex flex-col space-y-4">
-                <Link
-                  href="/"
-                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Home
-                </Link>
-                <Link
-                  href="/about"
-                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
-                  onClick={toggleMenu}
-                >
-                  About
-                </Link>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Services
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Pricing
-                </Link>
-                <Link
-                  href="/admission-checker"
-                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Admission Checker
-                </Link>
-                <Link
-                  href="#"
-                  className="text-gray-600 hover:text-yellow-600 transition-colors py-2 border-b border-gray-200"
-                  onClick={toggleMenu}
-                >
-                  Contact
-                </Link>
-              </div>
-
-              <div className="mt-auto pt-6">
-                <button className="w-full bg-yellow-400 text-black px-4 py-3 rounded-md font-medium hover:bg-[#ffdb82] transition-colors">
-                  Download App
-                </button>
-
-                <div className="mt-6 flex items-center justify-center space-x-4">
-                  <a href="#" className="text-gray-600 hover:text-yellow-600">
-                    <svg
-                      className="w-6 h-6"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                  </a>
-                  <a href="#" className="text-gray-600 hover:text-yellow-600">
-                    <svg
-                      className="w-6 h-6"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" />
-                    </svg>
-                  </a>
-                  <a href="#" className="text-gray-600 hover:text-yellow-600">
-                    <svg
-                      className="w-6 h-6"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z" />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Overlay */}
-        {isMenuOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-[40]"
-            onClick={toggleMenu}
-          ></div>
-        )}
+        <Navbar />
 
         {/* Hero Section */}
-        <section className="px-4 sm:px-6 pt-12 sm:pt-20 pb-12 sm:pb-24 max-w-7xl mx-auto">
-          <div className="text-center mb-4">
-            <p className="text-gray-600 flex items-center justify-center gap-2">
-              <span className="w-1 h-1 rounded-full bg-yellow-400"></span>
-              Empowering Nigerian Education
+        <section className="relative px-4 sm:px-6 pt-32 sm:pt-48 pb-12 sm:pb-24 min-h-[90vh] flex flex-col justify-center overflow-hidden bg-black">
+          {/* Background Image & Overlays */}
+          <div className="absolute inset-0">
+            <Image
+              src="/images/IMG_5609.jpg"
+              alt="Education Background"
+              fill
+              className="object-cover opacity-60"
+              priority
+            />
+            {/* Layer 1: Solid Black Overlay */}
+            <div className="absolute inset-0 bg-black/40"></div>
+            {/* Layer 2: Black to Transparent Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-black/20 to-transparent"></div>
+          </div>
+
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-4">
+              <p className="text-white/80 flex items-center justify-center gap-2">
+                <span className="w-1 h-1 rounded-full bg-[#AFF8C8]"></span>
+                Empowering Nigerian Education
+              </p>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mb-6">
+              Bridging Educational Excellence
+              <br className="hidden sm:block" />
+              in Nigeria
+            </h1>
+
+            <p className="text-white/70 text-center max-w-2xl mx-auto mb-8 px-4">
+              Connecting secondary and tertiary education through innovative
+              technology, ensuring students are well-prepared for academic success
             </p>
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8 sm:mb-16 px-4">
+              <button className="bg-[#014751] text-white px-6 py-3 rounded-md font-medium w-full sm:w-auto">
+                Get Started
+              </button>
+              <button className="border border-white/20 text-white px-6 py-3 rounded-md font-medium hover:bg-white/10 transition-colors w-full sm:w-auto">
+                Request a demo
+              </button>
+            </div>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 text-center mb-6">
-            Bridging Educational Excellence
-            <br className="hidden sm:block" />
-            in Nigeria
-          </h1>
-
-          <p className="text-gray-600 text-center max-w-2xl mx-auto mb-8 px-4">
-            Connecting secondary and tertiary education through innovative
-            technology, ensuring students are well-prepared for academic success
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8 sm:mb-16 px-4">
-            <button className="bg-yellow-400 text-black px-6 py-3 rounded-md font-medium w-full sm:w-auto">
-              Get Started
-            </button>
-            <button className="border border-gray-300 text-gray-900 px-6 py-3 rounded-md font-medium hover:bg-white border border-gray-100 shadow-sm transition-colors w-full sm:w-auto">
-              Request a demo
-            </button>
-          </div>
 
           {/* App Screenshot */}
-          <div className="relative max-w-4xl mx-auto px-4">
+          <div className="relative w-full max-w-5xl mx-auto px-4">
             <div className="bg-gradient-to-b from-yellow-400/20 to-transparent absolute inset-0 rounded-3xl"></div>
-            <div className="relative bg-white border border-gray-100 shadow-sm rounded-3xl p-4 sm:p-8">
-              <div className="flex flex-wrap items-center gap-4 mb-6">
+            <div className="relative bg-white border border-gray-200 shadow-xl rounded-[32px] p-6 sm:p-10 sm:px-12">
+              <div className="flex flex-wrap items-center gap-6 mb-8">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
-                  <span className="text-gray-900">95% Success</span>
+                  <div className="w-3.5 h-3.5 bg-[#014751] rounded-full"></div>
+                  <span className="text-gray-900 font-bold text-base">95% Success</span>
                 </div>
-                <div className="text-gray-600">WAEC</div>
-                <div className="text-gray-600">NECO</div>
-                <div className="text-gray-600">JAMB</div>
+                <div className="text-gray-500 font-medium text-base">WAEC</div>
+                <div className="text-gray-500 font-medium text-base">NECO</div>
+                <div className="text-gray-500 font-medium text-base">JAMB</div>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-6">
                 <div>
-                  <div className="text-gray-600 text-sm mb-1">
+                  <div className="text-gray-500 text-sm mb-1 font-medium">
                     Students Progress
                   </div>
-                  <div className="text-gray-900 text-2xl font-semibold">
+                  <div className="text-gray-900 text-3xl sm:text-4xl font-black tracking-tight">
                     84.3% Average
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-600"></div>
-                    <div className="w-8 h-8 rounded-full bg-gray-700"></div>
-                    <div className="w-8 h-8 rounded-full bg-gray-200"></div>
+                <div className="flex items-center gap-4">
+                  <div className="flex -space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-gray-600 border-2 border-white shadow-sm"></div>
+                    <div className="w-10 h-10 rounded-full bg-gray-700 border-2 border-white shadow-sm"></div>
+                    <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm"></div>
                   </div>
-                  <span className="text-gray-600">500+ Schools</span>
+                  <span className="text-gray-600 font-bold text-lg">500+ Schools</span>
                 </div>
               </div>
             </div>
@@ -301,1089 +166,573 @@ export default function Home() {
         </section>
 
         {/* Trusted By Section */}
-        <section className="px-4 sm:px-6 py-8 sm:py-16 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto">
-            <p className="text-center text-gray-600 mb-8 sm:mb-12">
+        <section className="py-12 border-t border-gray-100 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 mb-10">
+            <p className="text-center text-gray-400 font-medium text-sm tracking-widest uppercase">
               Trusted by Top Educational Institutions in Nigeria
             </p>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-8 items-center justify-items-center opacity-50">
-              <div className="text-gray-600 font-medium text-center">
-                University of Lagos
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                University of Ibadan
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                Covenant University
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                Obafemi Awolowo
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                Ahmadu Bello
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                University of Nigeria
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                Federal Ministry of Education
-              </div>
-              <div className="text-gray-600 font-medium text-center">
-                WAEC Nigeria
-              </div>
-            </div>
           </div>
-        </section>
 
-        {/* Features Section */}
-        <section className="px-6 py-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-12">
-              <div className="md:w-1/2">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">
-                  Start Your Educational
-                  <br />
-                  Journey Today
-                </h2>
-                <p className="text-gray-600 mb-8">
-                  SabiDub bridges the gap between secondary and tertiary
-                  education, providing a seamless learning experience for
-                  Nigerian students.
-                </p>
-
-                <div className="space-y-8">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white border border-gray-100 shadow-sm flex items-center justify-center flex-shrink-0">
-                      <svg
-                        className="w-6 h-6 text-yellow-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-gray-900 font-semibold mb-2">
-                        Create Your Student Profile
-                      </h3>
-                      <p className="text-gray-600">
-                        Sign up and create your academic profile to track your
-                        educational journey from secondary school through
-                        university.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white border border-gray-100 shadow-sm flex items-center justify-center flex-shrink-0">
-                      <svg
-                        className="w-6 h-6 text-[#AFF8C8]"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-gray-900 font-semibold mb-2">
-                        Access Quality Learning Resources
-                      </h3>
-                      <p className="text-gray-600">
-                        Get access to comprehensive study materials for WAEC,
-                        NECO, JAMB and university courses with real-time
-                        progress tracking.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-white border border-gray-100 shadow-sm flex items-center justify-center flex-shrink-0">
-                      <svg
-                        className="w-6 h-6 text-yellow-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 className="text-gray-900 font-semibold mb-2">
-                        Connect with Educational Experts
-                      </h3>
-                      <p className="text-gray-600">
-                        Get guidance from educational mentors who provide
-                        academic advice and help you navigate your educational
-                        journey.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="md:w-1/2">
-                <div className="bg-white border border-gray-100 shadow-sm rounded-3xl p-4 sm:p-6">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-10 h-10 rounded-full bg-gray-200"></div>
-                    <div>
-                      <div className="text-gray-900">Hello, {userName}</div>
-                      <div className="text-gray-600 text-sm">S.S.3 Student</div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white rounded-xl p-4 sm:p-6 mb-6">
-                    <div className="text-gray-600 text-sm mb-2">
-                      Academic Progress
-                    </div>
-                    <div className="text-gray-900 text-xl sm:text-2xl font-semibold mb-4">
-                      87% Complete
-                    </div>
-                    <div className="flex flex-wrap gap-2 sm:gap-4">
-                      <button className="bg-yellow-400 text-black px-3 sm:px-4 py-2 rounded-full text-sm">
-                        Study
-                      </button>
-                      <button className="bg-gray-200 text-gray-900 px-3 sm:px-4 py-2 rounded-full text-sm">
-                        Tests
-                      </button>
-                      <button className="bg-gray-200 text-gray-900 px-3 sm:px-4 py-2 rounded-full text-sm">
-                        Resources
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="text-gray-900 font-medium">Your Courses</div>
-                      <button className="text-yellow-400 text-sm">
-                        See All
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap justify-start sm:justify-between gap-3 sm:gap-6">
-                      {[
-                        "Mathematics",
-                        "English",
-                        "Physics",
-                        "Chemistry",
-                        "Biology",
-                      ].map((subject, i) => (
-                        <div
-                          key={i}
-                          className="text-center w-[calc(20%-8px)] sm:w-auto"
-                        >
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-200 mb-2 flex items-center justify-center text-[#AFF8C8] text-xs">
-                            {subject.substring(0, 2)}
-                          </div>
-                          <div className="text-gray-600 text-[10px] sm:text-xs">
-                            {subject}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Additional Features */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
-                  {/* Security and Compliance */}
-                  <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <svg
-                          className="w-6 h-6 text-yellow-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="text-gray-900 font-medium mb-1">
-                          Security and compliance
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          We work hard to secure and protect
-                        </p>
-                        <button className="text-yellow-400 text-sm mt-2 flex items-center">
-                          Learn More <span className="ml-1">→</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Integrations */}
-                  <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
-                        <svg
-                          className="w-6 h-6 text-[#AFF8C8]"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16m-7 6h7"
-                          />
-                        </svg>
-                      </div>
-                      <div>
-                        <h3 className="text-gray-900 font-medium mb-1">
-                          Integrations
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          Link to learning management tools
-                        </p>
-                        <button className="text-yellow-400 text-sm mt-2 flex items-center">
-                          Learn More <span className="ml-1">→</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Educational Features Section */}
-        <section className="px-6 py-16 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-10">
-              <div className="md:col-span-2">
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                  Bridging Educational Excellence in Nigeria
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  SabiDub connects secondary and tertiary education through
-                  innovative technology, ensuring students have the resources
-                  they need to succeed at every level of their academic journey.
-                </p>
-              </div>
-
-              <div className="md:col-span-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Unified Learning Journey */}
-                <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Unified Learning Journey
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Create a seamless path from secondary to tertiary education
-                    with structured preparation and integrated resources.
-                  </p>
-                  <div className="bg-white p-4 rounded-lg flex items-center">
-                    <div className="w-12 h-12 rounded-lg bg-yellow-400/10 flex items-center justify-center flex-shrink-0">
-                      <svg
-                        className="w-6 h-6 text-yellow-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-4">
-                      <div className="text-sm text-gray-600">
-                        Completion rate
-                      </div>
-                      <div className="text-xl text-gray-900 font-semibold">
-                        94.7%
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Academic Excellence */}
-                <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Academic Excellence
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Access comprehensive exam prep tools and interactive
-                    learning resources with detailed performance tracking.
-                  </p>
-                  <div className="bg-white p-4 rounded-lg">
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-gray-900 text-sm">Progress</span>
-                      <span className="text-[#AFF8C8] text-xs px-2 py-1 bg-[#AFF8C8]/10 rounded">
-                        +12.5%
-                      </span>
-                    </div>
-                    <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#AFF8C8]"
-                        style={{ width: "65%" }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Student Development */}
-                <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Student Development
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Build professional portfolios, develop critical thinking
-                    skills, and engage in collaborative learning.
-                  </p>
-                  <div className="bg-white p-4 rounded-lg flex flex-col">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-8 h-8 rounded-full bg-yellow-400/20 flex items-center justify-center">
-                        <svg
-                          className="w-4 h-4 text-yellow-400"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13 10V3L4 14h7v7l9-11h-7z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-gray-900 block">875</span>
-                        <span className="text-gray-500 text-xs">students</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Educational Insights */}
-                <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    Educational Insights
-                  </h3>
-                  <p className="text-gray-600 text-sm mb-4">
-                    Gain data-driven insights into your learning style and
-                    receive personalized recommendations.
-                  </p>
-                  <div className="bg-white p-4 rounded-lg">
-                    <div className="flex justify-between items-center">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
-                        <span className="text-xs text-gray-600">WAEC</span>
-                      </div>
-                      <span className="text-xs text-gray-900">58%</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <div className="flex items-center">
-                        <div className="w-3 h-3 rounded-full bg-[#AFF8C8] mr-2"></div>
-                        <span className="text-xs text-gray-600">
-                          University
-                        </span>
-                      </div>
-                      <span className="text-xs text-gray-900">42%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* The Challenge Section */}
-        <section className="px-6 py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                The Challenge We're Solving
-              </h2>
-              <p className="text-gray-600 max-w-3xl mx-auto">
-                In Nigeria's educational landscape, we face a critical gap
-                between secondary and tertiary education.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="bg-white border border-gray-100 shadow-sm p-8 rounded-2xl">
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-yellow-400/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-yellow-400">✓</span>
-                    </div>
-                    <p className="text-gray-700">
-                      Lack of proper guidance during the transition from
-                      secondary to tertiary education
-                    </p>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-yellow-400/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-yellow-400">✓</span>
-                    </div>
-                    <p className="text-gray-700">
-                      Limited access to quality educational resources
-                    </p>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-yellow-400/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-yellow-400">✓</span>
-                    </div>
-                    <p className="text-gray-700">
-                      Disconnected learning experiences between different
-                      educational levels
-                    </p>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-white border border-gray-100 shadow-sm p-8 rounded-2xl">
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#AFF8C8]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-[#AFF8C8]">✓</span>
-                    </div>
-                    <p className="text-gray-700">
-                      Insufficient preparation for higher education challenges
-                    </p>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#AFF8C8]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-[#AFF8C8]">✓</span>
-                    </div>
-                    <p className="text-gray-700">
-                      Poor tracking of academic progress across educational
-                      journey
-                    </p>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-[#AFF8C8]/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-[#AFF8C8]">✓</span>
-                    </div>
-                    <p className="text-gray-700">
-                      Lack of integrated systems connecting secondary and
-                      tertiary education
-                    </p>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Why SabiDub Section */}
-        <section className="px-6 py-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Why SabiDub?
-              </h2>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Bridge the Gap */}
-              <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 hover:bg-[#212121] transition-colors border border-gray-200">
-                <div className="w-14 h-14 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6">
-                  <svg
-                    className="w-8 h-8 text-yellow-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-gray-900 font-semibold text-xl mb-4">
-                  Bridge the Gap
-                </h3>
-                <ul className="text-gray-600 space-y-3">
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
-                    <span>Connect secondary schools with universities</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
-                    <span>Prepare for higher education challenges</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
-                    <span>Early exposure to tertiary requirements</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Empower Students */}
-              <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 hover:bg-[#212121] transition-colors border border-gray-200">
-                <div className="w-14 h-14 rounded-lg bg-[#AFF8C8]/10 flex items-center justify-center mb-6">
-                  <svg
-                    className="w-8 h-8 text-[#AFF8C8]"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905 0 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-gray-900 font-semibold text-xl mb-4">
-                  Empower Students
-                </h3>
-                <ul className="text-gray-600 space-y-3">
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#AFF8C8]">•</span>
-                    <span>Access to quality educational resources</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#AFF8C8]">•</span>
-                    <span>Real-time performance tracking</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-[#AFF8C8]">•</span>
-                    <span>Career guidance and development</span>
-                  </li>
-                </ul>
-              </div>
-
-              {/* Transform Education */}
-              <div className="bg-white border border-gray-100 shadow-sm rounded-2xl p-8 hover:bg-[#212121] transition-colors border border-gray-200">
-                <div className="w-14 h-14 rounded-lg bg-yellow-400/10 flex items-center justify-center mb-6">
-                  <svg
-                    className="w-8 h-8 text-yellow-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="text-gray-900 font-semibold text-xl mb-4">
-                  Transform Education
-                </h3>
-                <ul className="text-gray-600 space-y-3">
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
-                    <span>Modernize Nigerian education system</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
-                    <span>Create data-driven educational insights</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-yellow-400">•</span>
-                    <span>Foster academic excellence</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Our Impact */}
-        <section className="px-6 py-16 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-6">
-              <div className="inline-block bg-yellow-400/10 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium mb-3">
-                <span className="flex items-center gap-1">
-                  <svg
-                    className="w-4 h-4"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
-                  </svg>
-                  Impact
-                </span>
-              </div>
-              <h2 className="text-3xl font-bold text-gray-900">
-                Educational Growth{" "}
-                <span className="text-yellow-400">Made Easy</span>
-              </h2>
-              <p className="text-gray-600 mt-2">
-                Study less and learn more effectively for all your exams
-              </p>
-            </div>
-
-            <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="relative">
-                <div className="bg-white border border-gray-100 shadow-sm rounded-3xl p-5 relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div className="w-10 h-10 bg-yellow-400/20 rounded-full flex items-center justify-center">
-                      <svg
-                        className="w-5 h-5 text-yellow-400"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 3c-2.33 0-4.31 1.46-5.11 3.5h10.22c-.8-2.04-2.78-3.5-5.11-3.5z" />
-                      </svg>
-                    </div>
-                    <img
-                      src="/images/favicon white.png"
-                      alt="SabiDub"
-                      className="h-6"
-                    />
-                  </div>
-
-                  <div className="mt-10 relative">
-                    <div className="absolute -left-6 -top-6">
-                      <div className="w-12 h-12 rounded-full bg-white border border-gray-100 shadow-sm shadow-sm flex items-center justify-center overflow-hidden">
-                        <img
-                          src="/images/jnr.jpg"
-                          alt="Student"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-
-                    <div className="bg-yellow-400 text-[#111] p-6 rounded-xl rounded-tl-none">
-                      <h3 className="text-lg font-medium mb-2">
-                        Increase your
-                        <br />
-                        Academic Performance{" "}
-                        <span className="text-xs bg-white/10 rounded px-1 py-0.5 ml-1">
-                          📈 Globally
-                        </span>
-                      </h3>
-                      <p className="text-sm text-[#111]/80">
-                        SabiDub has helped me bridge the gap between secondary
-                        and university education, making my transition seamless
-                        and boosting my scores.
-                      </p>
-
-                      <button className="mt-4 bg-white text-yellow-400 px-4 py-2 rounded-full text-sm font-medium">
-                        Get Started →
-                      </button>
-                    </div>
-
-                    <div className="absolute -right-4 -bottom-4">
-                      <div className="w-12 h-12 rounded-full bg-white border border-gray-100 shadow-sm shadow-sm flex items-center justify-center overflow-hidden">
-                        <img
-                          src="/images/jnr.jpg"
-                          alt="Student"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="absolute bottom-0 left-0 w-full h-1/2 bg-yellow-400/10 -z-10 rounded-3xl"></div>
-              </div>
-
-              <div>
-                <div className="flex items-center mb-8">
-                  <div className="w-12 h-12 bg-yellow-400/20 rounded-full flex items-center justify-center mr-4">
-                    <svg
-                      className="w-6 h-6 text-yellow-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                      />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-gray-900 font-semibold">Easy Growth</h3>
-                    <p className="text-gray-600 text-sm">Easy Education.</p>
-                  </div>
-                </div>
-
-                <div className="space-y-8 pl-4 border-l-2 border-gray-200">
-                  <div className="relative">
-                    <div className="absolute -left-[25px] top-0 w-12 h-12 bg-yellow-400/20 rounded-full flex items-center justify-center">
-                      <div className="w-6 h-6 bg-yellow-400 rounded-full"></div>
-                    </div>
-                    <div className="pl-8">
-                      <h4 className="text-gray-900 font-medium">
-                        We make Education Simple
-                      </h4>
-                      <p className="text-gray-600 text-sm mt-1">
-                        Our platform connects secondary and tertiary education,
-                        closing the gap between educational levels.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute -left-[25px] top-0 w-12 h-12 bg-[#AFF8C8]/20 rounded-full flex items-center justify-center">
-                      <div className="w-6 h-6 bg-[#AFF8C8] rounded-full"></div>
-                    </div>
-                    <div className="pl-8">
-                      <h4 className="text-gray-900 font-medium">
-                        High-Quality Services
-                      </h4>
-                      <p className="text-gray-600 text-sm mt-1">
-                        Unlimited educational resources, study materials, and
-                        practice tests with real-time performance tracking.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="relative">
-                    <div className="absolute -left-[25px] top-0 w-12 h-12 bg-yellow-400/20 rounded-full flex items-center justify-center">
-                      <div className="w-6 h-6 bg-yellow-400 rounded-full"></div>
-                    </div>
-                    <div className="pl-8">
-                      <h4 className="text-gray-900 font-medium">
-                        Measurable Results
-                      </h4>
-                      <p className="text-gray-600 text-sm mt-1">
-                        95% of our students report better grades and smoother
-                        transitions to university education.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Impact Statistics */}
-        <section className="px-6 py-16 bg-white border border-gray-100 shadow-sm">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-yellow-400 text-4xl font-bold mb-2">
-                  500K+
-                </div>
-                <p className="text-gray-600">Active Students</p>
-              </div>
-              <div>
-                <div className="text-[#AFF8C8] text-4xl font-bold mb-2">
-                  95%
-                </div>
-                <p className="text-gray-600">Success Rate</p>
-              </div>
-              <div>
-                <div className="text-yellow-400 text-4xl font-bold mb-2">
-                  1000+
-                </div>
-                <p className="text-gray-600">Educational Resources</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Call to Action */}
-        <section className="px-6 py-16">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Ready to Transform Your Educational Journey?
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Join thousands of students already benefiting from our
-              comprehensive educational platform
-            </p>
-            <button className="bg-yellow-400 text-black px-8 py-3 rounded-md font-medium hover:bg-[#AFF8C8] transition-colors">
-              Get Started Today
-            </button>
-          </div>
-        </section>
-
-        {/* Premium Benefits Section */}
-        <section className="px-4 sm:px-6 py-8 sm:py-16 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 gap-6 sm:gap-10">
-              <div>
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
-                  Unlock Premium Benefits with
-                  <br className="hidden sm:block" />
-                  Our Advanced Features
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  Simplify your educational journey with our easy-to-use,
-                  scalable SabiDub platform. Built for Nigerian students, our
-                  tools make complex educational processes simple.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-6 sm:mt-10">
-              {/* AI-Powered Learning */}
-              <div className="bg-white border border-gray-100 shadow-sm p-4 sm:p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  AI-Powered Assistance
-                </h3>
-                <p className="text-gray-600 text-sm mb-6">
-                  Access a tailored AI assistant that adapts to your learning
-                  needs, delivering personalized educational insights.
-                </p>
-                <div className="flex items-center justify-center">
-                  <div className="w-full flex flex-col items-center">
-                    <div className="text-right w-full">
-                      <span className="text-yellow-400 font-bold">
-                        ₦ 18,073.49
-                      </span>
-                    </div>
-                    <div className="h-14 w-full mt-2">
-                      <div className="w-full h-10 bg-gradient-to-r from-yellow-400/40 to-yellow-400 rounded-md flex items-center justify-start pl-4">
-                        <span className="text-xs text-gray-800">
-                          Main Subjects
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right w-full mt-1">
-                      <span className="text-[#AFF8C8] text-xs">+9.5%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Exclusive Resources */}
-              <div className="bg-white border border-gray-100 shadow-sm p-4 sm:p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Exclusive Features
-                </h3>
-                <p className="text-gray-600 text-sm mb-6">
-                  Unlock advanced features like enhanced analytics, deeper
-                  customization, and priority mentorship.
-                </p>
-                <div className="flex items-center justify-center">
-                  <div className="bg-white rounded-lg p-4 w-full">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">
-                        Unlock all features
-                      </span>
-                      <span className="text-xs bg-yellow-400 text-gray-800 px-2 py-1 rounded-full">
-                        625+ resources
-                      </span>
-                    </div>
-                    <div className="mt-6">
-                      <img
-                        src="/images/jnr.jpg"
-                        alt="Student Profile"
-                        className="w-16 h-16 rounded-full mx-auto"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Growth Rate */}
-              <div className="bg-white border border-gray-100 shadow-sm p-4 sm:p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Growth rate
-                </h3>
-                <p className="text-gray-600 text-sm mb-6">
-                  The growth rate is a crucial metric in educational management
-                  that measures the increase in a student's performance.
-                </p>
-                <div className="flex flex-col items-center">
-                  <div className="text-[#AFF8C8] text-4xl font-bold">36%</div>
-                  <div className="text-gray-600 text-sm">Growth rate</div>
-                  <div className="w-full h-16 mt-2">
-                    <div className="flex items-end justify-between h-full">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                        <div
-                          key={i}
-                          className={`w-2 ${i === 7
-                            ? "h-full bg-[#AFF8C8]"
-                            : "h-1/2 bg-gray-200"
-                            } rounded-sm mx-1`}
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Activity Manager */}
-              <div className="bg-white border border-gray-100 shadow-sm p-4 sm:p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Study Planner Tools
-                </h3>
-                <p className="text-gray-600 text-sm mb-6">
-                  A Study Planner is a tool that allows students to manage
-                  tasks, track assignments, and organize study sessions
-                  efficiently.
-                </p>
-                <div className="bg-white rounded-lg p-3 w-full">
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm text-[#0F2830] font-semibold">
-                      Study manager
+          <div className="relative flex overflow-x-hidden">
+            <div className="animate-marquee flex items-center gap-12 sm:gap-24">
+              {/* Each logo item */}
+              {[
+                { name: "Facesta", type: 'image', src: '/images/facesta.png' },
+                { name: "University of Lagos", type: 'text' },
+                { name: "University of Ibadan", type: 'text' },
+                { name: "Covenant University", type: 'text' },
+                { name: "Obafemi Awolowo", type: 'text' },
+                { name: "Ahmadu Bello", type: 'text' },
+                { name: "University of Nigeria", type: 'text' },
+                { name: "WAEC Nigeria", type: 'text' },
+              ].map((brand, i) => (
+                <div key={i} className="flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer opacity-50 hover:opacity-100">
+                  {brand.type === 'image' ? (
+                    <img src={brand.src} alt={brand.name} className="h-10 sm:h-12 object-contain" />
+                  ) : (
+                    <span className="text-xl sm:text-2xl font-black text-gray-500 whitespace-nowrap tracking-tighter">
+                      {brand.name.toUpperCase()}
                     </span>
-                    <span className="text-xs text-gray-500">View details</span>
+                  )}
+                </div>
+              ))}
+
+              {/* Duplicate for infinite loop */}
+              {[
+                { name: "Facesta", type: 'image', src: '/images/facesta.png' },
+                { name: "University of Lagos", type: 'text' },
+                { name: "University of Ibadan", type: 'text' },
+                { name: "Covenant University", type: 'text' },
+                { name: "Obafemi Awolowo", type: 'text' },
+                { name: "Ahmadu Bello", type: 'text' },
+                { name: "University of Nigeria", type: 'text' },
+                { name: "WAEC Nigeria", type: 'text' },
+              ].map((brand, i) => (
+                <div key={`dup-${i}`} className="flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer opacity-50 hover:opacity-100">
+                  {brand.type === 'image' ? (
+                    <img src={brand.src} alt={brand.name} className="h-10 sm:h-12 object-contain" />
+                  ) : (
+                    <span className="text-xl sm:text-2xl font-black text-gray-500 whitespace-nowrap tracking-tighter">
+                      {brand.name.toUpperCase()}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Added Gradient Masks for smooth edges */}
+            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10"></div>
+            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10"></div>
+          </div>
+        </section>
+
+        {/* Unified Product Showcase - Light Bento Grid */}
+        <section className="px-4 sm:px-6 py-24 bg-white relative overflow-hidden border-t border-gray-100">
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tighter">
+                Empowering Academic Ambition.
+                <br />
+                <span className="text-gray-400">Guided by SabiDub technology.</span>
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
+                SabiDub connects secondary and tertiary education through innovative technology,
+                ensuring students are well-prepared for academic success at every level.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-[240px]">
+
+              {/* Card 1: Success Analytics (Large) */}
+              <div className="md:col-span-8 md:row-span-2 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 overflow-hidden relative group">
+                <div className="relative z-10">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#014751]/10 border border-[#014751]/20 text-[#014751] text-[10px] font-bold uppercase tracking-wider mb-4">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#014751] animate-pulse"></span>
+                    Real-time Tracking
                   </div>
-                  <div className="space-y-2">
-                    {["Mathematics", "English", "Physics"].map((subject) => (
-                      <div
-                        key={subject}
-                        className="flex items-center bg-white p-2 rounded text-[#0F2830]"
-                      >
-                        <div
-                          className={`w-3 h-3 rounded-full ${subject === "Mathematics"
-                            ? "bg-[#0F2830]"
-                            : subject === "English"
-                              ? "bg-[#AFF8C8]"
-                              : "bg-gray-400"
-                            } mr-2`}
-                        ></div>
-                        <span className="text-xs">{subject}</span>
-                      </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Design optimized for peak performance</h3>
+                  <p className="text-gray-500 max-w-md text-sm leading-relaxed font-medium">
+                    Track your academic progress with precision. From WAEC prep to University GPAs, we visualize your growth.
+                  </p>
+                  <div className="flex gap-4 mt-4">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-[#014751]"></div>
+                      <span className="text-[10px] font-bold text-gray-600 uppercase">Growth</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-[#014751]/30"></div>
+                      <span className="text-[10px] font-bold text-gray-600 uppercase">Target</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mockup Chart Visual */}
+                <div className="absolute bottom-0 right-0 left-0 h-1/2 flex items-end px-8">
+                  <div className="w-full h-full flex items-end gap-1">
+                    {[40, 70, 45, 90, 65, 80, 55, 95, 75, 85, 60, 100].map((h, i) => (
+                      <div key={i} className="flex-1 bg-gradient-to-t from-[#014751]/40 to-transparent rounded-t-lg transition-all duration-1000 group-hover:from-[#014751]/60" style={{ height: `${h}%`, opacity: 0.2 + (i * 0.05) }}></div>
                     ))}
                   </div>
+                  {/* Line Overlay */}
+                  <svg className="absolute left-0 bottom-[10%] w-full h-2/3 opacity-20" preserveAspectRatio="none">
+                    <path d="M0 100 Q 100 20, 200 80 T 400 30 T 600 70 T 800 10 T 1000 50" fill="none" stroke="#014751" strokeWidth="2" />
+                    <circle cx="400" cy="30" r="4" fill="#014751" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Card 2: Modular Learning (Small/Tall) */}
+              <div className="md:col-span-4 md:row-span-2 bg-gray-900 border border-gray-800 rounded-[32px] p-8 flex flex-col justify-between group overflow-hidden">
+                <div className="relative z-10">
+                  <h3 className="text-xl font-bold text-white mb-4">Modular Success</h3>
+                  <div className="space-y-3 font-mono text-[10px] text-gray-400">
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-teal-400">
+                      <span className="text-gray-500">01</span> .waec-prep {"{"} ... {"}"}
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-teal-400">
+                      <span className="text-gray-500">02</span> .jamb-mastery {"{"} ... {"}"}
+                    </div>
+                    <div className="p-3 rounded-xl bg-[#014751]/40 border border-[#014751]/50 text-white group-hover:scale-105 transition-transform shadow-lg">
+                      <span className="text-white/60">03</span> .uni-admission {"{"} ... {"}"}
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-8 relative z-10">
+                  <p className="text-xs text-gray-500 mb-2 font-bold uppercase tracking-widest">Next Step</p>
+                  <p className="text-sm text-gray-300">Automated pathways for every Nigerian student.</p>
+                </div>
+              </div>
+
+              {/* Card 3: Seamless Transition (Small) */}
+              <div className="md:col-span-4 md:row-span-1 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 flex flex-col justify-center items-center text-center overflow-hidden group relative">
+                <div className="absolute top-4 right-6 flex gap-1">
+                  <div className="w-1 h-1 rounded-full bg-teal-500/30 animate-ping"></div>
+                  <div className="w-1 h-1 rounded-full bg-teal-500/20"></div>
+                </div>
+                <div className="text-5xl font-black text-gray-900 tracking-tighter group-hover:scale-110 transition-transform duration-500 blur-[0.5px] group-hover:blur-0">
+                  Smooooooth.
+                </div>
+                <div className="flex items-center gap-3 mt-4">
+                  <p className="text-xs text-gray-400 uppercase tracking-[0.2em] font-bold">Secondary</p>
+                  <svg className="w-4 h-4 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 8l4 4m0 0l-4 4m4-4H3" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p className="text-xs text-gray-400 uppercase tracking-[0.2em] font-bold">Tertiary</p>
+                </div>
+              </div>
+
+              {/* Card 4: Integrations (Small) */}
+              <div className="md:col-span-4 md:row-span-1 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 flex flex-col justify-between group relative overflow-hidden">
+                {/* Decorative background grid/dots */}
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#014751 1px, transparent 0)', backgroundSize: '15px 15px' }}></div>
+
+                <div className="flex flex-wrap gap-2.5 items-center relative z-10">
+                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex flex-col items-center justify-center text-gray-900 group-hover:scale-110 transition-transform duration-500">
+                    <span className="font-black text-[9px] leading-tight">JAMB</span>
+                    <div className="w-1 h-1 bg-green-500 rounded-full mt-0.5"></div>
+                  </div>
+                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-[#014751] font-bold text-[9px] italic group-hover:scale-110 transition-transform delay-75 duration-500 leading-tight">WAEC</div>
+                  <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-gray-100 flex items-center justify-center text-gray-400 font-bold text-[9px] group-hover:scale-110 transition-transform delay-100 duration-500 opacity-60 leading-tight">NECO</div>
+                  <div className="w-10 h-10 rounded-xl bg-[#014751] flex items-center justify-center text-white group-hover:scale-110 transition-transform delay-150 duration-500 relative">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" /></svg>
+                    <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <h4 className="text-sm font-bold text-gray-900">Neat integrations</h4>
+                    <span className="text-[7px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-black uppercase tracking-tighter">API ACTIVE</span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 font-bold leading-relaxed">Direct links with JAMB, WAEC & Institutional Portals for real-time verification.</p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <div className="h-[2px] w-8 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-green-500 w-2/3 animate-[shimmer_2s_infinite]"></div>
+                    </div>
+                    <span className="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Last Synced: Just now</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 5: Profile/CMS (Small) */}
+              <div className="md:col-span-4 md:row-span-1 bg-white border border-gray-100 rounded-[32px] p-6 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-[#014751] text-white flex items-center justify-center text-xs font-black border-2 border-white shadow-sm">
+                      {userName?.substring(0, 1) || 'G'}
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-gray-900">Hello, {userName || 'Guest'}</p>
+                      <p className="text-[9px] text-gray-400 font-black tracking-[0.1em] uppercase">Academic Hub Active</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-1.5 pt-1">
+                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.6)] animate-pulse"></div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="bg-gray-50/80 rounded-2xl p-4 border border-gray-100">
+                    <div className="flex justify-between items-end mb-2">
+                      <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Total Progress</span>
+                      <span className="text-sm font-black text-[#014751]">87%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-[#014751] to-teal-400 w-[87%] rounded-full shadow-inner"></div>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <div className="flex-1 bg-gray-50/50 rounded-xl p-2.5 border border-gray-100 flex flex-col items-center">
+                      <span className="text-[8px] text-gray-400 font-bold uppercase mb-1 whitespace-nowrap">Missions Done</span>
+                      <span className="text-xs font-black text-gray-900">12/15</span>
+                    </div>
+                    <div className="flex-1 bg-[#014751]/5 rounded-xl p-2.5 border border-[#014751]/10 flex flex-col items-center">
+                      <span className="text-[8px] text-[#014751]/60 font-bold uppercase mb-1 whitespace-nowrap">Current Rank</span>
+                      <span className="text-xs font-black text-[#014751]">#4</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+
+
+        {/* Vision Section - Expanded Hero */}
+        <section className="py-12 bg-white overflow-hidden">
+          <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative w-full h-[600px] rounded-[48px] overflow-hidden group shadow-3xl">
+              <Image
+                src="/images/IMG_5713.JPG"
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                alt="SabiDub Vision"
+              />
+              {/* Overlay with Content */}
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center p-8 text-center">
+                <div className="bg-white/10 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] text-white font-bold uppercase tracking-widest border border-white/20 mb-6">
+                  Our Vision
+                </div>
+                <h2 className="text-4xl sm:text-5xl md:text-7xl font-neonderthaw text-white tracking-tight leading-tight">
+                  Prevent academic hurdle.
+                </h2>
+                <p className="mt-6 text-white/80 max-w-xl text-lg font-medium leading-relaxed">
+                  Empowering Nigerian students through holistic wellness and academic excellence.
+                  Your journey to success starts here.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Premium Benefits Section - Redesigned Bento Grid */}
+        <section className="px-4 sm:px-6 py-16 sm:py-24 bg-white">
+          <div className="max-w-7xl mx-auto">
+            <div className="mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+                Unlock Premium Benefits with
+                <br className="hidden sm:block" />
+                Our Advanced Features
+              </h2>
+              <p className="text-gray-500 max-w-2xl text-lg">
+                Simplify your educational journey with our easy-to-use, scalable SabiDub platform.
+                Built for Nigerian students, our tools make complex learning simple.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+
+              {/* Card 1: Pathways */}
+              <div className="md:col-span-4 bg-[#F8F9FA] rounded-[40px] p-10 flex flex-col h-[480px] overflow-hidden relative border border-gray-100/50">
+                <div className="relative z-10">
+                  <h3 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">Pathways</h3>
+                  <p className="text-gray-500 text-base leading-relaxed max-w-[280px]">
+                    Dive into a <span className="font-bold text-gray-900">world of knowledge</span> tailored to your goals. Explore curated courses...
+                  </p>
+                </div>
+
+                <div className="absolute inset-x-0 bottom-0 top-[45%] px-4 pb-4">
+                  <div className="relative w-full h-full rounded-[30px] overflow-hidden shadow-sm">
+                    <Image src="/images/2149156427.jpg" alt="Pathways" fill className="object-cover" />
+
+                    {/* Tags Overlay - Matching the image design */}
+                    <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center px-4">
+                      <div className="flex bg-white/40 backdrop-blur-md rounded-2xl p-1.5 gap-2 border border-white/20 shadow-xl">
+                        <span className="px-4 py-2 bg-white/90 text-gray-800 rounded-xl text-[10px] font-bold shadow-sm whitespace-nowrap">Coding</span>
+                        <span className="px-4 py-2 bg-white/90 text-gray-800 rounded-xl text-[10px] font-bold shadow-sm whitespace-nowrap">Design</span>
+                        <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center text-white flex-shrink-0">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        <span className="px-4 py-2 bg-white/90 text-gray-800 rounded-xl text-[10px] font-bold shadow-sm whitespace-nowrap">Health</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 2: 1 vs 1 */}
+              <div className="md:col-span-4 bg-[#F8F9FA] rounded-[40px] p-10 flex flex-col h-[480px] overflow-hidden border border-gray-100/50">
+                <div>
+                  <h3 className="text-4xl font-bold text-gray-900 mb-4 tracking-tight">1 vs 1</h3>
+                  <p className="text-gray-500 text-base leading-relaxed">
+                    We offers cutting-edge <span className="font-bold text-gray-900">tools</span> and 1 vs 1 solutions.
+                  </p>
+                </div>
+
+                {/* Avatar Network Hub Visual */}
+                <div className="flex-1 flex items-center justify-center relative mt-12 scale-110">
+                  <div className="w-56 h-56 relative">
+                    {/* Central Avatar */}
+                    <div className="absolute inset-0 m-auto w-20 h-20 rounded-full border-[6px] border-white shadow-2xl z-20 overflow-hidden ring-4 ring-[#AFF8C8]/20">
+                      <Image src="/images/jnr.jpg" alt="Avatar" fill className="object-cover" />
+                    </div>
+
+                    {/* Connecting Lines */}
+                    <svg className="absolute inset-0 w-full h-full text-gray-200" viewBox="0 0 100 100">
+                      <path d="M50 50 Q 30 30 15 15" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="3 3" />
+                      <path d="M50 50 Q 80 40 90 25" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="3 3" />
+                      <path d="M50 50 Q 20 60 10 80" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="3 3" />
+                      <path d="M50 50 Q 85 70 95 85" stroke="currentColor" strokeWidth="0.5" fill="none" strokeDasharray="3 3" />
+                    </svg>
+
+                    {/* Surrounding Avatars with status icons */}
+                    <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden ring-2 ring-gray-100 bg-white">
+                      <Image src="/images/128895.jpg" alt="M1" fill className="object-cover" />
+                    </div>
+                    <div className="absolute top-10 right-2 w-10 h-10 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                      <Image src="/images/146757.jpg" alt="M2" fill className="object-cover" />
+                    </div>
+                    <div className="absolute bottom-5 left-0 w-14 h-14 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white transition-transform hover:scale-110">
+                      <Image src="/images/2151104075.jpg" alt="M3" fill className="object-cover" />
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#AFF8C8] rounded-full border-2 border-white flex items-center justify-center">
+                        <span className="text-[10px] saturate-150">✍️</span>
+                      </div>
+                    </div>
+                    <div className="absolute bottom-4 right-6 w-11 h-11 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                      <Image src="/images/freepik__the-style-is-candid-image-photography-with-natural__83832.jpeg" alt="M4" fill className="object-cover" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 3: Discovery (Tall) */}
+              <div className="md:col-span-4 md:row-span-2 bg-[#F8F9FA] rounded-[40px] pt-12 overflow-hidden border border-gray-100/50 flex flex-col h-[984px]">
+                <div className="px-10 text-center">
+                  <div className="flex items-center justify-between mb-20 bg-white shadow-sm px-4 py-3 rounded-2xl border border-gray-100">
+                    <span className="font-black text-gray-900 text-sm flex items-center gap-2">
+                      <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white text-[10px]">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                        </svg>
+                      </div>
+                      SabiDub Ambassador
+                    </span>
+                    <button className="text-gray-400">
+                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="mb-6">
+                    <span className="px-4 py-1.5 bg-white shadow-sm border border-gray-100 text-gray-500 rounded-lg text-xs font-bold">Rebound <span className="text-black">C</span></span>
+                  </div>
+
+                  <h3 className="text-5xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">Discover learning path</h3>
+                  <p className="text-gray-500 text-base mb-12 max-w-[240px] mx-auto leading-relaxed">
+                    Stay organized and on track with your <span className="font-bold text-gray-900">personalized</span> schedule.
+                  </p>
+
+                  {/* Search Bar Visual - Matching exactly */}
+                  <div className="relative max-w-[340px] mx-auto mb-20">
+                    <div className="w-full bg-white border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.08)] rounded-[20px] py-4 px-6 text-left text-gray-300 text-xs flex items-center justify-between">
+                      Search for education desire...
+                      <div className="w-10 h-10 bg-[#014751] rounded-xl flex items-center justify-center text-white transition-transform hover:scale-105">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Topographic Waves Visual - Complex Green Style */}
+                <div className="mt-auto relative h-[610px] w-full">
+                  <div className="absolute inset-0 z-0">
+                    <Image src="/images/backgroundw.png" alt="Waves" fill className="object-cover object-bottom" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#40916C]/10 to-transparent"></div>
+                  </div>
+                  {/* Brand Badges at bottom */}
+                  <div className="absolute inset-x-0 bottom-12 px-10 flex justify-between items-center z-10 opacity-60">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Circus</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Mercury</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">Remotemiro</span>
+                    <div className="w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center">B</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 4: New-packed (Wide) */}
+              <div className="md:col-span-8 bg-gradient-to-br from-[#E9C46A]/30 via-[#40916C]/20 to-[#AFF8C8]/40 rounded-[40px] p-12 overflow-hidden border border-gray-100/30 h-[480px] relative">
+                <div className="grid grid-cols-1 md:grid-cols-2 h-full relative z-10">
+                  <div className="flex flex-col justify-between py-4">
+                    <div>
+                      <h3 className="text-6xl font-black text-[#014751] mb-8 leading-[1.1] tracking-tighter">New-packed<br />education</h3>
+                      <p className="text-[#014751]/80 text-xl leading-relaxed max-w-[340px]">
+                        Your personal hub for insights and analytics. <span className="font-bold text-[#014751]">Visualize</span> your progress identify...
+                      </p>
+                    </div>
+                    <div className="flex gap-4 mt-12">
+                      <button className="px-8 py-4 bg-[#014751] text-white rounded-2xl font-bold text-base shadow-xl hover:scale-105 transition-all">All Courses</button>
+                      <button className="px-8 py-4 bg-white text-[#014751] rounded-2xl font-bold text-base shadow-lg hover:scale-105 transition-all border border-gray-100">Join us</button>
+                    </div>
+                  </div>
+
+                  {/* Floating Documents Overlay - More layered like the image */}
+                  <div className="relative hidden md:block">
+                    {/* Top Document */}
+                    <div className="absolute top-0 -right-4 w-[380px] h-[480px] transform rotate-2 z-10 transition-transform hover:rotate-0 duration-500">
+                      <div className="bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] p-8 h-full border border-gray-100 overflow-hidden">
+                        <div className="w-12 h-1.5 bg-gray-100 rounded-full mb-8"></div>
+                        <p className="text-xs text-gray-400 font-bold mb-4 uppercase tracking-wider">Creative Strategy for: SabiDub</p>
+                        <h4 className="text-sm font-bold text-gray-800 mb-6">(hypothetical company)</h4>
+
+                        <div className="space-y-4">
+                          <div className="h-2 w-full bg-gray-50 rounded"></div>
+                          <div className="h-2 w-11/12 bg-gray-50 rounded"></div>
+                          <div className="h-40 w-full bg-[#AFF8C8]/10 rounded-2xl my-6 overflow-hidden relative">
+                            <Image src="/images/IMG_5569.JPG" alt="Edu" fill className="object-cover" />
+                          </div>
+                          <div className="h-2 w-full bg-gray-50 rounded"></div>
+                          <div className="h-2 w-4/5 bg-gray-50 rounded"></div>
+                        </div>
+
+                        <div className="absolute bottom-8 left-8 flex -space-x-3">
+                          <div className="w-10 h-10 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-50">
+                            <Image src="/images/jnr.jpg" alt="P1" fill className="object-cover" />
+                          </div>
+                          <div className="w-10 h-10 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-100">
+                            <Image src="/images/128895.jpg" alt="P2" fill className="object-cover" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Under Document */}
+                    <div className="absolute -bottom-10 right-[180px] w-[260px] h-[340px] transform -rotate-12 z-0">
+                      <div className="bg-white/80 rounded-3xl shadow-xl p-6 h-full border border-gray-200 backdrop-blur-sm">
+                        <div className="w-full h-40 bg-[#014751]/5 rounded-2xl mb-6 flex items-center justify-center">
+                          <svg className="w-12 h-12 text-[#014751]/20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                          </svg>
+                        </div>
+                        <div className="space-y-3">
+                          <div className="h-2 w-full bg-gray-200 rounded"></div>
+                          <div className="h-2 w-3/4 bg-gray-200 rounded"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="px-6 py-16 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                What Our Students Say
-              </h2>
-              <p className="text-gray-600 max-w-3xl mx-auto">
-                Hear from our students about how SabiDub has transformed their
-                educational journey
-              </p>
+        {/* Blog/Featured Articles Section */}
+        <section className="py-20 bg-gray-50/50 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className="text-3xl sm:text-4xl font-black tracking-tight text-[#0F2830]">
+                  Featured <span className="text-[#014751] italic font-serif">Articles</span>
+                </h2>
+                <p className="mt-2 text-gray-500 font-medium">Insights and guides from our expert educators</p>
+              </div>
+              <Link
+                href="/blog"
+                className="hidden sm:flex items-center gap-2 px-6 py-3 bg-white border border-gray-100 rounded-full shadow-sm hover:shadow-md transition-all group"
+              >
+                <span className="text-sm font-bold text-gray-700">See All Articles</span>
+                <div className="w-6 h-6 rounded-full bg-[#014751]/10 flex items-center justify-center group-hover:bg-[#014751] transition-colors">
+                  <svg className="w-3 h-3 text-[#014751] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {/* Testimonial 1 */}
-              <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-yellow-400/20 flex items-center justify-center">
-                    <span className="text-yellow-400 text-xl font-semibold">
-                      C
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-gray-900 font-medium">Chioma Okonkwo</div>
-                    <div className="text-gray-600 text-sm">SS3 Student</div>
-                  </div>
+            {/* Draggable Carousel */}
+            <div className="relative cursor-grab active:cursor-grabbing group/carousel">
+              {loadingPosts ? (
+                <div className="flex justify-center items-center py-20 w-full">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#014751]"></div>
                 </div>
-                <div className="flex mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      className="w-5 h-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+              ) : featuredPosts.length > 0 ? (
+                <motion.div
+                  drag="x"
+                  dragConstraints={{ left: -1000, right: 0 }}
+                  className="flex gap-6 pb-8"
+                >
+                  {featuredPosts.map((post, index) => (
+                    <motion.div
+                      key={post.id}
+                      className="flex-shrink-0 w-[90vw] sm:w-[600px] h-[450px] sm:h-[550px] rounded-[20px] p-8 sm:p-12 relative overflow-hidden flex flex-col justify-between group"
                     >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4">
-                  "SabiDub has been instrumental in my WAEC preparation. The
-                  personalized study plans and practice tests have boosted my
-                  confidence significantly."
-                </p>
-                <div className="text-yellow-400 text-sm">Verified Student</div>
-              </div>
+                      {/* Background Image */}
+                      <div className="absolute inset-0 z-0">
+                        <Image
+                          src={post.image || "/images/placeholder.png"}
+                          alt={post.title}
+                          fill
+                          className="object-cover"
+                        />
+                        {/* Dark Overlay for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/60 to-black/50"></div>
+                      </div>
+                      {/* Decorative Elements */}
+                      <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-white/5 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700 z-[1]" />
+                      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-black/10 rounded-full blur-3xl group-hover:scale-110 transition-transform duration-700 z-[1]" />
 
-              {/* Testimonial 2 */}
-              <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-[#AFF8C8]/20 flex items-center justify-center">
-                    <span className="text-[#AFF8C8] text-xl font-semibold">
-                      O
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-gray-900 font-medium">
-                      Oluwaseun Adeleke
-                    </div>
-                    <div className="text-gray-600 text-sm">
-                      University Freshman
-                    </div>
-                  </div>
-                </div>
-                <div className="flex mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      className="w-5 h-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  ))}
-                </div>
-                <p className="text-gray-600 mb-4">
-                  "The transition from secondary school to university was smooth
-                  thanks to SabiDub. Their resources helped me maintain my
-                  academic excellence."
-                </p>
-                <div className="text-yellow-400 text-sm">Verified Student</div>
-              </div>
+                      <div className="relative z-10">
+                        <span className="text-sm font-black uppercase tracking-widest text-[#AFF8C8]">{post.category}</span>
+                        <h3 className="mt-4 text-2xl sm:text-3xl font-bold text-white leading-tight line-clamp-2">{post.title}</h3>
+                        <p className="mt-3 text-white/90 text-sm line-clamp-3 max-w-[300px]">{post.excerpt}</p>
+                      </div>
 
-              {/* Testimonial 3 */}
-              <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-xl">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-12 h-12 rounded-full bg-yellow-400/20 flex items-center justify-center">
-                    <span className="text-yellow-400 text-xl font-semibold">
-                      A
-                    </span>
-                  </div>
-                  <div>
-                    <div className="text-gray-900 font-medium">Amina Ibrahim</div>
-                    <div className="text-gray-600 text-sm">SS2 Student</div>
-                  </div>
-                </div>
-                <div className="flex mb-4">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
-                      key={star}
-                      className="w-5 h-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                      <div className="relative z-10 flex items-end justify-between">
+                        <div>
+                          <p className="text-white/70 text-[10px] font-bold uppercase tracking-widest mb-4">
+                            By {post.author.name} • {post.readingTime || '5 min read'}
+                          </p>
+                          <Link href={`/blog/${post.slug}`}>
+                            <button className="px-8 py-3 bg-white text-[#0F2830] rounded-full font-black text-sm hover:scale-105 active:scale-95 transition-all shadow-lg hover:shadow-white/20">
+                              Read Article
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
+                    </motion.div>
                   ))}
+                </motion.div>
+              ) : (
+                <div className="text-center py-20 bg-white/5 rounded-3xl border-2 border-dashed border-gray-200">
+                  <p className="text-gray-500 font-medium">No articles available at the moment.</p>
                 </div>
-                <p className="text-gray-600 mb-4">
-                  "The AI-powered assistance and personalized study plans have
-                  helped me improve my grades dramatically. I'm more confident
-                  than ever!"
-                </p>
-                <div className="text-yellow-400 text-sm">Verified Student</div>
-              </div>
+              )}
+
+              {/* Drag Indicator Overlay */}
+              {!loadingPosts && featuredPosts.length > 1 && (
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-black/20 backdrop-blur-md px-6 py-3 rounded-full opacity-0 group-hover/carousel:opacity-100 transition-opacity pointer-events-none">
+                  <div className="flex gap-1">
+                    {[1, 2, 3].map(i => <div key={i} className="w-1.5 h-1.5 rounded-full bg-white/50" />)}
+                  </div>
+                  <span className="text-xs font-bold text-white/80 uppercase tracking-widest">Hold and Drag</span>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -1403,7 +752,7 @@ export default function Home() {
                 <p className="text-gray-600 mb-4">Ask any questions</p>
                 <a
                   href="mailto:support@sabidub.com"
-                  className="text-yellow-400 font-medium hover:underline"
+                  className="text-[#014751] font-medium hover:underline"
                 >
                   support@sabidub.com
                 </a>
@@ -1537,194 +886,9 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Smooth Learning Experience */}
-        <section className="px-6 py-16 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row gap-12">
-              <div className="md:w-1/2">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                  Smooth and Easy
-                  <br />
-                  Educational
-                  <br />
-                  Experience
-                </h2>
-                <p className="text-gray-600 mb-6">
-                  With user-friendly features, comprehensive and logical tests,
-                  and careful attention to educational standards, our platform
-                  simplifies learning processes.
-                </p>
-
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <svg
-                      className="w-5 h-5 text-yellow-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-gray-700">
-                      Seamless transition between educational levels
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <svg
-                      className="w-5 h-5 text-yellow-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-gray-700">
-                      Comprehensive exchange across different subjects
-                    </span>
-                  </div>
-                </div>
-
-                <button className="mt-6 bg-white text-gray-900 px-4 py-2 rounded hover:bg-gray-200 transition-colors">
-                  Get Started
-                </button>
-              </div>
-
-              <div className="md:w-1/2">
-                <div className="bg-white border border-gray-100 shadow-sm p-6 rounded-lg shadow-sm">
-                  <div className="flex justify-between mb-8">
-                    <div>
-                      <img
-                        src="/images/favicon white.png  "
-                        alt="SabiDub"
-                        className="w-8 h-8 mb-2"
-                      />
-                      <div className="text-xs text-gray-500">Study Tracker</div>
-                    </div>
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                      <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center mb-6">
-                    <div>
-                      <div className="text-xs text-gray-500">From Subject</div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center">
-                          <span className="text-[8px]">Ma</span>
-                        </div>
-                        <span className="text-sm text-gray-900">Mathematics</span>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-gray-500 ">To Subject</div>
-                      <div className="flex items-center gap-1">
-                        <div className="w-5 h-5 bg-gray-200 rounded-full flex items-center justify-center">
-                          <span className="text-[8px]">Ph</span>
-                        </div>
-                        <span className="text-sm text-gray-900">Physics</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white p-4 rounded-lg mb-4">
-                    <div className="text-center text-2xl font-bold text-gray-800 mb-1">
-                      ₦ 3,200.00
-                    </div>
-                    <div className="flex justify-center">
-                      <div className="text-xs text-gray-500">Study Credits</div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <div className="w-10 h-6 rounded-full bg-gray-200 flex items-center justify-center">
-                      <div className="w-5 h-5 rounded-full bg-yellow-400"></div>
-                    </div>
-                    <div className="border-t border-dashed border-gray-300 w-32 h-0 mt-3"></div>
-                    <div className="w-10 h-6 rounded-full bg-gray-200 flex items-center justify-center">
-                      <div className="w-5 h-5 rounded-full bg-[#AFF8C8]"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="px-6 py-12 bg-white">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-wrap justify-between items-center">
-              <div className="flex items-center gap-3 mb-4 md:mb-0">
-                <div className="flex -space-x-2">
-                  {[1, 2, 3].map((i) => (
-                    <div
-                      key={i}
-                      className="w-8 h-8 rounded-full bg-white border border-gray-100 shadow-sm border-2 border-[#111]"
-                    ></div>
-                  ))}
-                </div>
-                <div>
-                  <div className="text-gray-900 font-bold">120K+</div>
-                  <div className="text-xs text-gray-600">
-                    Our platform is a trusted choice for many students
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 mb-4 md:mb-0">
-                <div className="text-yellow-500 text-xl">★</div>
-                <div>
-                  <div className="text-gray-900 font-bold">4.9</div>
-                  <div className="text-xs text-gray-500">
-                    Our high rating proves our platform's quality and positive
-                    user reviews
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <div className="text-gray-900 font-bold">89+</div>
-                  <div className="text-xs text-gray-500">
-                    Our global presence ensures reliable, efficient local
-                    solutions
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Add Footer at the bottom of main */}
         <Footer />
-      </main>
+      </main >
     </>
   );
 }

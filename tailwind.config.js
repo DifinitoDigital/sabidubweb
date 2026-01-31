@@ -8,7 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#c4ff61",
+        primary: "#014751",
+      },
+      fontFamily: {
+        'league-script': ['var(--font-league-script)', 'cursive'],
+        'neonderthaw': ['var(--font-neonderthaw)', 'cursive'],
       },
     },
   },
