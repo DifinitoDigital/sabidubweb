@@ -25,12 +25,12 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>SabiDub - Coming Soon</title>
-        <meta name="description" content="SabiDub - Coming Soon. Get notified when we launch!" />
-        <link rel="icon" href="/images/favicon black.png" />
+        <title>SabiDub | Transforming Education through Innovation</title>
+        <meta name="description" content="SabiDub is a comprehensive digital ecosystem for modern African schools, offering advanced management tools and admission analysis for educational excellence." />
+        <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content="SabiDub - Coming Soon" />
-        <meta property="og:description" content="SabiDub - Coming Soon. Get notified when we launch!" />
+        <meta property="og:title" content="SabiDub | Transforming Education through Innovation" />
+        <meta property="og:description" content="Experience the future of school management with SabiDub. Comprehensive tools for modern African schools, visionary educators, and ambitious students." />
         <meta property="og:image" content="/images/black.png" />
         <meta property="og:type" content="website" />
       </Head>

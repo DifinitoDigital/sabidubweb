@@ -393,8 +393,8 @@ export default function Contact() {
                 <div className="text-[#014751] mb-4">
                   <FaMapMarkerAlt size={48} />
                 </div>
-                <p className="text-gray-900 text-lg">Interactive Map Coming Soon</p>
-                <p className="text-gray-500 text-sm mt-2">We're working on adding an interactive map to show our location</p>
+                <p className="text-gray-900 text-lg">SabiDub HQ Location</p>
+                <p className="text-gray-500 text-sm mt-2">Find our primary administrative hub in Victoria Island, Lagos</p>
               </div>
             </motion.div>
           </div>

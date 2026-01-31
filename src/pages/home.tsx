@@ -16,10 +16,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SabiDub | Bridging Educational Excellence in Nigeria</title>
+        <title>SabiDub | School Management System & Educational Excellence</title>
         <meta
           name="description"
-          content="SabiDub - Connecting secondary and tertiary education in Nigeria through innovative technology and comprehensive learning solutions"
+          content="SabiDub is Nigeria's leading school management system, bridging the gap between secondary and tertiary education with innovative management and diagnostic tools."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
