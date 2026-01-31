@@ -131,10 +131,23 @@ export default function Pricing() {
 
 
 
-  // Filter plans client-side based on billing cycle, school type, and usage limit
-  let filteredPlans = subscriptionPlans.filter(plan => {
-    // console.debug("Filtering plan:", plan.name, plan);
+  // Determine available categories
+  const hasSchoolPlans = subscriptionPlans.some(plan => plan.planType === "SCHOOL" || plan.planType === "MANAGEMENT");
+  const hasAdmissionPlans = subscriptionPlans.some(plan => plan.planType === "ADMISSION_CHECKER" || plan.planType === "SECONDARY" || plan.planType === "TERTIARY");
 
+  // Auto-switch away from empty categories
+  useEffect(() => {
+    if (!loading && subscriptionPlans.length > 0) {
+      if (schoolType === "school" && !hasSchoolPlans && hasAdmissionPlans) {
+        setSchoolType("admission");
+      } else if (schoolType === "admission" && !hasAdmissionPlans && hasSchoolPlans) {
+        setSchoolType("school");
+      }
+    }
+  }, [subscriptionPlans, loading, hasSchoolPlans, hasAdmissionPlans, schoolType]);
+
+  // Filter plans client-side based on billing cycle, school type, and usage limit
+  const filteredPlans = subscriptionPlans.filter(plan => {
     const billingMatch = schoolType === "admission" ? true : (isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY");
 
     let typeMatch = false;
@@ -144,24 +157,11 @@ export default function Pricing() {
       typeMatch = plan.planType === "ADMISSION_CHECKER" || plan.planType === "SECONDARY" || plan.planType === "TERTIARY";
     }
 
-    const result = billingMatch && typeMatch;
-    return result;
+    return billingMatch && typeMatch;
   });
 
-  // If no plans match the school type filter, show all plans for that billing cycle
-  if (filteredPlans.length === 0) {
-    // console.debug("No plans match school type filter, showing all plans for billing cycle");
-    filteredPlans = subscriptionPlans.filter(plan => {
-      const billingMatch = isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY";
-
-
-
-      return billingMatch;
-    });
-  }
-
   // Get all plans and sort by price (highest to lowest)
-  const allPlans = filteredPlans.sort((a, b) => b.price - a.price);
+  const allPlans = [...filteredPlans].sort((a, b) => b.price - a.price);
 
   // Helper to format price
   const formatPrice = (price: number) => {
@@ -261,17 +261,23 @@ export default function Pricing() {
               )}
 
               {/* School Type Toggle */}
-              <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
-                {(["school", "admission"] as SchoolType[]).map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setSchoolType(type)}
-                    className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${schoolType === type ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
-                  >
-                    {type === "admission" ? "Admission Checker" : "School"}
-                  </button>
-                ))}
-              </div>
+              {(hasSchoolPlans && hasAdmissionPlans) && (
+                <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
+                  {(["school", "admission"] as SchoolType[]).map((type) => {
+                    const available = type === "school" ? hasSchoolPlans : hasAdmissionPlans;
+                    if (!available) return null;
+                    return (
+                      <button
+                        key={type}
+                        onClick={() => setSchoolType(type)}
+                        className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${schoolType === type ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
+                      >
+                        {type === "admission" ? "Admission Checker" : "School"}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </motion.div>
 
