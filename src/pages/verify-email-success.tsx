@@ -170,9 +170,11 @@ export default function VerifyEmailSuccess() {
                 href={
                   result?.redirectType === 'system_staff'
                     ? "https://portal.sabidub.com/auth/staff/signin"
-                    : result?.redirectType === 'student'
-                      ? "/"
-                      : "https://portal.sabidub.com/auth/school/signin"
+                    : result?.redirectType === 'school_staff'
+                      ? "https://portal.sabidub.com/auth/school/signin"
+                      : result?.redirectType === 'student'
+                        ? "/"
+                        : "https://portal.sabidub.com/auth/school/signin"
                 }
                 onClick={handleLoginClick}
                 className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
