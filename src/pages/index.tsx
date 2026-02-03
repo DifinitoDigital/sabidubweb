@@ -125,9 +125,9 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8 sm:mb-16 px-4">
-              <button className="bg-[#014751] text-white px-6 py-3 rounded-md font-medium w-full sm:w-auto">
+              <a href="https://portal.sabidub.com/auth/school/signin" className="bg-[#014751] text-white px-6 py-3 rounded-md font-medium w-full sm:w-auto text-center">
                 Get Started
-              </button>
+              </a>
               <button className="border border-white/20 text-white px-6 py-3 rounded-md font-medium hover:bg-white/10 transition-colors w-full sm:w-auto">
                 Request a demo
               </button>
@@ -164,7 +164,7 @@ export default function Home() {
                     <div className="w-10 h-10 rounded-full bg-gray-700 border-2 border-white shadow-sm"></div>
                     <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm"></div>
                   </div>
-                  <span className="text-gray-600 font-bold text-lg">500+ Schools</span>
+                  <span className="text-gray-600 font-bold text-lg">0+ Schools</span>
                 </div>
               </div>
             </div>

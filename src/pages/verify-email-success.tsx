@@ -2,13 +2,16 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // Example: How to use the API URL for email verification in React
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
 
 export default function VerifyEmailSuccess() {
-  const [result, setResult] = useState<{ error?: boolean; message?: string } | null>(null);
+  const [result, setResult] = useState<{ error?: boolean; message?: string; redirectType?: string } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -35,11 +38,11 @@ export default function VerifyEmailSuccess() {
       });
   }, []);
 
-
   useEffect(() => {
     // Confetti effect on load
     const confetti = () => {
-      const colors = ["#FFEDB1", "#ffdb82", "#4CAF50", "#ffffff"];
+      // Updated colors to include the theme primary color #014751
+      const colors = ["#014751", "#FFEDB1", "#ffdb82", "#4CAF50", "#ffffff"];
       const confettiCount = 100;
 
       for (let i = 0; i < confettiCount; i++) {
@@ -84,6 +87,10 @@ export default function VerifyEmailSuccess() {
     confetti();
   }, []);
 
+  const handleLoginClick = () => {
+    setIsRedirecting(true);
+  };
+
   return (
     <>
       <Head>
@@ -98,7 +105,9 @@ export default function VerifyEmailSuccess() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen bg-white flex items-center justify-center px-4">
+      <Navbar />
+
+      <main className="min-h-screen bg-white flex items-center justify-center px-4 pt-24 pb-12">
         <div className="max-w-md w-full">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
@@ -111,7 +120,7 @@ export default function VerifyEmailSuccess() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-20 h-20 bg-yellow-600/10 rounded-full mx-auto mb-6 flex items-center justify-center"
+              className="w-20 h-20 bg-[#014751]/10 rounded-full mx-auto mb-6 flex items-center justify-center"
             >
               <svg
                 className="w-12 h-12 text-[#014751]"
@@ -146,8 +155,9 @@ export default function VerifyEmailSuccess() {
               transition={{ delay: 0.4 }}
               className="text-gray-600 mb-8"
             >
-              Thank you for verifying your email address. Your account is now
-              fully activated and you can access all features of SabiDub.
+              {result?.redirectType === 'student'
+                ? "Your student account is successfully verified. Please return to the SabiDub mobile app to log in."
+                : "Thank you for verifying your email address. Your account is now fully activated and you can access all features of SabiDub."}
             </motion.p>
 
             <motion.div
@@ -156,24 +166,42 @@ export default function VerifyEmailSuccess() {
               transition={{ delay: 0.5 }}
               className="space-y-4"
             >
-              <Link
-                href="/dashboard"
-                className="block w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#013b43] transition-colors font-medium"
+              <a
+                href={
+                  result?.redirectType === 'system_staff'
+                    ? "https://portal.sabidub.com/auth/staff/signin"
+                    : result?.redirectType === 'student'
+                      ? "/"
+                      : "https://portal.sabidub.com/auth/school/signin"
+                }
+                onClick={handleLoginClick}
+                className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
               >
-                Go to Dashboard
-              </Link>
+                <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
+                  {result?.redirectType === 'student'
+                    ? "Return to Home"
+                    : "Login to Your Account"}
+                </span>
+                {isRedirecting && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              </a>
               <Link
                 href="/"
-                className="block w-full bg-[#252525] text-gray-900 py-3 rounded-lg hover:bg-[#333] transition-colors"
+                className="block w-full bg-white border border-gray-200 text-[#014751] py-3 rounded-lg hover:bg-gray-50 transition-all font-medium group relative overflow-hidden"
               >
-                Back to Home
+                <span className="relative z-10">Back to Home</span>
+                <div className="absolute inset-0 bg-gray-50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
               </Link>
             </motion.div>
 
-            {/* Decorative Elements */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FFEDB1] via-[#ffdb82] to-[#FFEDB1]"></div>
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#FFEDB1]/5 rounded-full blur-2xl"></div>
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#FFEDB1]/5 rounded-full blur-2xl"></div>
+            {/* Decorative Elements - Updated to use #014751 theme */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#014751] via-[#026e7d] to-[#014751]"></div>
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#014751]/5 rounded-full blur-2xl"></div>
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#014751]/5 rounded-full blur-2xl"></div>
           </motion.div>
 
           {/* Additional Info */}
@@ -187,7 +215,7 @@ export default function VerifyEmailSuccess() {
               Need help?{" "}
               <Link
                 href="/contact"
-                className="text-[#014751] hover:text-[#ffdb82] transition-colors"
+                className="text-[#014751] hover:text-[#026e7d] transition-colors font-medium"
               >
                 Contact Support
               </Link>
@@ -195,6 +223,8 @@ export default function VerifyEmailSuccess() {
           </motion.div>
         </div>
       </main>
+
+      <Footer showAppDownload={false} />
     </>
   );
 }

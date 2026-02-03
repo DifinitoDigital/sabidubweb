@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // Reset password API function
 const resetPassword = async (token: string, newPassword: string) => {
@@ -75,9 +77,10 @@ export default function ResetPassword() {
       setResult(response);
 
       if (!response.error) {
-        // Redirect to reset-success page after successful reset
+        // Redirect to reset-success page with redirectType
         setTimeout(() => {
-          router.push('/reset-success');
+          const redirectType = response.redirectType || 'unknown';
+          router.push(`/reset-success?redirectType=${redirectType}`);
         }, 2000);
       }
     } catch (error) {
@@ -103,6 +106,7 @@ export default function ResetPassword() {
     }
   };
 
+  // Show error page if token is invalid
   if (result?.error && !token) {
     return (
       <>
@@ -113,7 +117,9 @@ export default function ResetPassword() {
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main className="min-h-screen bg-white flex items-center justify-center px-4">
+        <Navbar />
+
+        <main className="min-h-screen bg-white flex items-center justify-center px-4 pt-24 pb-12">
           <div className="max-w-md w-full">
             <motion.div
               initial={{ scale: 0.5, opacity: 0 }}
@@ -168,20 +174,24 @@ export default function ResetPassword() {
               >
                 <Link
                   href="/forgot-password"
-                  className="block w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#013b43] transition-colors font-medium"
+                  className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
                 >
-                  Request New Reset
+                  <span className="relative z-10">Request New Reset</span>
+                  <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                 </Link>
                 <Link
                   href="/"
-                  className="block w-full bg-white border border-gray-100 shadow-sm text-gray-900 py-3 rounded-lg hover:bg-[#333] transition-colors"
+                  className="block w-full bg-white border border-gray-200 text-[#014751] py-3 rounded-lg hover:bg-gray-50 transition-all font-medium group relative overflow-hidden"
                 >
-                  Back to Home
+                  <span className="relative z-10">Back to Home</span>
+                  <div className="absolute inset-0 bg-gray-50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                 </Link>
               </motion.div>
             </motion.div>
           </div>
         </main>
+
+        <Footer showAppDownload={false} />
       </>
     );
   }
@@ -195,7 +205,9 @@ export default function ResetPassword() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="min-h-screen bg-white flex items-center justify-center px-4">
+      <Navbar />
+
+      <main className="min-h-screen bg-white flex items-center justify-center px-4 pt-24 pb-12">
         <div className="max-w-md w-full">
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
@@ -209,8 +221,8 @@ export default function ResetPassword() {
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 className={`mb-6 p-4 rounded-lg ${result.error
-                    ? 'bg-red-500/10 border border-red-500/20'
-                    : 'bg-green-500/10 border border-green-500/20'
+                  ? 'bg-red-500/10 border border-red-500/20'
+                  : 'bg-green-500/10 border border-green-500/20'
                   }`}
               >
                 <div className="flex items-center gap-3">
@@ -238,7 +250,7 @@ export default function ResetPassword() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-              className="w-20 h-20 bg-yellow-600/10 rounded-full mx-auto mb-6 flex items-center justify-center"
+              className="w-20 h-20 bg-[#014751]/10 rounded-full mx-auto mb-6 flex items-center justify-center"
             >
               <svg
                 className="w-12 h-12 text-[#014751]"
@@ -291,9 +303,9 @@ export default function ResetPassword() {
                   name="newPassword"
                   value={formData.newPassword}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-white border border-gray-100 shadow-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.newPassword
-                      ? 'border-red-500 focus:ring-red-500/20'
-                      : 'border-gray-600 focus:ring-[#FFEDB1]/20 focus:border-[#FFEDB1]'
+                  className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.newPassword
+                    ? 'border-red-500 focus:ring-red-500/20'
+                    : 'border-gray-200 focus:ring-[#014751]/20 focus:border-[#014751]'
                     } text-gray-900 placeholder-gray-400`}
                   placeholder="Enter your new password"
                   disabled={loading}
@@ -314,9 +326,9 @@ export default function ResetPassword() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
-                  className={`w-full px-4 py-3 bg-white border border-gray-100 shadow-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.confirmPassword
-                      ? 'border-red-500 focus:ring-red-500/20'
-                      : 'border-gray-600 focus:ring-[#FFEDB1]/20 focus:border-[#FFEDB1]'
+                  className={`w-full px-4 py-3 bg-white border rounded-lg focus:outline-none focus:ring-2 transition-colors ${errors.confirmPassword
+                    ? 'border-red-500 focus:ring-red-500/20'
+                    : 'border-gray-200 focus:ring-[#014751]/20 focus:border-[#014751]'
                     } text-gray-900 placeholder-gray-400`}
                   placeholder="Confirm your new password"
                   disabled={loading}
@@ -327,22 +339,22 @@ export default function ResetPassword() {
               </div>
 
               {/* Password Requirements */}
-              <div className="bg-white border border-gray-100 shadow-sm p-4 rounded-lg">
+              <div className="bg-gray-50 border border-gray-200 p-4 rounded-lg">
                 <p className="text-sm text-gray-600 mb-2">Password requirements:</p>
                 <ul className="text-xs text-gray-500 space-y-1">
-                  <li className={`flex items-center gap-2 ${formData.newPassword.length >= 8 ? 'text-green-400' : ''}`}>
+                  <li className={`flex items-center gap-2 ${formData.newPassword.length >= 8 ? 'text-green-500' : ''}`}>
                     <span>{formData.newPassword.length >= 8 ? '✓' : '○'}</span>
                     At least 8 characters long
                   </li>
-                  <li className={`flex items-center gap-2 ${/(?=.*[a-z])/.test(formData.newPassword) ? 'text-green-400' : ''}`}>
+                  <li className={`flex items-center gap-2 ${/(?=.*[a-z])/.test(formData.newPassword) ? 'text-green-500' : ''}`}>
                     <span>{/(?=.*[a-z])/.test(formData.newPassword) ? '✓' : '○'}</span>
                     One lowercase letter
                   </li>
-                  <li className={`flex items-center gap-2 ${/(?=.*[A-Z])/.test(formData.newPassword) ? 'text-green-400' : ''}`}>
+                  <li className={`flex items-center gap-2 ${/(?=.*[A-Z])/.test(formData.newPassword) ? 'text-green-500' : ''}`}>
                     <span>{/(?=.*[A-Z])/.test(formData.newPassword) ? '✓' : '○'}</span>
                     One uppercase letter
                   </li>
-                  <li className={`flex items-center gap-2 ${/(?=.*\d)/.test(formData.newPassword) ? 'text-green-400' : ''}`}>
+                  <li className={`flex items-center gap-2 ${/(?=.*\d)/.test(formData.newPassword) ? 'text-green-500' : ''}`}>
                     <span>{/(?=.*\d)/.test(formData.newPassword) ? '✓' : '○'}</span>
                     One number
                   </li>
@@ -353,31 +365,33 @@ export default function ResetPassword() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#FFEDB1] text-black py-3 rounded-lg hover:bg-[#013b43] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
               >
-                {loading ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                    Resetting Password...
+                <span className={`${loading ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
+                  Reset Password
+                </span>
+                {loading && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   </div>
-                ) : (
-                  'Reset Password'
                 )}
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </button>
 
               {/* Back to Login */}
               <Link
                 href="/login"
-                className="block w-full bg-white border border-gray-100 shadow-sm text-gray-900 py-3 rounded-lg hover:bg-[#333] transition-colors text-center"
+                className="block w-full bg-white border border-gray-200 text-[#014751] py-3 rounded-lg hover:bg-gray-50 transition-all text-center font-medium group relative overflow-hidden"
               >
-                Back to Login
+                <span className="relative z-10">Back to Login</span>
+                <div className="absolute inset-0 bg-gray-50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
               </Link>
             </motion.form>
 
             {/* Decorative Elements */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#FFEDB1] via-[#ffdb82] to-[#FFEDB1]"></div>
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#FFEDB1]/5 rounded-full blur-2xl"></div>
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#FFEDB1]/5 rounded-full blur-2xl"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#014751] via-[#026e7d] to-[#014751]"></div>
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-[#014751]/5 rounded-full blur-2xl"></div>
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#014751]/5 rounded-full blur-2xl"></div>
           </motion.div>
 
           {/* Additional Info */}
@@ -391,7 +405,7 @@ export default function ResetPassword() {
               Need help?{" "}
               <Link
                 href="/contact"
-                className="text-[#014751] hover:text-[#ffdb82] transition-colors"
+                className="text-[#014751] hover:text-[#026e7d] transition-colors font-medium"
               >
                 Contact Support
               </Link>
@@ -399,6 +413,8 @@ export default function ResetPassword() {
           </motion.div>
         </div>
       </main>
+
+      <Footer showAppDownload={false} />
     </>
   );
-} 
+}

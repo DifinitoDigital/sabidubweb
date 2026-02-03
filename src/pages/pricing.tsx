@@ -322,6 +322,8 @@ export default function Pricing() {
                       onClick={() => {
                         if (schoolType === "admission") {
                           router.push("/admission-checker");
+                        } else {
+                          window.location.href = "https://portal.sabidub.com/auth/school/signin";
                         }
                       }}
                       className="w-full py-4 bg-[#014751] hover:bg-[#013b43] text-white rounded-xl text-xs font-bold uppercase transition-all shadow-lg shadow-[#014751]/10 mb-8 active:scale-95"
@@ -417,6 +419,8 @@ export default function Pricing() {
                                       onClick={() => {
                                         if (schoolType === "admission") {
                                           router.push("/admission-checker");
+                                        } else {
+                                          window.location.href = "https://portal.sabidub.com/auth/school/signin";
                                         }
                                       }}
                                       className="w-full py-3 bg-white text-gray-900 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 rounded-xl text-xs font-bold uppercase transition-all whitespace-nowrap"
