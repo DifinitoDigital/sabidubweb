@@ -12,13 +12,22 @@ export default function VerifyEmailSuccess() {
   const [result, setResult] = useState<{ error?: boolean; message?: string; redirectType?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const email = params.get('email');
     const token = params.get('token');
+    const userTypeParam = params.get('userType');
+
     console.log('Email from URL:', email);
     console.log('Token from URL:', token);
+    console.log('UserType from URL:', userTypeParam);
+
+    // Set userType from URL parameter
+    if (userTypeParam) {
+      setUserType(userTypeParam);
+    }
 
     fetch(`${apiUrl}/auth/school/verify-email?email=${email}&token=${token}`, {
       headers: {
@@ -155,8 +164,8 @@ export default function VerifyEmailSuccess() {
               transition={{ delay: 0.4 }}
               className="text-gray-600 mb-8"
             >
-              {result?.redirectType === 'student'
-                ? "Your student account is successfully verified. Please return to the SabiDub mobile app to log in."
+              {userType === 'student' || result?.redirectType === 'student'
+                ? "Your student account is successfully verified. You can now return to the SabiDub app to log in and start learning."
                 : "Thank you for verifying your email address. Your account is now fully activated and you can access all features of SabiDub."}
             </motion.p>
 
@@ -168,11 +177,11 @@ export default function VerifyEmailSuccess() {
             >
               <a
                 href={
-                  result?.redirectType === 'system_staff'
+                  userType === 'staff' || result?.redirectType === 'system_staff'
                     ? "https://portal.sabidub.com/auth/staff/signin"
-                    : result?.redirectType === 'school_staff'
+                    : userType === 'school' || result?.redirectType === 'school_staff'
                       ? "https://portal.sabidub.com/auth/school/signin"
-                      : result?.redirectType === 'student'
+                      : userType === 'student' || result?.redirectType === 'student'
                         ? "/"
                         : "https://portal.sabidub.com/auth/school/signin"
                 }
@@ -180,7 +189,7 @@ export default function VerifyEmailSuccess() {
                 className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
               >
                 <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
-                  {result?.redirectType === 'student'
+                  {userType === 'student' || result?.redirectType === 'student'
                     ? "Return to Home"
                     : "Login to Your Account"}
                 </span>
