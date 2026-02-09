@@ -20,10 +20,6 @@ export default function VerifyEmailSuccess() {
     const token = params.get('token');
     const userTypeParam = params.get('userType');
 
-    console.log('Email from URL:', email);
-    console.log('Token from URL:', token);
-    console.log('UserType from URL:', userTypeParam);
-
     // Set userType from URL parameter
     if (userTypeParam) {
       setUserType(userTypeParam);
@@ -38,12 +34,10 @@ export default function VerifyEmailSuccess() {
       .then(data => {
         setResult(data);
         setLoading(false);
-        console.log('Backend response:', data);
       })
       .catch(err => {
         setResult({ error: true, message: "Verification failed." });
         setLoading(false);
-        console.error('Verification failed:', err);
       });
   }, []);
 

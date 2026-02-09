@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import "@/lib/console-override";
 import type { AppProps } from "next/app";
 import Head from 'next/head';
 import { Manrope } from 'next/font/google';
