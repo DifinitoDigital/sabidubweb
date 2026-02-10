@@ -171,13 +171,13 @@ export default function VerifyEmailSuccess() {
             >
               <a
                 href={
-                  userType === 'staff' || result?.redirectType === 'system_staff'
+                  result?.redirectType === 'system_staff' || userType === 'staff'
                     ? "https://portal.sabidub.com/auth/staff/signin"
-                    : userType === 'school' || result?.redirectType === 'school_staff'
+                    : result?.redirectType === 'school_staff' || userType === 'school'
                       ? "https://portal.sabidub.com/auth/school/signin"
-                      : userType === 'student' || result?.redirectType === 'student'
+                      : result?.redirectType === 'student' || userType === 'student'
                         ? "/"
-                        : "https://portal.sabidub.com/auth/school/signin"
+                        : "https://portal.sabidub.com/auth/staff/signin" // Default to staff portal as it's the main entry for internal users
                 }
                 onClick={handleLoginClick}
                 className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
