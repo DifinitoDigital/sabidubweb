@@ -106,7 +106,22 @@ export default function Pricing() {
         // Remove the planType parameter to fetch all plans
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || '';
         const response = await axios.get(`${baseUrl}/subscription/plans`);
-        setSubscriptionPlans(response.data);
+
+        // Map backend features to expected format
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mappedPlans = response.data.map((plan: any) => ({
+          ...plan,
+          features: plan.features || (Array.isArray(plan.subscriptionFeatures)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ? plan.subscriptionFeatures.map((f: any) => ({
+              id: f.id,
+              name: f.name,
+              description: f.description
+            }))
+            : [])
+        }));
+
+        setSubscriptionPlans(mappedPlans);
         setError("");
       } catch (err) {
         console.error("Error fetching subscription plans:", err);
@@ -225,9 +240,11 @@ export default function Pricing() {
         <section className="pt-32 pb-20 text-center px-4">
           <motion.div variants={fadeInUp} className="max-w-4xl mx-auto mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our pricing</h1>
-            <p className="text-gray-500 font-medium text-sm md:text-base">
-              Free 7-day trial, no credit card required
-            </p>
+            {schoolType !== "admission" && (
+              <p className="text-gray-500 font-medium text-sm md:text-base">
+                Free 7-day trial, no credit card required
+              </p>
+            )}
 
             <div className="mt-8 flex flex-col items-center gap-6">
               {/* Billing Toggle */}
