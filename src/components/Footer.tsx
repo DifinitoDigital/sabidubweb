@@ -68,7 +68,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FFEDB1] rounded-full blur-[100px] opacity-20" />
                   <div className="relative z-10 w-full h-[400px] rounded-3xl overflow-hidden shadow-2xl transform rotate-2">
                     <Image
-                      src="/images/2151104075.jpg"
+                      src="/images/work.jpg"
                       alt="App Interface"
                       fill
                       className="object-cover"

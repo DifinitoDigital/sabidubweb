@@ -763,22 +763,20 @@ export default function Home() {
               </Link>
             </div>
 
-            {/* Draggable Carousel */}
-            <div className="relative cursor-grab active:cursor-grabbing group/carousel">
+            {/* Horizontal Scroll Carousel */}
+            <div className="relative group/carousel">
               {loadingPosts ? (
                 <div className="flex justify-center items-center py-20 w-full">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#014751]"></div>
                 </div>
               ) : featuredPosts.length > 0 ? (
-                <motion.div
-                  drag="x"
-                  dragConstraints={{ left: -1000, right: 0 }}
-                  className="flex gap-6 pb-8"
+                <div
+                  className="flex gap-6 pb-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
                 >
                   {featuredPosts.map((post, index) => (
                     <Link key={post.id} href={`/blog/${post.slug}`}>
                       <motion.div
-                        className="flex-shrink-0 w-[90vw] sm:w-[600px] h-[500px] sm:h-[600px] rounded-[40px] relative overflow-hidden flex flex-col justify-end group shadow-2xl cursor-pointer"
+                        className="snap-center flex-shrink-0 w-[90vw] sm:w-[600px] h-[500px] sm:h-[600px] rounded-[40px] relative overflow-hidden flex flex-col justify-end group shadow-2xl cursor-pointer"
                       >
                         {/* Background Image */}
                         <div className="absolute inset-0 z-0 transition-transform duration-1000 group-hover:scale-110">
@@ -799,16 +797,10 @@ export default function Home() {
                               <h3 className="text-xl sm:text-3xl font-bold text-white leading-[1.2] mb-3 tracking-tight">
                                 {post.title}
                               </h3>
-                              <p className="text-white/80 text-xs sm:text-sm line-clamp-2 max-w-2xl leading-relaxed mb-4">
-                                {post.excerpt}
-                              </p>
-                              <div className="flex items-center gap-2 group/link">
-                                <span className="text-white text-[10px] font-bold uppercase tracking-widest">Read more</span>
-                                <div className="p-1 rounded-full bg-white/10 group-hover/link:bg-white group-hover/link:rotate-45 transition-all duration-300">
-                                  <svg className="w-2.5 h-2.5 text-white group-hover/link:text-gray-900 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
-                                  </svg>
-                                </div>
+                              <div className="flex items-center gap-3 text-white/80 text-[10px] sm:text-xs">
+                                <span className="uppercase tracking-widest font-medium">{post.author?.name || 'SabiDub Editor'}</span>
+                                <span className="w-1 h-1 rounded-full bg-white/50"></span>
+                                <span className="uppercase tracking-widest font-medium">{post.readingTime || '5 min read'}</span>
                               </div>
                             </div>
 
@@ -819,7 +811,7 @@ export default function Home() {
                       </motion.div>
                     </Link>
                   ))}
-                </motion.div>
+                </div>
               ) : (
                 <div className="text-center py-20 bg-white/5 rounded-3xl border-2 border-dashed border-gray-200">
                   <p className="text-gray-500 font-medium">No articles available at the moment.</p>
