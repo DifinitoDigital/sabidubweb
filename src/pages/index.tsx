@@ -114,9 +114,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mb-6">
-              Bridging Educational Excellence
-              <br className="hidden sm:block" />
-              in Nigeria
+              Bridging Educational Excellence <br className="hidden sm:block" /> in Nigeria
             </h1>
 
             <p className="text-white/70 text-center max-w-2xl mx-auto mb-8 px-4">
