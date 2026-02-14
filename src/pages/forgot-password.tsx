@@ -98,7 +98,7 @@ export default function ForgotPassword() {
               transition={{ delay: 0.4 }}
               className="text-gray-600 mb-8 text-center"
             >
-              Enter your email address and we'll send you a link to reset your password.
+              Enter your email address and we&apos;ll send you a link to reset your password.
             </motion.p>
 
             <motion.form
@@ -135,8 +135,8 @@ export default function ForgotPassword() {
                   initial={{ y: -20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   className={`p-4 rounded-lg border ${result.error
-                      ? 'bg-red-500/10 border-red-500/20'
-                      : 'bg-green-500/10 border-green-500/20'
+                    ? 'bg-red-500/10 border-red-500/20'
+                    : 'bg-green-500/10 border-green-500/20'
                     }`}
                 >
                   <div className="flex items-center gap-3">

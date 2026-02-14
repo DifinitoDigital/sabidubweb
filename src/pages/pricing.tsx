@@ -1,11 +1,11 @@
 
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import Footer from "../components/Footer";
 import { motion } from "framer-motion";
 import axios from "axios";
-import { LuZap, LuCheck, LuSearch } from "react-icons/lu";
+import { FaBolt as LuZap, FaCheck as LuCheck, FaMagnifyingGlass as LuSearch } from "react-icons/fa6";
 import Navbar from "../components/Navbar";
 
 type SchoolType = "school" | "admission";
@@ -108,11 +108,11 @@ export default function Pricing() {
         const response = await axios.get(`${baseUrl}/subscription/plans`);
 
         // Map backend features to expected format
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line
         const mappedPlans = response.data.map((plan: any) => ({
           ...plan,
           features: plan.features || (Array.isArray(plan.subscriptionFeatures)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line
             ? plan.subscriptionFeatures.map((f: any) => ({
               id: f.id,
               name: f.name,
@@ -173,7 +173,7 @@ export default function Pricing() {
     return `₦${price.toLocaleString()}`;
   };
 
-  const compareSpecificPlans = () => {
+  const compareSpecificPlans = useCallback(() => {
     if (!selectedPlan1 || !selectedPlan2) {
       setError('Please select two plans to compare');
       return;
@@ -187,12 +187,12 @@ export default function Pricing() {
       return;
     }
 
-    const features1 = plan1.features.map(f => typeof f === 'string' ? f : f.name);
-    const features2 = plan2.features.map(f => typeof f === 'string' ? f : f.name);
+    const features1 = plan1.features.map((f: any) => typeof f === 'string' ? f : f.name);
+    const features2 = plan2.features.map((f: any) => typeof f === 'string' ? f : f.name);
 
-    const uniqueToFirst = features1.filter(f => !features2.includes(f));
-    const uniqueToSecond = features2.filter(f => !features1.includes(f));
-    const commonFeatures = features1.filter(f => features2.includes(f));
+    const uniqueToFirst = features1.filter((f: any) => !features2.includes(f));
+    const uniqueToSecond = features2.filter((f: any) => !features1.includes(f));
+    const commonFeatures = features1.filter((f: any) => features2.includes(f));
 
     setComparisonResult({
       plan1Name: plan1.name,
@@ -208,13 +208,13 @@ export default function Pricing() {
     });
 
     setError("");
-  };
+  }, [selectedPlan1, selectedPlan2, allPlans]);
 
   useEffect(() => {
     if (selectedPlan1 && selectedPlan2) {
       compareSpecificPlans();
     }
-  }, [selectedPlan1, selectedPlan2, allPlans]);
+  }, [selectedPlan1, selectedPlan2, compareSpecificPlans]);
 
   return (
     <>
@@ -362,7 +362,7 @@ export default function Pricing() {
               <div className="mt-16 md:mt-24">
                 <div className="text-center mb-12">
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Compare all features</h2>
-                  <p className="text-gray-500">Detailed breakdown of what's included in each plan</p>
+                  <p className="text-gray-500">Detailed breakdown of what&apos;s included in each plan</p>
                 </div>
 
                 <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_20px_40px_rgba(0,0,0,0.04)] overflow-hidden">

@@ -1,204 +1,223 @@
 import Head from "next/head";
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
-import { FaUsers, FaCalendarAlt, FaPlane, FaEnvelope, FaPhone, FaChalkboardTeacher, FaStar, FaQuestionCircle, FaDownload, FaCreditCard, FaBook, FaLaptop } from "react-icons/fa";
+import {
+  FaMagnifyingGlass as FaSearch,
+  FaBookOpen,
+  FaUserPlus,
+  FaCreditCard,
+  FaShieldHalved as FaShieldAlt,
+  FaRegCommentDots,
+  FaCircleQuestion as FaQuestionCircle,
+  FaChevronDown,
+  FaDesktop,
+  FaGlobe,
+  FaLifeRing
+} from "react-icons/fa6";
 import Footer from "../components/Footer";
-import Navbar from "../components/Navbar"; // Added import
+import Navbar from "../components/Navbar";
+import { motion, AnimatePresence } from "framer-motion";
+
+const categories = [
+  {
+    icon: <FaUserPlus className="w-6 h-6" />,
+    title: "Account & Onboarding",
+    description: "Learn how to set up your account, verify your identity, and get started.",
+    links: ["Create Account", "Login Issues", "Security Settings"]
+  },
+  {
+    icon: <FaCreditCard className="w-6 h-6" />,
+    title: "Subscription & Billing",
+    description: "Understand our flexible pricing plans, billing cycles, and payments.",
+    links: ["Pricing Plans", "Payment Methods", "Refund Policy"]
+  },
+  {
+    icon: <FaBookOpen className="w-6 h-6" />,
+    title: "Learning Resources",
+    description: "Discover how to access modules, take exams, and track your progress.",
+    links: ["Subject Modules", "Exam Prep", "Progress Reports"]
+  },
+  {
+    icon: <FaShieldAlt className="w-6 h-6" />,
+    title: "Premium Features",
+    description: "Explore AR/VR simulations, AI assistance, and advanced analytics.",
+    links: ["AI Tutor", "AR/VR Setup", "Performance Insights"]
+  },
+  {
+    icon: <FaDesktop className="w-6 h-6" />,
+    title: "Platform Support",
+    description: "Troubleshoot technical issues across web and mobile platforms.",
+    links: ["App Download", "Offline Mode", "Technical Errors"]
+  },
+  {
+    icon: <FaGlobe className="w-6 h-6" />,
+    title: "Partnerships",
+    description: "Information for institutions, NGOs, and telecom partners.",
+    links: ["Institutional Plans", "Telecom Bundles", "SabiDub Ambassadors"]
+  }
+];
+
+const faqs = [
+  {
+    question: "How do I access SabiDub offline?",
+    answer: "Our Basic Plan and above include an offline mode. You can download specific learning modules while connected to the internet and access them anytime without data."
+  },
+  {
+    question: "Which devices are supported?",
+    answer: "SabiDub is fully functional on standard smartphones, tablets, and desktops via our web platform and dedicated mobile apps."
+  },
+  {
+    question: "What happens if I have payment issues?",
+    answer: "All payments are processed securely. If you experience any issues, please contact our support team at isabidub@gmail.com with your transaction reference."
+  },
+  {
+    question: "Are there discounts for institutions?",
+    answer: "Yes, we offer competitive bulk pricing for schools and institutions. Contact our partnership team for a custom quote tailored to your student body size."
+  }
+];
 
 export default function Help() {
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+  };
 
   return (
     <>
       <Head>
         <title>Help Center | SabiDub - Educational Excellence in Nigeria</title>
-        <meta name="description" content="Get help and support for using SabiDub's educational platform." />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name="description" content="Get professional support and explore our resources to maximize your SabiDub experience." />
       </Head>
-      <main className="min-h-screen bg-white relative pt-20">
+
+      <main className="min-h-screen bg-white relative">
         <Navbar />
 
-        {/* Help Center Content */}
-        <section className="px-4 sm:px-6 py-12 sm:py-20 max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Help Center</h1>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-              Welcome to the SabiDub Help Center. Your resource for getting the most out of our EdTech platform.
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto space-y-12">
-            <div>
-              <p className="text-gray-600 mb-8">
-                Whether you're a student, educator, or institutional user, we're here to support you with our accessible, engaging, and effective learning solutions. Our support team targets &lt;24-hour resolution and 90% satisfaction rates.
+        {/* Hero Search Section */}
+        <section className="pt-32 pb-16 bg-[#014751] text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+            <motion.div
+              initial="initial"
+              animate="animate"
+              variants={fadeInUp}
+            >
+              <h1 className="text-4xl md:text-6xl font-black mb-6 tracking-tight">How can we help you?</h1>
+              <p className="text-white/70 text-lg mb-12 max-w-2xl mx-auto">
+                Search our knowledge base or browse categories below to find answers to your questions.
               </p>
+
+              <div className="max-w-2xl mx-auto relative group">
+                <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#014751] transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Search for articles, guides, and more..."
+                  className="w-full bg-white text-gray-900 py-5 pl-16 pr-6 rounded-2xl shadow-2xl border-none focus:ring-4 focus:ring-[#AFF8C8]/30 transition-all text-lg"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Categories Grid */}
+        <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {categories.map((category, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="p-8 rounded-[32px] bg-[#F8F9FA] border border-gray-100 hover:border-[#014751]/20 hover:shadow-xl transition-all group"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-[#014751]/10 text-[#014751] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#014751] group-hover:text-white transition-all">
+                  {category.icon}
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-3">{category.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed mb-6">
+                  {category.description}
+                </p>
+                <div className="space-y-3">
+                  {category.links.map((link, lIdx) => (
+                    <Link key={lIdx} href="#" className="flex items-center gap-2 text-sm font-bold text-[#014751] hover:underline">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#014751]/30"></span>
+                      {link}
+                    </Link>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* Featured FAQ Section */}
+        <section className="py-24 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 tracking-tight">Popular Questions</h2>
+              <p className="text-gray-500">Quick answers to our most frequently asked questions.</p>
             </div>
 
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Getting Started</h2>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">How to Create an Account</h3>
-              <ol className="list-decimal list-inside text-gray-600 space-y-2">
-                <li>Visit www.sabidub.com or download the SabiDub app (iOS/Android).</li>
-                <li>Click "Sign Up" and provide your name, email, phone number, and (if applicable) institution details.</li>
-                <li>For users under 18, obtain parental/guardian consent via the registration form.</li>
-                <li>Choose a plan (Basic: ₦1,200/month, High Access: ₦2,800/month, Premium: ₦3,200/month) or start with a 30-day freemium trial.</li>
-                <li>Verify your email to activate your account.</li>
-              </ol>
-              <p className="text-gray-600 mt-4">Metric: 85% onboarding success rate.</p>
+            <div className="space-y-4">
+              {faqs.map((faq, idx) => (
+                <div
+                  key={idx}
+                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden"
+                >
+                  <button
+                    onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
+                    className="w-full p-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="font-bold text-gray-900">{faq.question}</span>
+                    <FaChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${activeFaq === idx ? 'rotate-180' : 'rotate-0'}`} />
+                  </button>
+                  <AnimatePresence>
+                    {activeFaq === idx && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="px-6 pb-6 overflow-hidden"
+                      >
+                        <p className="text-gray-600 text-sm leading-relaxed border-t border-gray-50 pt-4">
+                          {faq.answer}
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              ))}
             </div>
+          </div>
+        </section>
 
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Accessing the Platform</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Log in via website or app using your credentials.</li>
-                <li>Offline mode available for Basic Plan users in areas with limited internet (36% penetration in Africa).</li>
-                <li>Compatible with smartphones (40%+ penetration in Nigeria), tablets, and desktops.</li>
-              </ul>
-            </div>
+        {/* Support CTA */}
+        <section className="py-24 px-4 sm:px-6 max-w-7xl mx-auto">
+          <div className="bg-[#014751] rounded-[48px] p-8 md:p-16 relative overflow-hidden flex flex-col items-center text-center">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#AFF8C8]/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#AFF8C8]/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
 
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Subscription and Billing</h2>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Choosing a Plan</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Basic Plan (₦1,200/month): Core modules, offline access, basic analytics.</li>
-                <li>High Access Plan (₦2,800/month): Full library, adaptive learning, gamified content.</li>
-                <li>Premium Plan (₦3,200/month): AR/VR simulations, advanced analytics, priority support.</li>
-                <li>Institutional Plans: Bulk discounts (e.g., ₦2,500/user/month for 50+ users).</li>
-                <li>Annual subscriptions save up to 20% (e.g., ₦12,000/year for Basic).</li>
-                <li>Launch Discount: 20% off first 3 months (e.g., Basic: ₦960/month).</li>
-              </ul>
-            </div>
+            <FaLifeRing className="w-16 h-16 text-[#AFF8C8] mb-8" />
+            <h2 className="text-3xl md:text-5xl font-black text-white mb-6">Still need help?</h2>
+            <p className="text-white/70 max-w-xl mb-12 text-lg">
+              Our dedicated support team is available to assist you with any questions or technical difficulties.
+            </p>
 
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Payment Issues</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Payments are processed securely via third-party providers (e.g., Paystack).</li>
-                <li>Contact hello@definito.digital for billing disputes or refunds (within 7 days if no content accessed).</li>
-                <li>For institutional subscriptions, contact our sales team for invoicing: hello@definito.digital.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Free Trial</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>30-day freemium access to limited features.</li>
-                <li>Upgrade to a paid plan via the platform or app to unlock full features (e.g., AR/VR, advanced analytics).</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Using SabiDub Features</h2>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Interactive Learning Modules</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Access 50+ modules (English at launch, Hausa/Yoruba by Year 2).</li>
-                <li>Engage with gamified content and AR/VR simulations (Premium Plan).</li>
-                <li>Use adaptive learning paths for personalized education based on performance.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Educator Tools</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Access AI-driven lesson planning and real-time analytics (High Access/Premium).</li>
-                <li>Explore professional development courses (Premium Plan).</li>
-                <li>Upload lesson plans (subject to moderation; see Terms).</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Offline Mode</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Download content for offline use (Basic Plan and above).</li>
-                <li>Ideal for rural users with limited internet access.</li>
-                <li>Sync progress when reconnected.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Analytics and Progress Tracking</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>View real-time analytics on quiz results, module completion, and engagement (High Access/Premium).</li>
-                <li>Educators: Track class performance and customize lessons.</li>
-                <li>Institutions: Access aggregated data for academic insights.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Troubleshooting</h2>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Login Issues</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Reset password via "Forgot Password" link on login page.</li>
-                <li>Ensure correct email and password; check spam for verification emails.</li>
-                <li>Contact hello@definito.digital if issues persist.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Platform Errors</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>We target &lt;2% bug rate and 95% uptime.</li>
-                <li>Clear browser cache or reinstall app for technical glitches.</li>
-                <li>Report issues via hello@definito.digital for resolution within 24 hours.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">Content Access</h3>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Ensure active subscription (Basic, High Access, Premium).</li>
-                <li>Check device compatibility (smartphone, tablet, or desktop).</li>
-                <li>For offline mode, download content while connected.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Promotions and Rewards</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Launch Campaign (Feb-Apr 2025): 20% off first 3 months (e.g., Basic: ₦960).</li>
-                <li>Back-to-School (May-Jul 2025): 25% off Premium for 100+ users (₦2,400/user/month).</li>
-                <li>Referral Program: Earn ₦500 credit per paid referral.</li>
-                <li>Gamification Contest (Aug-Oct 2025): Complete 10 modules for a chance to win ₦10,000 vouchers or free High Access month.</li>
-                <li>Loyalty Program: Earn 100 points/month (redeemable for ₦100 discounts).</li>
-                <li>Student Ambassadors: Join to promote SabiDub and earn free Basic Plan access.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Partnerships</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Collaborations with telecoms (e.g., MTN, Airtel) for data bundles.</li>
-                <li>NGO partnerships for subsidized access in underserved areas.</li>
-                <li>Contact partnerships@sabidub.com for inquiries.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Contact Support</h2>
-              <ul className="list-none text-gray-600 space-y-2">
-                <li>Email: hello@definito.digital (response within 24 hours)</li>
-                <li>Phone: +234-810-911-7784 (12-hour support shifts)</li>
-                <li>Live Chat: Available on website/app (High Access/Premium users)</li>
-                <li>FAQ Bot: Access via website for instant answers to common questions</li>
-                <li>Address: SabiDub Headquarters, Abuja, Nigeria</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Feedback</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Share feedback via hello@definito.digital or in-app surveys to help us achieve 80% user satisfaction.</li>
-                <li>Join our "Future of Learning" webinars for live demos and Q&A.</li>
-              </ul>
-            </div>
-
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">Additional Resources</h2>
-              <ul className="list-disc list-inside text-gray-600 space-y-2">
-                <li>Tutorials: Access pre-recorded onboarding videos on www.sabidub.com/support.</li>
-                <li>Blog: Visit www.sabidub.com/blog for tips on using adaptive learning, gamification, and educator tools.</li>
-                <li>Community: Follow us on Instagram, X, and WhatsApp for updates and success stories.</li>
-              </ul>
+            <div className="flex flex-col sm:flex-row gap-6 w-full max-w-lg">
+              <a href="mailto:isabidub@gmail.com" className="flex-1 bg-white text-[#014751] py-4 px-8 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-[#AFF8C8] transition-all">
+                <FaRegCommentDots className="w-5 h-5" />
+                Email Support
+              </a>
+              <a href="tel:+2348109117784" className="flex-1 bg-white/10 backdrop-blur-md text-white border border-white/20 py-4 px-8 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-white/20 transition-all">
+                <FaQuestionCircle className="w-5 h-5" />
+                Call Center
+              </a>
             </div>
           </div>
         </section>
@@ -207,4 +226,4 @@ export default function Help() {
       </main>
     </>
   );
-} 
+}

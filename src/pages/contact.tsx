@@ -58,7 +58,7 @@ export default function Contact() {
         <title>Contact Us - SabiDub | Educational Excellence in Nigeria</title>
         <meta
           name="description"
-          content="Get in touch with SabiDub for any questions about our educational services. We're here to help you succeed."
+          content="Get in touch with SabiDub for any questions about our educational services. We&apos;re here to help you succeed."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -83,15 +83,15 @@ export default function Contact() {
               variants={fadeInUp}
               className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6"
             >
-              Let's Start a
+              Let&apos;s Start a
               <span className="text-[#014751] block">Conversation</span>
             </motion.h1>
             <motion.p
               variants={fadeIn}
               className="text-gray-900 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed"
             >
-              Ready to transform your educational journey? We're here to help you succeed.
-              Reach out to us and let's discuss how SabiDub can support your learning goals.
+              Ready to transform your educational journey? We&apos;re here to help you succeed.
+              Reach out to us and let&apos;s discuss how SabiDub can support your learning goals.
             </motion.p>
           </div>
         </motion.section>
@@ -220,7 +220,7 @@ export default function Contact() {
                   className="text-gray-900 text-center mb-8 max-w-2xl mx-auto"
                 >
                   Have a question or want to learn more about our services?
-                  Fill out the form below and we'll get back to you as soon as possible.
+                  Fill out the form below and we&apos;ll get back to you as soon as possible.
                 </motion.p>
 
                 <motion.form

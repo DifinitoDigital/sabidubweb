@@ -79,7 +79,7 @@ export default function Home() {
         <title>SabiDub | School Management System & Educational Excellence</title>
         <meta
           name="description"
-          content="SabiDub is Nigeria's leading school management system, bridging the gap between secondary and tertiary education with innovative management and diagnostic tools."
+          content="SabiDub is Nigeria&apos;s leading school management system, bridging the gap between secondary and tertiary education with innovative management and diagnostic tools."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -194,7 +194,7 @@ export default function Home() {
               ].map((brand, i) => (
                 <div key={i} className="flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer opacity-50 hover:opacity-100">
                   {brand.type === 'image' ? (
-                    <img src={brand.src} alt={brand.name} className="h-10 sm:h-12 object-contain" />
+                    <Image src={brand.src as string} alt={brand.name} width={120} height={48} className="h-10 sm:h-12 object-contain" />
                   ) : (
                     <span className="text-xl sm:text-2xl font-black text-gray-500 whitespace-nowrap tracking-tighter">
                       {brand.name.toUpperCase()}
@@ -216,7 +216,7 @@ export default function Home() {
               ].map((brand, i) => (
                 <div key={`dup-${i}`} className="flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer opacity-50 hover:opacity-100">
                   {brand.type === 'image' ? (
-                    <img src={brand.src} alt={brand.name} className="h-10 sm:h-12 object-contain" />
+                    <Image src={brand.src as string} alt={brand.name} width={120} height={48} className="h-10 sm:h-12 object-contain" />
                   ) : (
                     <span className="text-xl sm:text-2xl font-black text-gray-500 whitespace-nowrap tracking-tighter">
                       {brand.name.toUpperCase()}
@@ -912,8 +912,8 @@ export default function Home() {
                       <div className="pb-4">
                         <p className="text-gray-600 text-sm">
                           You can update your profile information from your
-                          account dashboard. Navigate to "Profile Settings" and
-                          you'll be able to edit your personal details,
+                          account dashboard. Navigate to &quot;Profile Settings&quot; and
+                          you&apos;ll be able to edit your personal details,
                           educational information, and preferences.
                         </p>
                       </div>

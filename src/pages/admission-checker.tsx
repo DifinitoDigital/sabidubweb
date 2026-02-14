@@ -1,43 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Footer from '../components/Footer';
-import Navbar from '../components/Navbar'; // Added import
+import Navbar from '../components/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Inter } from 'next/font/google';
+import { Manrope } from 'next/font/google';
 import {
-    LuCheck,
-    LuX,
-    LuInfo,
+    FaCheck as LuCheck,
+    FaXmark as LuX,
+    FaCircleInfo as LuInfo,
+    FaSchool as LuSchool,
+    FaGraduationCap as LuGraduationCap,
+    FaMagnifyingGlass as LuSearch,
+    FaChevronRight as LuChevronRight,
+    FaChevronDown as LuChevronDown,
+    FaSliders as LuSettings2,
+    FaClockRotateLeft as LuHistory,
+    FaBolt as LuZap,
+    FaChartLine as LuActivity,
+    FaBookOpen as LuBookOpen,
+    FaArrowRight as LuArrowRight,
+    FaPlus as LuPlus,
+    FaTrashCan as LuTrash2,
+    FaLock as LuLock,
+    FaLockOpen as LuLockOpen,
+    FaCartShopping as LuShoppingCart,
+    FaChartBar as LuChartBar,
+    FaFileCircleCheck as LuFileCheck,
+    FaDownload as LuDownload,
+    FaCopy as LuCopy,
+    FaTriangleExclamation as LuTriangleAlert
+} from 'react-icons/fa6';
 
-    LuSchool,
-    LuGraduationCap,
-    LuSearch,
-    LuChevronRight,
-    LuChevronDown,
-    LuSettings2,
-    LuBinary,
-    LuHistory,
-    LuZap,
-    LuActivity,
-    LuBookOpen,
-    LuArrowRight,
-    LuPlus,
-    LuTrash2,
-    LuLock,
-    LuLockOpen,
-    LuShoppingCart
-} from 'react-icons/lu';
-
-const inter = Inter({ subsets: ['latin'] });
-
+const manrope = Manrope({ subsets: ['latin'], weight: ['400', '500', '600', '700', '800'] });
 
 // --- Type Definitions ---
-type Grade = 'A1' | 'B2' | 'B3' | 'C4' | 'C5' | 'C6';
+type Grade = 'A1' | 'B2' | 'B3' | 'C4' | 'C5' | 'C6' | 'D7' | 'E8' | 'F9';
 type ExamType = 'WAEC' | 'NECO' | 'NABTEB' | 'GCE';
-type AdmissionChance = 'High' | 'Medium' | 'Low';
 
 interface SubjectEntry {
     id: string;
@@ -46,56 +47,70 @@ interface SubjectEntry {
 }
 
 const GRADE_VALUES: Record<Grade, number> = {
-    'A1': 6, 'B2': 5, 'B3': 4, 'C4': 3, 'C5': 2, 'C6': 1
+    'A1': 6, 'B2': 5, 'B3': 4, 'C4': 3, 'C5': 2, 'C6': 1, 'D7': 0, 'E8': -1, 'F9': -2
 };
 
 // --- Components ---
 
 const InputLabel = ({ children }: { children: React.ReactNode }) => (
-    <label className="block text-xs font-black uppercase tracking-widest text-gray-500 mb-2">{children}</label>
+    <label className="block text-[11px] font-extrabold uppercase tracking-[0.15em] text-[#014751]/60 mb-2.5">{children}</label>
 );
 
-const Select = ({ value, onChange, options, placeholder }: { value: string, onChange: (val: string) => void, options: string[], placeholder?: string }) => (
-    <div className="relative">
+const Select = ({ value, onChange, options, placeholder, icon: Icon }: { value: string, onChange: (val: string) => void, options: string[], placeholder?: string, icon?: any }) => (
+    <div className="relative group">
         <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 appearance-none focus:outline-none focus:border-[#014751] focus:ring-1 focus:ring-[#014751] transition-colors font-medium text-sm"
+            className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 appearance-none focus:outline-none focus:border-[#014751] focus:ring-4 focus:ring-[#014751]/5 transition-all font-semibold text-sm shadow-sm"
         >
             {placeholder && <option value="">{placeholder}</option>}
             {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
         </select>
-        <div className="absolute right-4 top-3.5 text-gray-500 pointer-events-none">
-            <LuChevronDown />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none text-gray-400 group-focus-within:text-[#014751] transition-colors">
+            {Icon && <Icon className="w-4 h-4" />}
+            <LuChevronDown className="w-4 h-4" />
         </div>
     </div>
 );
 
 const GradeSelect = ({ value, onChange }: { value: Grade, onChange: (val: Grade) => void }) => (
-    <div className="relative min-w-[80px]">
+    <div className="relative min-w-[90px]">
         <select
             value={value}
             onChange={(e) => onChange(e.target.value as Grade)}
-            className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-3 py-3 appearance-none focus:outline-none focus:border-[#014751] focus:ring-1 focus:ring-[#014751] text-center font-bold text-sm"
+            className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-4 py-4 appearance-none focus:outline-none focus:border-[#014751] focus:ring-4 focus:ring-[#014751]/5 text-center font-extrabold text-sm shadow-sm transition-all"
         >
             {Object.keys(GRADE_VALUES).map(g => <option key={g} value={g}>{g}</option>)}
         </select>
-        <div className="absolute right-2 top-3.5 text-gray-500 pointer-events-none">
-            <LuChevronDown className="w-3 h-3" />
+        <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
+            <LuChevronDown className="w-3.5 h-3.5" />
         </div>
     </div>
 );
 
 // Animation variants
-const fadeIn = {
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }
+    }
+};
+
+const itemVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0 }
 };
 
-export default function AdmissionChecker() {
-    // API Base URL
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+};
 
+// API Base URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+
+export default function AdmissionChecker() {
     // State
     const [selectedExams, setSelectedExams] = useState<string[]>(['WAEC']);
     const [institutions, setInstitutions] = useState<any[]>([]);
@@ -119,23 +134,31 @@ export default function AdmissionChecker() {
         { id: '2', name: 'Mathematics', grade: 'C6' },
         { id: '3', name: '', grade: 'C6' },
         { id: '4', name: '', grade: 'C6' },
-        { id: '5', name: '', grade: 'C6' }
+        { id: '5', name: '', grade: 'C6' },
+        { id: '6', name: '', grade: 'C6' },
+        { id: '7', name: '', grade: 'C6' },
+        { id: '8', name: '', grade: 'C6' },
+        { id: '9', name: '', grade: 'C6' }
     ]);
     const [utmeSubjects, setUtmeSubjects] = useState<string[]>(['English Language', '', '', '']);
     const [jambScore, setJambScore] = useState<number | ''>('');
     const [targetCourseName, setTargetCourseName] = useState<string>('');
     const [targetUniName, setTargetUniName] = useState<string>('');
 
-    const [results, setResults] = useState<any[] | null>(null);
+    const [results, setResults] = useState<any[]>([]);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [isFetchingMore, setIsFetchingMore] = useState(false);
     const [previewData, setPreviewData] = useState<any | null>(null);
     const [selectedResult, setSelectedResult] = useState<any | null>(null);
     const [selectedPlanId, setSelectedPlanId] = useState<string>('');
     const [isChecking, setIsChecking] = useState(false);
+    const [hasError, setHasError] = useState(false);
     const [usageInfo, setUsageInfo] = useState<{
         viewCount: number;
         totalViews: number;
         viewsRemaining: number;
-        expiresAt: Date;
+        expiresAt: string | Date;
         planName?: string;
     } | null>(null);
     const [isUnlocking, setIsUnlocking] = useState(false);
@@ -144,6 +167,9 @@ export default function AdmissionChecker() {
     const [resumePaymentId, setResumePaymentId] = useState<string>('');
     const [isResuming, setIsResuming] = useState(false);
     const [userEmail, setUserEmail] = useState<string>('');
+    const [courseRequirements, setCourseRequirements] = useState<any>(null);
+    const [loadingRequirements, setLoadingRequirements] = useState(false);
+
     const [alertConfig, setAlertConfig] = useState<{
         isOpen: boolean;
         title: string;
@@ -156,8 +182,6 @@ export default function AdmissionChecker() {
         type: 'info'
     });
 
-    const verifyingRef = useRef<string | null>(null);
-
     const [toastConfig, setToastConfig] = useState<{
         isOpen: boolean;
         message: string;
@@ -168,6 +192,32 @@ export default function AdmissionChecker() {
         type: 'info'
     });
 
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showSearch, setShowSearch] = useState(false);
+    const [showResumeModal, setShowResumeModal] = useState(false);
+
+    // Enhanced Features State
+    const [courseSuggestions, setCourseSuggestions] = useState<any[]>([]);
+    const [comparisons, setComparisons] = useState<any[]>([]);
+    const [simulationResults, setSimulationResults] = useState<any | null>(null);
+    const [isComparing, setIsComparing] = useState(false);
+
+    // Pagination for Enhanced Features
+    const [comparisonPage, setComparisonPage] = useState(1);
+    const [comparisonTotalPages, setComparisonTotalPages] = useState(1);
+    const [isComparingMore, setIsComparingMore] = useState(false);
+
+    const [suggestionsPage, setSuggestionsPage] = useState(1);
+    const [suggestionsTotalPages, setSuggestionsTotalPages] = useState(1);
+    const [isSuggestionsLoadingMore, setIsSuggestionsLoadingMore] = useState(false);
+
+    const [isSimulating, setIsSimulating] = useState(false);
+    const [simulatedScore, setSimulatedScore] = useState<number | ''>('');
+    const [activeTab, setActiveTab] = useState<'results' | 'suggestions' | 'comparison' | 'simulation' | 'form'>('results');
+
+    const router = useRouter();
+    const verifyingRef = useRef<string | null>(null);
+
     const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
         setToastConfig({ isOpen: true, message, type });
         setTimeout(() => setToastConfig(prev => ({ ...prev, isOpen: false })), 3000);
@@ -177,48 +227,79 @@ export default function AdmissionChecker() {
         setAlertConfig({ isOpen: true, title, message, type });
     };
 
-    const router = useRouter();
 
-    // Initial Data Fetch
-    useEffect(() => {
-        const loadInitialData = async () => {
-            try {
-                const [instRes, courseRes, subjectRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/admission/institutions`),
-                    fetch(`${API_BASE_URL}/admission/courses`),
-                    fetch(`${API_BASE_URL}/admission/subjects`)
-                ]);
+    const fetchAdmissionResults = useCallback(async (paymentId: string, pageNum: number, searchStr: string = '', append = false, isResume = false) => {
+        if (!paymentId) return;
+        if (pageNum === 1 && !append) setIsUnlocking(true);
+        else setIsFetchingMore(true);
+        setHasError(false);
 
-                if (instRes.ok) setInstitutions(await instRes.json());
-                if (courseRes.ok) setGlobalCourses(await courseRes.json());
-                if (subjectRes.ok) {
-                    const sbjs = await subjectRes.json();
-                    if (sbjs.length > 0) setSubjectsList(sbjs);
+        try {
+            const url = `${API_BASE_URL}/admission/results/${paymentId.trim()}?page=${pageNum}&pageSize=50${searchStr ? `&search=${encodeURIComponent(searchStr)}` : ''}${isResume ? '&mode=resume' : ''}`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error("Failed to fetch results");
+            const data = await res.json();
+
+            if (data.unlocked) {
+                if (append) {
+                    setResults(prev => [...prev, ...(data.results || [])]);
+                } else {
+                    setResults(data.results || []);
                 }
-            } catch (err) {
-                console.error("Failed to load admission data", err);
+
+                if (data.pagination) {
+                    setPage(data.pagination.currentPage);
+                    setTotalPages(data.pagination.totalPages);
+                }
+
+                if (data.courseSuggestions) {
+                    setCourseSuggestions(data.courseSuggestions);
+                    setSuggestionsPage(1);
+                    if (data.totalSuggestionsCount !== undefined) {
+                        setSuggestionsTotalPages(Math.ceil(data.totalSuggestionsCount / 15));
+                    }
+                }
+                if (data.subjects && data.subjects.length > 0) {
+                    setSubjects(data.subjects.map((s: any) => ({
+                        id: Math.random().toString(36).substr(2, 9),
+                        name: s.name,
+                        grade: s.grade
+                    })));
+                }
+
+                // Repopulate form fields for seamless resume
+                if (data.jambScore) setJambScore(data.jambScore);
+                if (data.utmeSubjects && data.utmeSubjects.length > 0) {
+                    setUtmeSubjects(data.utmeSubjects);
+                }
+                if (data.targetInstitution) setSelectedInstitutionId(data.targetInstitution);
+                if (data.targetCourse) setTargetCourseName(data.targetCourse);
+                if (data.targetDepartment) setTargetDepartmentId(data.targetDepartment);
+                if (data.email) setUserEmail(data.email);
+
+                setIsPaid(true);
+                setSavedPaymentId(paymentId.trim());
+                setUsageInfo({
+                    viewCount: data.viewCount,
+                    totalViews: data.totalViews,
+                    viewsRemaining: data.viewsRemaining,
+                    expiresAt: data.expiresAt,
+                    planName: data.planName
+                });
             }
-        };
-
-        if (router.isReady) {
-            loadInitialData();
-
-            // Check for payment return (ONLY if we haven't processed this reference yet)
-            const { reference, paymentId, status } = router.query;
-            if (reference && paymentId && status === 'success' && verifyingRef.current !== reference) {
-                verifyingRef.current = reference as string;
-                handleVerifyReturn(paymentId as string, reference as string);
-            }
+            if (data.email) setUserEmail(data.email);
+            return data;
+        } catch (err) {
+            console.error("Error fetching results:", err);
+            setHasError(true);
+            return null;
+        } finally {
+            setIsUnlocking(false);
+            setIsFetchingMore(false);
         }
-    }, [router.isReady]); // Removed router.query to prevent multiple triggers; we check query inside manually
+    }, []);
 
-    useEffect(() => {
-        if (previewData?.plans && previewData.plans.length > 0) {
-            setSelectedPlanId(previewData.plans[0].id);
-        }
-    }, [previewData]);
-
-    const handleVerifyReturn = async (payId: string, ref: string) => {
+    const handleVerifyReturn = useCallback(async (payId: string, ref: string) => {
         setIsUnlocking(true);
         try {
             const res = await fetch(`${API_BASE_URL}/payment/verify`, {
@@ -227,93 +308,26 @@ export default function AdmissionChecker() {
                 body: JSON.stringify({ reference: ref, payerType: 'ADMISSION_CHECK', profileId: payId })
             });
             const data = await res.json();
-
-            if (data.status === 'success') {
-                // Fetch full results
-                const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${payId}`);
-                if (resultsRes.ok) {
-                    const fullData = await resultsRes.json();
-
-                    if (fullData.unlocked) {
-                        setResults(fullData.results || []);
-                        setJambScore(fullData.jambScore || '');
-
-                        // Handle subjects carefully
-                        const rawSubjects = Array.isArray(fullData.subjects) ? fullData.subjects : [];
-                        if (rawSubjects.length > 0) {
-                            setSubjects(rawSubjects.map((s: any) => ({
-                                id: Math.random().toString(36).substr(2, 9),
-                                name: s.name,
-                                grade: s.grade
-                            })));
-                        }
-
-                        setIsPaid(true);
-                        setPreviewData(null);
-                        setSavedPaymentId(payId);
-
-                        setUsageInfo({
-                            viewCount: fullData.viewCount,
-                            totalViews: fullData.totalViews || 3,
-                            viewsRemaining: fullData.viewsRemaining,
-                            expiresAt: fullData.expiresAt,
-                            planName: fullData.planName
-                        });
-
-                        // Clear query params to clean URL
-                        router.replace('/admission-checker', undefined, { shallow: true });
-                        showToast("Payment verified! Your results are now unlocked.", "success");
-                    } else {
-                        // Still in preview mode? Something is wrong with verification timing
-                        setPreviewData(fullData);
-                        showToast("Verification complete, fetching results...", "info");
-                    }
-                }
+            if (data.status === 'success' || data.status === 'completed') {
+                await fetchAdmissionResults(payId, 1, '', false);
+                setPreviewData(null);
+                setActiveTab('results');
+                showToast("Payment verified! Results unlocked.");
             } else {
-                showAlert('Payment Verification', data.error || data.message || 'Payment verification failed. If you were charged, please use your Payment ID to resume.', 'error');
+                showAlert('Verification', data.error || 'Payment verification failed.', 'error');
             }
         } catch (err) {
-            console.error("Verification error:", err);
-            showAlert('Verification Error', "We couldn't verify your payment. Please try searching with your Payment ID.", 'error');
+            console.error("Verification failed", err);
+            showAlert('Error', 'Failed to verify payment.', 'error');
         } finally {
             setIsUnlocking(false);
+            // Clear query params to prevent re-verification
+            router.replace('/admission-checker', undefined, { shallow: true });
         }
-    };
-
-    // Fetch Departments when Institution changes
-    useEffect(() => {
-        if (selectedInstitutionId) {
-            fetch(`${API_BASE_URL}/admission/departments/${selectedInstitutionId}`)
-                .then(res => res.json())
-                .then(data => setFilteredDepartments(data))
-                .catch(err => console.error(err));
-        } else {
-            setFilteredDepartments([]);
-        }
-    }, [selectedInstitutionId]);
-
-    // Handlers
-    const addSubject = () => {
-        if (subjects.length < 9) {
-            setSubjects([...subjects, { id: Math.random().toString(), name: '', grade: 'C6' }]);
-        }
-    };
-
-    const removeSubject = (id: string) => {
-        if (subjects.length > 5) {
-            setSubjects(subjects.filter(s => s.id !== id));
-        }
-    };
-
-    const updateSubject = (id: string, field: 'name' | 'grade', value: string) => {
-        setSubjects(subjects.map(s => s.id === id ? { ...s, [field]: value } : s));
-    };
+    }, [fetchAdmissionResults, router]);
 
     const checkAdmission = async () => {
         setIsChecking(true);
-        // Don't reset results/isPaid yet so the user doesn't see a flicker or lose their spot
-        // if they are just re-clicking with the same data.
-
         try {
             const body = {
                 jambScore: Number(jambScore),
@@ -334,164 +348,175 @@ export default function AdmissionChecker() {
 
             if (!res.ok) {
                 const errorData = await res.json().catch(() => ({}));
-                if (errorData.message?.includes('JAMB score cannot be changed')) {
-                    showAlert(
-                        'JAMB Score Locked',
-                        'This payment ID is locked to a different JAMB score. You cannot share or reuse payment IDs with different JAMB scores. Please start a new check or use the correct JAMB score.',
-                        'error'
-                    );
-                    setSavedPaymentId(''); // Clear the invalid payment ID
-                    return;
-                }
-                throw new Error(errorData.message || 'Failed to check eligibility');
+                showAlert('Check Failed', errorData.message || 'Analysis failed.', 'error');
+                return;
             }
 
             const data = await res.json();
-
-            // IMPORTANT: If backend returns subjects in preview/results, map them with unique IDs
             if (data.subjects) {
-                const subjectsWithIds = data.subjects.map((s: any) => ({
+                setSubjects(data.subjects.map((s: any) => ({
                     id: Math.random().toString(36).substr(2, 9),
                     name: s.name,
                     grade: s.grade
-                }));
-                setSubjects(subjectsWithIds);
+                })));
             }
 
-            // Clear old states after we get new data
-            setResults(null);
+            if (data.email) setUserEmail(data.email);
+            setResults([]);
             setPreviewData(null);
 
             if (data.preview) {
-                if (data.isPaid) {
+                if (data.isPaid && (data.paymentId || data.previewId)) {
                     const payId = data.paymentId || data.previewId;
-                    if (payId) {
-                        try {
-                            const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${payId}`);
-                            if (resultsRes.ok) {
-                                const fullResData = await resultsRes.json();
-                                if (fullResData.unlocked) {
-                                    setResults(fullResData.results || []);
-                                    setJambScore(fullResData.jambScore || '');
-                                    const rSubjs = Array.isArray(fullResData.subjects) ? fullResData.subjects : [];
-                                    if (rSubjs.length > 0) {
-                                        setSubjects(rSubjs.map((s: any) => ({
-                                            id: Math.random().toString(36).substr(2, 9),
-                                            name: s.name,
-                                            grade: s.grade
-                                        })));
-                                    }
-                                    setIsPaid(true);
-                                    setPreviewData(null);
-                                    setSavedPaymentId(payId);
-                                    setUsageInfo({
-                                        viewCount: fullResData.viewCount,
-                                        totalViews: fullResData.totalViews || 3,
-                                        viewsRemaining: fullResData.viewsRemaining,
-                                        expiresAt: fullResData.expiresAt,
-                                        planName: fullResData.planName
-                                    });
-                                    return;
-                                }
-                            }
-                        } catch (err) { console.error("Auto-fetch results failed:", err); }
+                    const success = await fetchAdmissionResults(payId, 1, '', false);
+                    if (success?.unlocked) {
+                        setActiveTab('results');
+                        return;
+                    }
+                    if (success?.preview) {
+                        setPreviewData(success);
+                        if (success.planId) setSelectedPlanId(success.planId);
+                        setActiveTab('results');
+                        return;
                     }
                 }
-                setIsPaid(!!data.isPaid);
                 setPreviewData(data);
-            } else if (data.unlocked || !data.preview) {
-                // If it returned full results (either unlockedSession or free results)
-                const resultsRaw = data.unlocked ? data.results : data;
-                setResults(resultsRaw);
+                if (data.planId) setSelectedPlanId(data.planId);
+            } else if (data.unlocked) {
+                setResults(data.results || []);
+                if (data.pagination) {
+                    setPage(data.pagination.currentPage);
+                    setTotalPages(data.pagination.totalPages);
+                }
+                setCourseSuggestions(data.courseSuggestions || []);
+                setSuggestionsPage(1);
+                if (data.totalSuggestionsCount !== undefined) {
+                    setSuggestionsTotalPages(Math.ceil(data.totalSuggestionsCount / 15));
+                }
                 setIsPaid(true);
-
-                // Ensure subjects have unique IDs when coming from backend
-                if (data.unlocked && data.subjects) {
-                    setSubjects(data.subjects.map((s: any) => ({
-                        id: Math.random().toString(36).substr(2, 9),
-                        name: s.name,
-                        grade: s.grade
-                    })));
-                } else if (data.subjects) {
-                    setSubjects(data.subjects.map((s: any) => ({
-                        id: Math.random().toString(36).substr(2, 9),
-                        name: s.name,
-                        grade: s.grade
-                    })));
-                }
-
-                if (data.unlocked) {
-                    setUsageInfo({
-                        viewCount: data.viewCount,
-                        totalViews: data.totalViews || 3,
-                        viewsRemaining: data.viewsRemaining,
-                        expiresAt: data.expiresAt,
-                        planName: data.planName
-                    });
-                }
+                setSavedPaymentId(data.paymentId);
+                setUsageInfo({
+                    viewCount: data.viewCount,
+                    totalViews: data.totalViews,
+                    viewsRemaining: data.viewsRemaining,
+                    expiresAt: data.expiresAt,
+                    planName: data.planName
+                });
+                setActiveTab('results');
             }
         } catch (err) {
-            console.error(err);
-            showAlert('Backend Error', "Connection error: Make sure the backend server is running.", 'error');
+            showAlert('Connection Error', "Could not reach the analysis server. Please check your internet connection and try again.", 'error');
         } finally {
             setIsChecking(false);
         }
     };
 
+    // Debounced search
+    useEffect(() => {
+        if (!isPaid || !savedPaymentId || !showSearch) return;
+
+        const timer = setTimeout(() => {
+            fetchAdmissionResults(savedPaymentId, 1, searchTerm, false);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [searchTerm, isPaid, savedPaymentId, showSearch, fetchAdmissionResults]);
+
+    // Initial Data Fetch
+    useEffect(() => {
+        const loadInitialData = async () => {
+            try {
+                const [instRes, courseRes, subjectRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/admission/institutions`),
+                    fetch(`${API_BASE_URL}/admission/courses`),
+                    fetch(`${API_BASE_URL}/admission/subjects`)
+                ]);
+
+                if (instRes.ok) setInstitutions(await instRes.json());
+                if (courseRes.ok) setGlobalCourses(await courseRes.json());
+                if (subjectRes.ok) {
+                    const sbjs = await subjectRes.json();
+                    if (sbjs.length > 0) setSubjectsList(sbjs);
+                }
+            } catch (err) {
+                console.error("Failed to load admission data", err);
+                showToast("Could not connect to server. Check your connection.", "error");
+            }
+        };
+
+        if (router.isReady) {
+            loadInitialData();
+            const { reference, paymentId, status } = router.query;
+            if (reference && paymentId && status === 'success' && verifyingRef.current !== reference) {
+                verifyingRef.current = reference as string;
+                handleVerifyReturn(paymentId as string, reference as string);
+            }
+        }
+    }, [router.isReady, router.query, handleVerifyReturn]);
+
+    useEffect(() => {
+        if (previewData?.plans && previewData.plans.length > 0) {
+            setSelectedPlanId(String(previewData.plans[0].id));
+        }
+    }, [previewData]);
+
+
+    // Fetch Departments
+    useEffect(() => {
+        if (selectedInstitutionId) {
+            fetch(`${API_BASE_URL}/admission/departments/${selectedInstitutionId}`)
+                .then(res => res.json())
+                .then(data => setFilteredDepartments(data))
+                .catch(err => console.error(err));
+        } else {
+            setFilteredDepartments([]);
+        }
+    }, [selectedInstitutionId]);
+
+    // Fetch Requirements
+    useEffect(() => {
+        if (targetCourseName) {
+            setLoadingRequirements(true);
+            const params = new URLSearchParams({ courseName: targetCourseName });
+            if (selectedInstitutionId) params.append('institutionId', selectedInstitutionId);
+            fetch(`${API_BASE_URL}/admission/course-requirements?${params}`)
+                .then(res => res.json())
+                .then(data => data.found ? setCourseRequirements(data) : setCourseRequirements(null))
+                .catch(() => setCourseRequirements(null))
+                .finally(() => setLoadingRequirements(false));
+        } else {
+            setCourseRequirements(null);
+        }
+    }, [targetCourseName, selectedInstitutionId]);
+
+    const addSubject = () => {
+        if (subjects.length < 9) setSubjects([...subjects, { id: Math.random().toString(), name: '', grade: 'C6' }]);
+    };
+
+    const removeSubject = (id: string) => {
+        if (subjects.length > 1) setSubjects(subjects.filter(s => s.id !== id));
+    };
+
+    const updateSubject = (id: string, field: 'name' | 'grade', value: string) => {
+        setSubjects(subjects.map(s => s.id === id ? { ...s, [field]: value } : s));
+    };
+
+
     const handleUnlock = async () => {
         const payId = previewData?.paymentId || previewData?.previewId;
         if (!payId) return;
 
-        // If backend says we already have a valid payment, just fetch results directly
         if (previewData.isPaid) {
-            setIsUnlocking(true);
-            try {
-                const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${payId}`);
-                if (!resultsRes.ok) throw new Error('Failed to fetch results');
-
-                const fullData = await resultsRes.json();
-                if (fullData.unlocked) {
-                    setResults(fullData.results || []);
-                    setJambScore(fullData.jambScore || '');
-
-                    // Handle subjects carefully
-                    const rawSubjects = Array.isArray(fullData.subjects) ? fullData.subjects : [];
-                    if (rawSubjects.length > 0) {
-                        setSubjects(rawSubjects.map((s: any) => ({
-                            id: Math.random().toString(36).substr(2, 9),
-                            name: s.name,
-                            grade: s.grade
-                        })));
-                    }
-
-                    setIsPaid(true);
-                    setPreviewData(null);
-                    setSavedPaymentId(payId);
-
-                    setUsageInfo({
-                        viewCount: fullData.viewCount,
-                        totalViews: fullData.totalViews || 3,
-                        viewsRemaining: fullData.viewsRemaining,
-                        expiresAt: fullData.expiresAt,
-                        planName: fullData.planName
-                    });
-
-                    showToast("Report unlocked successfully!", "success");
-                    return;
-                } else {
-                    throw new Error(fullData.message || 'Payment required');
-                }
-            } catch (err) {
-                console.error(err);
-                showToast("Could not unlock report. Please try again.", "error");
-            } finally {
-                setIsUnlocking(false);
+            const success = await fetchAdmissionResults(payId, 1, '', false);
+            if (success?.unlocked) {
+                setPreviewData(null);
+                setActiveTab('results');
+                showToast("Results unlocked.");
             }
             return;
         }
 
-        const planToUse = previewData.plans?.find((p: any) => p.id === selectedPlanId) || previewData.plans?.[0] || { id: previewData.planId, price: previewData.amount };
-
+        const plan = previewData.plans?.find((p: any) => String(p.id) === selectedPlanId) || previewData.plans?.[0];
         setIsUnlocking(true);
         try {
             const initRes = await fetch(`${API_BASE_URL}/payment/initialize`, {
@@ -499,1333 +524,1283 @@ export default function AdmissionChecker() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     email: userEmail.trim() || 'guest@sabidub.com',
-                    amount: planToUse.price,
+                    amount: plan.price,
                     payerType: 'ADMISSION_CHECK',
-                    planId: planToUse.id,
+                    planId: plan.id,
                     profileId: payId,
-                    // Extra data for on-the-fly creation
                     jambScore: previewData.isNewCheck ? Number(jambScore) : undefined,
                     subjects: previewData.isNewCheck ? subjects : undefined,
-                    results: previewData.results ? previewData.results : undefined,
+                    utmeSubjects: previewData.isNewCheck ? utmeSubjects : undefined,
+                    targetInstitution: previewData.isNewCheck ? selectedInstitutionId : undefined,
+                    targetCourse: previewData.isNewCheck ? targetCourseName : undefined,
+                    targetDepartment: previewData.isNewCheck ? targetDepartmentId : undefined,
                 })
             });
-
-            if (!initRes.ok) throw new Error('Failed to initialize payment');
-
-            const initData = await initRes.json();
-            if (initData.authorization_url) {
-                window.location.href = initData.authorization_url;
-            } else {
-                throw new Error('No authorization URL received');
-            }
+            const init = await initRes.json();
+            if (init.authorization_url) window.location.href = init.authorization_url;
         } catch (err) {
-            console.error(err);
-            showToast("Failed to initialize payment. Please try again.", "error");
+            showToast("Payment initialization failed.", "error");
+        } finally {
             setIsUnlocking(false);
         }
     };
 
-
     const handleResumeCheck = async () => {
-        if (!resumePaymentId.trim()) {
-            showAlert('Payment ID Required', 'Please enter your Payment ID to continue.', 'info');
-            return;
-        }
-
+        if (!resumePaymentId.trim()) return;
         setIsResuming(true);
         try {
-            const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${resumePaymentId.trim()}?mode=resume`);
-            if (!resultsRes.ok) throw new Error('Failed to fetch results');
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-            const fullData = await resultsRes.json();
-
-            if (fullData.resumed) {
-                // Resume Mode: Populate inputs but don't show results or increment count yet
-                setJambScore(fullData.jambScore || '');
-                if (fullData.subjects) {
-                    setSubjects(fullData.subjects.map((s: any) => ({
-                        id: Math.random().toString(36).substr(2, 9),
-                        name: s.name,
-                        grade: s.grade
-                    })));
+            const res = await fetch(`${API_BASE_URL}/admission/results/${resumePaymentId.trim()}?mode=resume`, {
+                signal: controller.signal,
+                headers: {
+                    'Content-Type': 'application/json',
                 }
-                setSavedPaymentId(resumePaymentId.trim());
-                setResumePaymentId('');
-                setIsPaid(false); // Ensure we don't think it's 'paid/unlocked' until they check -> unlock
-                setPreviewData(null);
-                setResults(null);
-                showToast("Session resumed! Click 'Check Eligibility' to continue.", "info");
-                return;
+            });
+
+            clearTimeout(timeoutId);
+
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
             }
 
-            if (fullData.unlocked) {
-                setResults(fullData.results);
-                setJambScore(fullData.jambScore || '');
-                if (fullData.subjects) {
-                    setSubjects(fullData.subjects.map((s: any) => ({
-                        id: Math.random().toString(36).substr(2, 9),
-                        name: s.name,
-                        grade: s.grade
-                    })));
-                }
-                setIsPaid(true);
-                setPreviewData(null);
-                setSavedPaymentId(resumePaymentId.trim());
-                setUsageInfo({
-                    viewCount: fullData.viewCount,
-                    totalViews: fullData.totalViews || 3,
-                    viewsRemaining: fullData.viewsRemaining,
-                    expiresAt: fullData.expiresAt,
-                    planName: fullData.planName
-                });
-                setResumePaymentId('');
-            } else if (fullData.preview) {
-                // Resume a pending/failed payment
-                if (fullData.isPaid) {
-                    const rId = resumePaymentId.trim();
-                    try {
-                        const resultsRes = await fetch(`${API_BASE_URL}/admission/results/${rId}`);
-                        if (resultsRes.ok) {
-                            const fData = await resultsRes.json();
-                            if (fData.unlocked) {
-                                setResults(fData.results || []);
-                                setJambScore(fData.jambScore || '');
-                                const rSubjs = Array.isArray(fData.subjects) ? fData.subjects : [];
-                                if (rSubjs.length > 0) {
-                                    setSubjects(rSubjs.map((s: any) => ({ id: Math.random().toString(36).substr(2, 9), name: s.name, grade: s.grade })));
-                                }
-                                setIsPaid(true); setPreviewData(null); setSavedPaymentId(rId);
-                                setUsageInfo({
-                                    viewCount: fData.viewCount, totalViews: fData.totalViews || 3,
-                                    viewsRemaining: fData.viewsRemaining, expiresAt: fData.expiresAt, planName: fData.planName
-                                });
-                                setResumePaymentId(''); showToast("Session resumed and unlocked!", "success");
-                                return;
-                            }
-                        }
-                    } catch (err) { console.error("Resume auto-unlock failed:", err); }
-                }
+            const data = await res.json();
 
-                setIsPaid(!!fullData.isPaid);
-                setPreviewData(fullData);
-                setJambScore(fullData.jambScore || '');
-                if (fullData.subjects) {
-                    setSubjects(fullData.subjects.map((s: any) => ({
+            if (data.resumed) {
+                setJambScore(data.jambScore || '');
+                if (data.subjects) {
+                    setSubjects(data.subjects.map((s: any) => ({
                         id: Math.random().toString(36).substr(2, 9),
                         name: s.name,
                         grade: s.grade
                     })));
                 }
                 setSavedPaymentId(resumePaymentId.trim());
-                setResumePaymentId('');
-            } else if (fullData.viewLimitReached) {
-                showAlert('View Limit Reached', fullData.message + '\n\nYou can make a new payment to continue checking.', 'info');
-            } else if (fullData.expired) {
-                showAlert('Check Expired', fullData.message, 'error');
+                if (data.utmeSubjects && Array.isArray(data.utmeSubjects)) setUtmeSubjects(data.utmeSubjects);
+                if (data.targetInstitution) setSelectedInstitutionId(data.targetInstitution);
+                if (data.targetCourse) setTargetCourseName(data.targetCourse);
+                if (data.targetDepartment) setTargetDepartmentId(data.targetDepartment);
+
+                if (data.email) setUserEmail(data.email);
+                if (data.unlocked) {
+                    setResults(data.results || []);
+                    if (data.pagination) {
+                        setPage(data.pagination.currentPage);
+                        setTotalPages(data.pagination.totalPages);
+                    }
+                    setCourseSuggestions(data.courseSuggestions || []);
+                    setIsPaid(true);
+                    setUsageInfo({
+                        viewCount: data.viewCount,
+                        totalViews: data.totalViews,
+                        viewsRemaining: data.viewsRemaining,
+                        expiresAt: data.expiresAt,
+                        planName: data.planName
+                    });
+                    setActiveTab('results');
+                    setPreviewData(null);
+                    setShowResumeModal(false);
+                    showToast('Results restored successfully!');
+                } else if (data.preview) {
+                    setPreviewData(data);
+                    if (data.planId) setSelectedPlanId(data.planId);
+                    setActiveTab('results');
+                    setShowResumeModal(false);
+                    showToast('Preview restored.');
+                } else {
+                    setActiveTab('form');
+                    setPreviewData(null);
+                    setShowResumeModal(false);
+                    showToast('Previous data loaded. Complete your check!');
+                }
             } else {
-                showAlert('Access Denied', fullData.message || 'Unable to retrieve results. Please check your Payment ID.', 'error');
+                showToast(data.message || 'Payment ID not found or expired.', 'error');
             }
-        } catch (err) {
-            console.error(err);
-            showAlert('Search Error', 'Failed to retrieve results. Please verify your Payment ID and try again.', 'error');
+        } catch (error: any) {
+            console.error('Resume error:', error);
+            let errorMessage = 'Failed to resume check. ';
+
+            if (error.name === 'AbortError') {
+                errorMessage += 'Request timed out. Please check your connection and try again.';
+            } else if (error.message.includes('Failed to fetch')) {
+                errorMessage += 'Cannot connect to server. Please ensure the backend is running on port 4000.';
+            } else {
+                errorMessage += error.message || 'Please try again.';
+            }
+
+            showToast(errorMessage, 'error');
         } finally {
             setIsResuming(false);
         }
     };
 
-    const generatePDF = async () => {
-        if (!results || results.length === 0) return;
+    const handleCompareRequest = async (loadMore = false) => {
+        if (!savedPaymentId || !targetCourseName) return;
 
-        const doc = new jsPDF();
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        const margin = 20;
-
-        // Colors
-        const primaryColor = [1, 71, 81] as [number, number, number]; // Sabidub Teal
-        const secondaryColor = [33, 33, 33] as [number, number, number]; // Dark Gray
-        const accentColor = [255, 255, 255] as [number, number, number]; // White
-        const tableHeadColor = [250, 250, 250] as [number, number, number]; // Light Gray for headers
-        const textColor = [60, 60, 60] as [number, number, number];
-
-        // Helper to load image
-        const loadImage = (url: string): Promise<{ data: string, ratio: number }> => {
-            return new Promise((resolve, reject) => {
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                img.src = url;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx?.drawImage(img, 0, 0);
-                    resolve({
-                        data: canvas.toDataURL('image/png'),
-                        ratio: img.width / img.height
-                    });
-                };
-                img.onerror = reject;
-            });
-        };
+        const nextPage = loadMore ? comparisonPage + 1 : 1;
+        if (loadMore) setIsComparingMore(true);
+        else setIsComparing(true);
 
         try {
-            // --- HEADER ---
-            // Top Bar
-            doc.setFillColor(...primaryColor);
-            doc.rect(0, 0, pageWidth, 6, 'F');
+            const res = await fetch(`${API_BASE_URL}/admission/compare-universities`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    courseName: targetCourseName,
+                    jambScore: Number(jambScore),
+                    subjects: subjects.filter(s => s.name).map(s => ({ name: s.name, grade: s.grade })),
+                    utmeSubjects: utmeSubjects.filter(s => s && s.trim()),
+                    paymentId: savedPaymentId,
+                    page: nextPage,
+                    pageSize: 15
+                })
+            });
+            const data = await res.json();
+            if (data.locked) showAlert('Premium Feature', data.message);
+            else {
+                if (loadMore) {
+                    setComparisons(prev => [...prev, ...(data.comparisons || [])]);
+                    setComparisonPage(nextPage);
+                } else {
+                    setComparisons(data.comparisons || []);
+                    setComparisonPage(1);
+                }
 
-            // Logo
-            try {
-                const logo = await loadImage('/images/black.png');
-                const logoWidth = 35;
-                const logoHeight = logoWidth / logo.ratio;
-                doc.addImage(logo.data, 'PNG', margin, 15, logoWidth, logoHeight);
-            } catch (e) {
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(24);
-                doc.setTextColor(...secondaryColor);
-                doc.text('SABIDUB', margin, 25);
+                if (data.pagination) {
+                    setComparisonTotalPages(data.pagination.totalPages);
+                }
+
+                // Update usage limit
+                if (data.viewsRemaining !== undefined) {
+                    setUsageInfo((prev: any) => ({
+                        ...prev,
+                        viewCount: data.viewCount,
+                        viewsRemaining: data.viewsRemaining,
+                        totalViews: data.totalViews,
+                        expiresAt: prev?.expiresAt || new Date().toISOString()
+                    }));
+                }
             }
-
-            // Title
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.setTextColor(...secondaryColor);
-            doc.text('Admission Eligibility Report', pageWidth - margin, 25, { align: 'right' });
-
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(10);
-            doc.setTextColor(100, 100, 100);
-            doc.text('Official Academic Analysis', pageWidth - margin, 31, { align: 'right' });
-
-            // Line Separator
-            doc.setDrawColor(230, 230, 230);
-            doc.setLineWidth(0.5);
-            doc.line(margin, 40, pageWidth - margin, 40);
-
-            // --- INFO GRID ---
-            const infoY = 50;
-            // No strict 3-column grid anymore to avoid overlap
-
-            // Box 1: JAMB (Left Aligned)
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(10);
-            doc.setTextColor(150, 150, 150);
-            doc.text('JAMB UTME SCORE', margin, infoY);
-            doc.setFontSize(16);
-            doc.setTextColor(...secondaryColor);
-            doc.text(String(jambScore || 'N/A'), margin, infoY + 8);
-
-            // Box 2: Payment ID (Offset to avoid JAMB, but give plenty of space)
-            const refX = margin + 50;
-            doc.setFontSize(10);
-            doc.setTextColor(150, 150, 150);
-            doc.text('PAYMENT REFERENCE', refX, infoY);
-            doc.setFontSize(12);
-            doc.setTextColor(...secondaryColor);
-            doc.text(savedPaymentId || 'N/A', refX, infoY + 8);
-
-            // Box 3: Date (Right Aligned)
-            doc.setFontSize(10);
-            doc.setTextColor(150, 150, 150);
-            doc.text('GENERATED ON', pageWidth - margin, infoY, { align: 'right' });
-            doc.setFontSize(12);
-            doc.setTextColor(...secondaryColor);
-            doc.text(new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }), pageWidth - margin, infoY + 8, { align: 'right' });
-
-            // --- SUBJECTS TABLE ---
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(...secondaryColor);
-            doc.text('O\'Level Subjects', margin, 75);
-
-            const subjectRows = subjects.filter(s => s.name).map(s => [s.name, s.grade]);
-
-            autoTable(doc, {
-                startY: 80,
-                head: [['Subject', 'Grade']],
-                body: subjectRows,
-                theme: 'grid',
-                styles: {
-                    font: 'helvetica',
-                    fontSize: 10,
-                    cellPadding: 6,
-                    lineColor: [240, 240, 240],
-                    lineWidth: 0.1,
-                },
-                headStyles: {
-                    fillColor: tableHeadColor,
-                    textColor: secondaryColor,
-                    fontStyle: 'bold',
-                    lineColor: [230, 230, 230],
-                    lineWidth: 0.1,
-                },
-                bodyStyles: {
-                    textColor: textColor,
-                },
-                alternateRowStyles: {
-                    fillColor: [255, 255, 255]
-                },
-                columnStyles: {
-                    0: { cellWidth: 'auto' },
-                    1: { cellWidth: 40, fontStyle: 'bold', halign: 'center' }
-                },
-                margin: { left: margin, right: margin }
-            });
-
-            // --- RESULTS TABLE ---
-            let finalY = (doc as any).lastAutoTable.finalY + 15;
-
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(...secondaryColor);
-            doc.text('Admission Analysis Results', margin, finalY);
-
-            const resultRows = results.map(r => [
-                r.university,
-                r.course,
-                r.chance,
-                r.reason.replace(/✅|⚠️|❌/g, '').trim()
-            ]);
-
-            autoTable(doc, {
-                startY: finalY + 5,
-                head: [['Institution', 'Program', 'Chance', 'Analysis']],
-                body: resultRows,
-                theme: 'grid',
-                styles: {
-                    font: 'helvetica',
-                    fontSize: 9,
-                    cellPadding: 6,
-                    lineColor: [240, 240, 240],
-                    lineWidth: 0.1,
-                    overflow: 'linebreak'
-                },
-                headStyles: {
-                    fillColor: tableHeadColor,
-                    textColor: secondaryColor,
-                    fontStyle: 'bold',
-                    lineColor: [230, 230, 230],
-                    lineWidth: 0.1,
-                },
-                columnStyles: {
-                    0: { fontStyle: 'bold', cellWidth: 50 }, // Inst
-                    1: { cellWidth: 45 }, // Prog
-                    2: { cellWidth: 25, halign: 'center', fontStyle: 'bold' }, // Chance
-                    3: { cellWidth: 'auto' } // Reason
-                },
-                didParseCell: function (data) {
-                    // Custom styling for Chance column
-                    if (data.section === 'body' && data.column.index === 2) {
-                        const chance = data.cell.raw as string;
-                        if (chance === 'High') {
-                            data.cell.styles.textColor = [34, 197, 94] as [number, number, number]; // Green
-                        } else if (chance === 'Medium') {
-                            data.cell.styles.textColor = [1, 71, 81] as [number, number, number]; // Teal
-                        } else {
-                            data.cell.styles.textColor = [239, 68, 68] as [number, number, number]; // Red
-                        }
-                    }
-                },
-                margin: { left: margin, right: margin }
-            });
-
-            // --- FOOTER ---
-            const footerY = pageHeight - 30;
-
-            // Disclaimer box
-            doc.setFillColor(250, 250, 250);
-            doc.setDrawColor(240, 240, 240);
-            doc.rect(margin, footerY, pageWidth - (margin * 2), 20, 'FD');
-
-            doc.setFontSize(7);
-            doc.setTextColor(120, 120, 120);
-            doc.setFont('helvetica', 'normal');
-            const disclaimer = 'DISCLAIMER: This report is an estimation based on past admission trends and available data. It does not guarantee admission. Final decisions are made by the respective institutions and governing bodies.';
-            doc.text(disclaimer, margin + 4, footerY + 8, { maxWidth: pageWidth - (margin * 2) - 8 });
-
-            // Bottom Branding
-            doc.setFontSize(8);
-            doc.setTextColor(180, 180, 180);
-            doc.text('© Sabidub Education. All rights reserved.', pageWidth / 2, pageHeight - 5, { align: 'center' });
-
-            doc.save(`Sabidub_Eligibility_${savedPaymentId || 'Report'}.pdf`);
-            showToast("PDF generated successfully!", "success");
-        } catch (err) {
-            console.error("PDF Generation Error:", err);
-            showToast("Failed to generate PDF.", "error");
+        } catch (error: any) {
+            console.error('Comparison error:', error);
+            showToast('Connection lost. Please check your internet.', 'error');
+        } finally {
+            setIsComparing(false);
+            setIsComparingMore(false);
         }
     };
 
-    return (
-        <div className={`min-h-screen bg-gray-50 text-gray-900 ${inter.className}`}>
-            <Head>
-                <title>Admission Checker | SabiDub</title>
-            </Head>
+    const handleLoadMoreSuggestions = async () => {
+        if (!savedPaymentId) return;
 
+        const nextPage = suggestionsPage + 1;
+        setIsSuggestionsLoadingMore(true);
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/admission/suggestions/${savedPaymentId}?page=${nextPage}&pageSize=15`);
+            const data = await res.json();
+
+            if (data.unlocked) {
+                setCourseSuggestions(prev => [...prev, ...(data.courseSuggestions || [])]);
+                setSuggestionsPage(nextPage);
+                if (data.pagination) {
+                    setSuggestionsTotalPages(data.pagination.totalPages);
+                }
+            } else if (data.locked) {
+                showAlert('Premium Feature', data.message);
+            }
+        } catch (error: any) {
+            console.error('Suggestions error:', error);
+            showToast('Connection failed. Could not load more suggestions.', 'error');
+        } finally {
+            setIsSuggestionsLoadingMore(false);
+        }
+    };
+
+    const handleSimulationRequest = async () => {
+        if (!savedPaymentId || !simulatedScore) return;
+        setIsSimulating(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/admission/simulate-score`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    simulatedScore: Number(simulatedScore),
+                    subjects: subjects.filter(s => s.name).map(s => ({ name: s.name, grade: s.grade })),
+                    utmeSubjects: utmeSubjects.filter(s => s && s.trim()),
+                    targetInstitutionId: selectedInstitutionId || undefined,
+                    targetCourseName: targetCourseName || undefined,
+                    paymentId: savedPaymentId
+                })
+            });
+            const data = await res.json();
+            if (data.locked) showAlert('Premium Feature', data.message);
+            else {
+                setSimulationResults(data);
+                // Update usage limit
+                if (data.viewsRemaining !== undefined) {
+                    setUsageInfo((prev: any) => ({
+                        ...prev,
+                        viewCount: data.viewCount,
+                        viewsRemaining: data.viewsRemaining,
+                        totalViews: data.totalViews,
+                        expiresAt: prev?.expiresAt || new Date().toISOString()
+                    }));
+                }
+            }
+        } catch (error: any) {
+            console.error('Simulation error:', error);
+            showToast('Connection failed. Could not run simulation.', 'error');
+        } finally {
+            setIsSimulating(false);
+        }
+    };
+
+    const generatePDF = async () => {
+        if (!results) return;
+        const doc = new jsPDF();
+
+        // Note: jsPDF only supports helvetica, times, and courier fonts natively.
+        // Helvetica is used throughout as it's the cleanest option (similar to Manrope).
+        // To use custom fonts like Manrope, we'd need to convert TTF to base64 and embed it.
+
+        // Brand colors - explicitly typed as tuples
+        const brandPrimary: [number, number, number] = [1, 71, 81]; // #014751
+        const brandLight: [number, number, number] = [240, 249, 250]; // #f0f9fa
+        const brandAccent: [number, number, number] = [0, 150, 136]; // Teal accent
+        const textDark: [number, number, number] = [31, 41, 55]; // Gray-800
+        const textLight: [number, number, number] = [107, 114, 128]; // Gray-500
+
+        // ========================================
+        // HEADER SECTION - Modern gradient design
+        // ========================================
+
+        // Main header background
+        doc.setFillColor(...brandPrimary);
+        doc.rect(0, 0, 210, 55, 'F');
+
+        // Accent stripe
+        doc.setFillColor(...brandAccent);
+        doc.rect(0, 55, 210, 3, 'F');
+
+        // Add logo (centered)
+        try {
+            const logoUrl = '/images/white.png';
+            const img = new Image();
+            img.src = logoUrl;
+            await new Promise((resolve) => {
+                img.onload = resolve;
+                img.onerror = resolve;
+            });
+            if (img.complete && img.naturalHeight !== 0) {
+                // Centered white logo
+                const imgWidth = 45;
+                const imgHeight = 12;
+                doc.addImage(img, 'PNG', (210 - imgWidth) / 2, 14, imgWidth, imgHeight);
+            }
+        } catch (e) {
+            // Fallback: Stylized text logo
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(26);
+            doc.setFont('helvetica', 'bold');
+            doc.text('SabiDub', 105, 22, { align: 'center' });
+        }
+
+        // Title with modern typography
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Admission Eligibility Report', 105, 38, { align: 'center' });
+
+        // Subtitle
+        doc.setFontSize(9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(200, 220, 225);
+        doc.text('Comprehensive Analysis & Recommendations', 105, 46, { align: 'center' });
+
+        // ========================================
+        // METADATA CARDS - Modern card design
+        // ========================================
+
+        const cardY = 68;
+        const cardHeight = 28;
+
+        // Background card
+        doc.setFillColor(...brandLight);
+        doc.roundedRect(15, cardY, 180, cardHeight, 3, 3, 'F');
+
+        // Left section - Date & Payment ID
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(20, cardY + 5, 90, 18, 2, 2, 'F');
+
+        doc.setFontSize(6.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...textLight);
+        doc.text('GENERATED ON', 26, cardY + 10);
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...textDark);
+        doc.text(new Date().toLocaleDateString('en-NG', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        }), 26, cardY + 16);
+
+        doc.setFontSize(6.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...textLight);
+        doc.text('PAYMENT ID', 65, cardY + 10);
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textDark);
+        doc.text(savedPaymentId, 65, cardY + 16);
+
+        // Right section - JAMB Score (highlighted)
+        doc.setFillColor(...brandPrimary);
+        doc.roundedRect(115, cardY + 5, 75, 18, 2, 2, 'F');
+
+        doc.setFontSize(6.5);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(200, 220, 225);
+        doc.text('YOUR JAMB SCORE', 120, cardY + 10);
+
+        doc.setFontSize(20);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text(String(jambScore), 120, cardY + 18);
+
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'normal');
+        doc.text('/ 400', 142, cardY + 18);
+
+        // ========================================
+        // STATISTICS BAR
+        // ========================================
+
+        const statsY = cardY + cardHeight + 8;
+        const highCount = results.filter(r => r.chance === 'High').length;
+        const mediumCount = results.filter(r => r.chance === 'Medium').length;
+        const lowCount = results.filter(r => r.chance === 'Low').length;
+
+        // Stats container
+        doc.setFillColor(250, 250, 250);
+        doc.roundedRect(15, statsY, 180, 16, 2, 2, 'F');
+
+        // High stat
+        doc.setFillColor(34, 197, 94); // Green
+        doc.circle(25, statsY + 8, 3, 'F');
+        doc.setFontSize(8);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(34, 197, 94);
+        doc.text(`${highCount}`, 30, statsY + 9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textLight);
+        doc.text('High Match', 38, statsY + 9);
+
+        // Medium stat
+        doc.setFillColor(234, 179, 8); // Yellow
+        doc.circle(80, statsY + 8, 3, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(234, 179, 8);
+        doc.text(`${mediumCount}`, 85, statsY + 9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textLight);
+        doc.text('Medium', 93, statsY + 9);
+
+        // Low stat
+        doc.setFillColor(239, 68, 68); // Red
+        doc.circle(125, statsY + 8, 3, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(239, 68, 68);
+        doc.text(`${lowCount}`, 130, statsY + 9);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...textLight);
+        doc.text('Low Match', 138, statsY + 9);
+
+        // Total
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(...brandPrimary);
+        doc.text(`Total: ${results.length} Courses`, 170, statsY + 9);
+
+        // ========================================
+        // RESULTS TABLE - Modern design
+        // ========================================
+
+        const cleanText = (text: string) => {
+            if (!text) return 'N/A';
+            return text
+                .replace(/[\uD800-\uDFFF]/g, '')
+                .replace(/[^\x00-\x7F]/g, '')
+                .replace(/\n/g, ' ')
+                .replace(/\s+/g, ' ')
+                .trim();
+        };
+
+        const rows = results.map(r => [
+            r.university || 'N/A',
+            r.course || 'N/A',
+            r.chance || 'N/A',
+            cleanText(r.reason || '')
+        ]);
+
+        autoTable(doc, {
+            startY: statsY + 22,
+            head: [['Institution', 'Program', 'Match', 'Analysis']],
+            body: rows,
+            theme: 'plain',
+            headStyles: {
+                fillColor: brandPrimary,
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 9,
+                cellPadding: 4,
+            },
+            bodyStyles: {
+                fontSize: 8,
+                textColor: textDark,
+                cellPadding: 3,
+                lineColor: [230, 230, 230],
+                lineWidth: 0.1,
+            },
+            alternateRowStyles: {
+                fillColor: [252, 252, 252],
+            },
+            columnStyles: {
+                0: { cellWidth: 48, fontStyle: 'bold' },
+                1: { cellWidth: 45 },
+                2: {
+                    cellWidth: 22,
+                    halign: 'center',
+                    fontStyle: 'bold',
+                },
+                3: {
+                    cellWidth: 65,
+                    fontSize: 7,
+                    textColor: textLight,
+                    overflow: 'linebreak'
+                },
+            },
+            didDrawCell: (data) => {
+                if (data.column.index === 2 && data.section === 'body') {
+                    const chance = data.cell.raw as string;
+                    // Add colored badge background
+                    if (chance === 'High') {
+                        doc.setFillColor(220, 252, 231); // Light green
+                        doc.setTextColor(22, 163, 74); // Dark green
+                    } else if (chance === 'Medium') {
+                        doc.setFillColor(254, 249, 195); // Light yellow
+                        doc.setTextColor(161, 98, 7); // Dark yellow
+                    } else {
+                        doc.setFillColor(254, 226, 226); // Light red
+                        doc.setTextColor(220, 38, 38); // Dark red
+                    }
+                }
+            },
+        });
+
+        // ========================================
+        // FOOTER - Modern with branding
+        // ========================================
+
+        const pageCount = doc.getNumberOfPages();
+        for (let i = 1; i <= pageCount; i++) {
+            doc.setPage(i);
+
+            // Footer line
+            doc.setDrawColor(...brandPrimary);
+            doc.setLineWidth(0.5);
+            doc.line(15, 282, 195, 282);
+
+            // Footer text
+            doc.setFontSize(7);
+            doc.setTextColor(...textLight);
+            doc.setFont('helvetica', 'normal');
+            doc.text(
+                'Generated by SabiDub Admission Assistant',
+                15,
+                287
+            );
+
+            // Page number
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...brandPrimary);
+            doc.text(
+                `Page ${i} of ${pageCount}`,
+                195,
+                287,
+                { align: 'right' }
+            );
+        }
+
+        doc.save('Sabidub_Eligibility_Report.pdf');
+    };
+
+    return (
+        <div className={`min-h-screen bg-[#FDFDFD] text-gray-900 selection:bg-[#014751]/10 ${manrope.className}`}>
+            <Head>
+                <title>Admission Assistant | SabiDub</title>
+            </Head>
 
             <Navbar />
 
-
-            <main className="max-w-7xl mx-auto px-6 pt-32 pb-10">
-
-                {/* Modern Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-                    <div className="space-y-2">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#014751]/10 text-[#014751] text-xs font-bold uppercase tracking-wider mb-2">
-                            <LuInfo className="w-5 h-5" />
-                            Admission Criteria
-                        </div>
-                        <h1 className="text-4xl font-black tracking-tight text-gray-900">
-                            Check <span className="text-[#014751]">Eligibility</span>
-                        </h1>
-                        <p className="max-w-xl text-sm font-medium text-gray-500">
-                            Enter your academic credentials to analyze your admission chances instantly.
-                        </p>
-                    </div>
-
-                    {/* Resume Check Input */}
-                    <div className="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm max-w-md">
-                        <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-2">
-                            Have a Payment ID?
-                        </label>
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={resumePaymentId}
-                                onChange={(e) => setResumePaymentId(e.target.value)}
-                                placeholder="Enter Payment ID"
-                                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#014751]"
-                            />
-                            <button
-                                onClick={handleResumeCheck}
-                                disabled={isResuming || !resumePaymentId.trim()}
-                                className="px-4 py-2 bg-[#014751] hover:bg-[#013b43] text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                            >
-                                {isResuming ? 'Loading...' : 'Resume'}
-                            </button>
-                        </div>
-                        <p className="mt-2 text-[10px] text-gray-400 font-medium">
-                            Retrieve your previously paid results
-                        </p>
-                    </div>
-                </div>
-
-                {/* Saved Payment ID Banner */}
-                {savedPaymentId && (
-                    <div className="mb-6 bg-green-50 border border-green-200 rounded-xl p-4">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2 text-green-900">
-                                    <LuCheck className="w-5 h-5 text-green-600" />
-                                    <span className="text-sm font-bold">Payment ID (Save this for future access)</span>
-                                </div>
-                                <p className="text-[10px] text-green-700 font-medium ml-7">
-                                    Valid for 1 month. You can use this ID to resume your check on any device.
-                                </p>
+            {/* Premium Header/Banner */}
+            <div className="pt-32 pb-4 bg-white border-b border-gray-100">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                        <div>
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#014751]/5 text-[#014751] text-[10px] font-extrabold uppercase tracking-[0.2em] mb-4">
+                                <LuActivity className="w-3.5 h-3.5" />
+                                Smart Admission Intelligence
                             </div>
-                            <div className="flex items-center gap-3">
-                                <code className="px-3 py-1.5 bg-white border border-green-300 rounded-lg text-sm font-mono font-bold text-green-700">
-                                    {savedPaymentId}
-                                </code>
+                            <h1 className="text-xl md:text-2xl lg:text-3xl font-black tracking-tight text-gray-900 mb-2">
+                                Future-Proof Your <span className="text-[#014751] relative">
+                                    Admission
+                                    <span className="absolute bottom-1 left-0 w-full h-[3px] md:h-[4px] bg-[#014751]/10 -z-10 rounded-full"></span>
+                                </span>
+                            </h1>
+                            <p className="max-w-md text-[10px] md:text-xs font-bold text-gray-400 leading-relaxed">
+                                Our AI-powered analyzer evaluates your academic profile against thousands of institutional requirements across Nigeria.
+                            </p>
+                        </div>
+
+                        {/* Resume Section */}
+                        <div className="bg-white border border-gray-100 rounded-[1.5rem] p-4 shadow-sm max-w-xs w-full relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-[#014751]/5 rounded-full -mr-12 -mt-12 blur-xl group-hover:bg-[#014751]/10 transition-colors" />
+                            <label className="block text-[9px] font-black uppercase tracking-[0.15em] text-[#014751]/50 mb-2 ml-1">
+                                RESUME PREVIOUS CHECK
+                            </label>
+                            <div className="flex gap-2 relative z-10">
+                                <input
+                                    type="text"
+                                    value={resumePaymentId}
+                                    onChange={(e) => setResumePaymentId(e.target.value)}
+                                    placeholder="Enter Payment ID"
+                                    className="flex-1 bg-gray-50 px-3.5 py-2.5 rounded-xl text-xs font-bold border-none focus:ring-1 focus:ring-[#014751]/20 transition-all placeholder:text-gray-300"
+                                />
                                 <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(savedPaymentId);
-                                        showToast('Payment ID copied to clipboard!');
-                                    }}
-                                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-black uppercase tracking-widest transition-all"
+                                    onClick={handleResumeCheck}
+                                    disabled={isResuming || !resumePaymentId.trim()}
+                                    className="w-10 h-10 bg-[#014751] hover:bg-[#013b43] text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-50 active:scale-95 shadow-md shadow-[#014751]/10"
                                 >
-                                    Copy
+                                    {isResuming ? (
+                                        <div className="w-4 h-4 border-2 border-t-white border-white/20 rounded-full animate-spin" />
+                                    ) : (
+                                        <LuArrowRight className="w-4 h-4" />
+                                    )}
                                 </button>
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
+            </div>
 
-                <div className="flex flex-col lg:flex-row gap-8 items-start">
+            <main className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6 font-bold">
 
-                    {/* LEFT: Dashboard-style Form */}
-                    <motion.div
-                        initial="hidden"
-                        animate="visible"
-                        variants={fadeIn}
-                        className="w-full lg:w-5/12"
-                    >
-                        <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 relative overflow-hidden">
-                            {/* Background Accent */}
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#014751]/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
-
-                            <div className="relative z-10 space-y-8">
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 rounded-2xl bg-[#014751] flex items-center justify-center shadow-lg shadow-[#014751]/20 text-white">
-                                        <LuGraduationCap className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-xl font-black uppercase tracking-tight">Academic Profile</h2>
-                                        <p className="text-xs font-medium text-gray-400">Update your details below</p>
-                                    </div>
+                {/* Status Bar */}
+                {savedPaymentId && (
+                    <div className="mb-6 p-0.5 bg-gradient-to-r from-[#014751] to-[#015d69] rounded-2xl shadow-lg max-w-5xl mx-auto w-full">
+                        <div className="bg-white/95 rounded-xl md:rounded-[0.9rem] px-4 md:px-5 py-2 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
+                            <div className="flex items-center gap-3 w-full md:w-auto overflow-hidden">
+                                <div className="w-8 h-8 rounded-lg bg-[#014751]/5 flex items-center justify-center text-[#014751] shrink-0">
+                                    <LuFileCheck className="w-4 h-4" />
                                 </div>
-
-                                <div className="space-y-6">
-                                    {/* Exam Type */}
-                                    <div>
-                                        <InputLabel>Examination Type</InputLabel>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            {['WAEC', 'NECO', 'NABTEB', 'GCE'].map(type => (
-                                                <button
-                                                    key={type}
-                                                    onClick={() => toggleExam(type)}
-                                                    className={`relative py-3 px-2 text-xs font-black uppercase tracking-wider rounded-xl border transition-all flex items-center justify-center gap-1.5 ${selectedExams.includes(type)
-                                                        ? 'bg-[#014751] text-white border-[#014751] shadow-sm'
-                                                        : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'
-                                                        }`}
-                                                >
-                                                    {type}
-                                                    {selectedExams.includes(type) && (
-                                                        <span className="w-4 h-4 rounded-full bg-black/10 flex items-center justify-center text-[8px]">
-                                                            <LuCheck strokeWidth={4} />
-                                                        </span>
-                                                    )}
-                                                </button>
-                                            ))}
-                                        </div>
-                                        <p className="text-[10px] text-gray-400 font-medium mt-2 text-right">
-                                            {selectedExams.length === 2 ? 'Two sittings combined.' : 'Single sitting selected.'}
-                                        </p>
-                                    </div>
-
-                                    {/* JAMB */}
-                                    <div>
-                                        <InputLabel>JAMB UTME Score</InputLabel>
-                                        <div className="relative">
-                                            <input
-                                                type="number"
-                                                value={jambScore}
-                                                onChange={(e) => setJambScore(Number(e.target.value))}
-                                                placeholder="e.g. 260"
-                                                className="w-full bg-gray-50 border border-gray-200 text-gray-900 rounded-xl px-4 py-3 focus:outline-none focus:border-[#014751] focus:ring-1 focus:ring-[#014751] font-mono text-lg font-bold placeholder-gray-300"
-                                            />
-                                            <div className="absolute right-4 top-3.5 text-xs font-bold text-gray-400 pointer-events-none">/ 400</div>
-                                        </div>
-                                    </div>
-
-                                    {/* UTME Subjects */}
-                                    <div>
-                                        <InputLabel>UTME Subject Combination (4 Subjects)</InputLabel>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {utmeSubjects.map((sub, idx) => (
-                                                <Select
-                                                    key={idx}
-                                                    value={sub}
-                                                    onChange={(val) => {
-                                                        const newSubs = [...utmeSubjects];
-                                                        newSubs[idx] = val;
-                                                        setUtmeSubjects(newSubs);
-                                                    }}
-                                                    options={subjectsList}
-                                                    placeholder={idx === 0 ? 'English Language' : `Subject ${idx + 1}`}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-
-
-                                    {/* Subjects */}
-                                    <div>
-                                        <div className="flex justify-between items-center mb-2">
-                                            <InputLabel>Subject Combination</InputLabel>
-                                            {subjects.length < 9 && (
-                                                <button onClick={addSubject} className="text-[10px] font-black uppercase tracking-widest text-[#014751] hover:text-[#013b43] transition-colors">
-                                                    + Add Subject
-                                                </button>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3">
-                                            {subjects.map((subject, index) => (
-                                                <div key={subject.id} className="flex flex-col sm:flex-row gap-2 items-start sm:items-center bg-gray-50/50 sm:bg-transparent p-3 sm:p-0 rounded-xl border border-gray-100 sm:border-0 relative">
-                                                    <div className="flex-1 w-full">
-                                                        <Select
-                                                            value={subject.name}
-                                                            onChange={(val) => updateSubject(subject.id, 'name', val)}
-                                                            options={subjectsList.filter(opt => !subjects.some(s => s.name === opt && s.id !== subject.id))}
-                                                            placeholder={`Subject ${index + 1}`}
-                                                        />
-                                                    </div>
-                                                    <div className="flex items-center gap-2 w-full sm:w-auto">
-                                                        <div className="flex-1 sm:w-24">
-                                                            <GradeSelect
-                                                                value={subject.grade}
-                                                                onChange={(val) => updateSubject(subject.id, 'grade', val)}
-                                                            />
-                                                        </div>
-                                                        {subjects.length > 5 && (
-                                                            <button
-                                                                onClick={() => removeSubject(subject.id)}
-                                                                className="w-10 h-10 sm:w-8 sm:h-8 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all border border-gray-100 sm:border-0"
-                                                            >
-                                                                <LuTrash2 className="w-4 h-4" />
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-
-                                    {/* Selectors */}
-                                    {/* Selectors */}
-                                    <div className="pt-4 border-t border-gray-100 space-y-4">
-                                        <div>
-                                            <InputLabel>Preferred Institution (Optional)</InputLabel>
-                                            <Select
-                                                value={targetUniName}
-                                                onChange={(val) => {
-                                                    setTargetUniName(val);
-                                                    const inst = institutions.find(i => i.name === val);
-                                                    setSelectedInstitutionId(inst?.id || '');
-                                                    // Reset course when institution changes
-                                                    setTargetCourseName('');
-                                                    setTargetDepartmentId('');
-                                                }}
-                                                options={institutions.map(i => i.name)}
-                                                placeholder="All Institutions"
-                                            />
-                                        </div>
-                                        <div>
-                                            <InputLabel>Preferred Course</InputLabel>
-                                            <Select
-                                                value={targetCourseName}
-                                                onChange={(val) => {
-                                                    setTargetCourseName(val);
-                                                    if (selectedInstitutionId) {
-                                                        const dept = filteredDepartments.find(d => d.name === val);
-                                                        setTargetDepartmentId(dept?.id || '');
-                                                    } else {
-                                                        setTargetDepartmentId('');
-                                                    }
-                                                }}
-                                                options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses}
-                                                placeholder="Select Preferred Course"
-                                            />
-                                        </div>
-                                    </div>
-
+                                <div className="flex items-center gap-2 bg-[#014751]/5 px-2 py-1 rounded-md border border-[#014751]/10 min-w-0">
+                                    <code className="text-[10px] md:text-xs font-black text-[#014751] tracking-wider truncate">{savedPaymentId}</code>
                                     <button
-                                        onClick={checkAdmission}
-                                        disabled={!jambScore || !targetCourseName || isChecking}
-                                        className={`w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 ${!jambScore || !targetCourseName || isChecking
-                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                                            : 'bg-[#014751] hover:bg-[#013b43] text-white shadow-[#014751]/25 active:scale-95'
-                                            }`}
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(savedPaymentId);
+                                            if (!toastConfig.isOpen) showToast("Payment ID copied to clipboard");
+                                        }}
+                                        className="p-1 hover:bg-white rounded text-[#014751]/60 hover:text-[#014751] transition-all shrink-0"
+                                        title="Copy Payment ID"
                                     >
-                                        {isChecking ? (
-                                            <>
-                                                <LuActivity className="w-5 h-5 animate-spin" />
-                                                Analyzing...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Check Eligibility
-                                                <LuArrowRight className="w-4 h-4" />
-                                            </>
-                                        )}
+                                        <LuCopy className="w-3 h-3" />
                                     </button>
                                 </div>
+                            </div>
+                            {usageInfo && (
+                                <div className="flex items-center gap-4 md:gap-5 px-4 md:px-5 py-1.5 bg-gray-50/50 rounded-xl border border-gray-100 w-full md:w-auto justify-center">
+                                    <div className="flex items-baseline gap-1.5">
+                                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase">Usage</p>
+                                        <p className="text-[11px] md:text-xs font-black text-gray-700">{(usageInfo.viewCount ?? 0)}/{(usageInfo.totalViews ?? 3)}</p>
+                                    </div>
+                                    <div className="w-[1px] h-3 bg-gray-200" />
+                                    <div className="flex items-baseline gap-1.5">
+                                        <p className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase">Plan</p>
+                                        <p className="text-[11px] md:text-xs font-black text-[#014751]">{usageInfo.planName || 'Basic'}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                )}
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+
+                    {/* LEFT PANEL */}
+                    <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className="lg:col-span-5 space-y-8"
+                    >
+                        {/* Identify */}
+                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6 shadow-sm">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#014751] text-white flex items-center justify-center shadow-lg">
+                                    <LuGraduationCap className="w-5 h-5 md:w-6 md:h-6" />
+                                </div>
+                                <h2 className="text-lg md:text-xl font-extrabold tracking-tight">Academic Identity</h2>
+                            </div>
+                            <div className="space-y-4">
+                                <div>
+                                    <InputLabel>Exam Body</InputLabel>
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {['WAEC', 'NECO', 'NABTEB', 'GCE'].map(t => (
+                                            <button
+                                                key={t}
+                                                onClick={() => toggleExam(t)}
+                                                className={`py-3 rounded-xl text-[10px] font-black transition-all ${selectedExams.includes(t) ? 'bg-[#014751] text-white' : 'bg-gray-50 text-gray-400'}`}
+                                            >
+                                                {t}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <InputLabel>JAMB Score</InputLabel>
+                                        <input
+                                            type="number"
+                                            id="jambScore"
+                                            name="jambScore"
+                                            value={jambScore}
+                                            onChange={e => setJambScore(e.target.value === '' ? '' : Number(e.target.value))}
+                                            className="w-full bg-gray-50 px-4 py-3 rounded-xl font-black text-[#014751] outline-none text-sm"
+                                            placeholder="000"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel>Email</InputLabel>
+                                        <input type="email" value={userEmail} onChange={e => setUserEmail(e.target.value)} className="w-full bg-gray-50 px-4 py-3 rounded-xl text-sm font-semibold outline-none" placeholder="Email" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Subject Matrix */}
+                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6 shadow-sm">
+                            <div className="mb-6">
+                                <h2 className="text-lg md:text-xl font-extrabold">Subject Matrix</h2>
+                            </div>
+                            <div className="space-y-4">
+                                <div>
+                                    <InputLabel>UTME (4 Subjects)</InputLabel>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {utmeSubjects.map((s, i) => {
+                                            const otherSelected = utmeSubjects.filter((subj, idx) => idx !== i && subj);
+                                            const availableSubjects = subjectsList.filter(opt => !otherSelected.includes(opt));
+
+                                            return (
+                                                <Select
+                                                    key={i}
+                                                    value={s}
+                                                    onChange={v => { const n = [...utmeSubjects]; n[i] = v; setUtmeSubjects(n); }}
+                                                    options={availableSubjects}
+                                                    placeholder={i === 0 ? 'English' : 'Subject'}
+                                                />
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <div className="h-px bg-gray-100" />
+                                <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <InputLabel>O&apos;Level Credits</InputLabel>
+                                        <button onClick={addSubject} className="flex items-center gap-1 text-[10px] font-black uppercase text-[#014751] hover:bg-[#014751]/5 px-2 py-1 rounded-lg transition-colors">
+                                            <LuPlus className="w-3 h-3" /> Add Subject
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {subjects.map((s, i) => {
+                                            // Filter out subjects already selected in other rows
+                                            const otherSelected = subjects
+                                                .filter(subj => subj.id !== s.id && subj.name)
+                                                .map(subj => subj.name);
+
+                                            const availableOptions = subjectsList.filter(opt =>
+                                                !otherSelected.includes(opt)
+                                            );
+
+                                            return (
+                                                <div key={s.id} className="flex gap-2 items-center">
+                                                    <div className="flex-1">
+                                                        <Select
+                                                            value={s.name}
+                                                            onChange={v => updateSubject(s.id, 'name', v)}
+                                                            options={availableOptions}
+                                                            placeholder="Subject"
+                                                        />
+                                                    </div>
+                                                    <GradeSelect value={s.grade} onChange={v => updateSubject(s.id, 'grade', v)} />
+                                                    <button onClick={() => removeSubject(s.id)} className="text-gray-300 hover:text-red-500">
+                                                        <LuTrash2 className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Strategic Target */}
+                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6 shadow-sm">
+                            <h2 className="text-lg md:text-xl font-extrabold mb-6">Strategic Target</h2>
+                            <div className="space-y-4">
+                                <div>
+                                    <InputLabel>Institution</InputLabel>
+                                    <Select value={targetUniName} onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); }} options={institutions.map(i => i.name)} placeholder="All Universities" icon={LuSchool} />
+                                </div>
+                                <div>
+                                    <InputLabel>Preferred Course</InputLabel>
+                                    <Select value={targetCourseName} onChange={v => setTargetCourseName(v)} options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses} placeholder="Select Course" icon={LuBookOpen} />
+                                </div>
+
+                                {courseRequirements?.found && courseRequirements.requirements?.[0] && (
+                                    <div className="p-4 bg-[#014751]/5 rounded-2xl border border-[#014751]/10">
+                                        <div className="flex items-center gap-2 mb-3"><LuInfo className="w-4 h-4 text-[#014751]" /><span className="text-[10px] font-black uppercase text-[#014751]">Requirements</span></div>
+                                        <div className="text-[11px] font-bold text-gray-600">
+                                            UTME: {(courseRequirements.requirements[0].jamb?.compulsory || []).join(', ')} + {(courseRequirements.requirements[0].jamb?.groups?.length || 0)} Elective Groups
+                                        </div>
+                                    </div>
+                                )}
+
+                                <button onClick={checkAdmission} disabled={isChecking || !jambScore || !targetCourseName} className="w-full py-4 rounded-xl md:rounded-2xl bg-[#014751] text-white font-black uppercase text-xs md:text-sm tracking-widest shadow-xl shadow-[#014751]/20 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
+                                    {isChecking ? <LuActivity className="animate-spin text-lg" /> : <>Run Analysis <LuArrowRight className="text-lg" /></>}
+                                </button>
                             </div>
                         </div>
                     </motion.div>
 
-                    {/* RIGHT: Results Area */}
-                    <div className="flex-1 w-full">
-                        {!results && !previewData && !isChecking && (
-                            <motion.div
-                                initial="hidden"
-                                animate="visible"
-                                variants={fadeIn}
-                                className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-12 bg-white border border-gray-100 shadow-xl shadow-gray-200/20 rounded-3xl"
-                            >
-                                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                                    <LuBookOpen className="w-8 h-8 text-gray-300" />
-                                </div>
-                                <h3 className="text-xl font-black text-gray-300 mb-2 uppercase tracking-tight">Ready to Analyze</h3>
-                                <p className="text-gray-400 max-w-sm font-medium">Complete your academic profile on the left to discover your admission possibilities.</p>
-                            </motion.div>
+                    {/* RIGHT PANEL */}
+                    <div className="lg:col-span-7">
+                        {!results && !previewData && (
+                            <div className="h-[300px] md:h-[500px] bg-gray-50/50 rounded-3xl md:rounded-[3rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-6 md:p-12">
+                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white flex items-center justify-center text-gray-200 mb-6 shadow-sm"><LuChartBar className="w-6 h-6 md:w-8 md:h-8" /></div>
+                                <h3 className="text-lg md:text-xl font-black text-gray-800 mb-2">Ready for analysis</h3>
+                                <p className="text-xs md:text-sm font-medium text-gray-400">Complete your profile to generate your report.</p>
+                            </div>
                         )}
 
-                        {previewData && (
-                            <motion.div
-                                initial="hidden"
-                                animate="visible"
-                                variants={fadeIn}
-                                className="h-full min-h-[500px] flex flex-col items-center justify-center text-center p-6 sm:p-12 bg-white border border-gray-100 shadow-2xl shadow-gray-200/50 rounded-[2.5rem] relative overflow-hidden"
-                            >
-                                {/* Background Decorations */}
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#014751]/10 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
-                                <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/5 rounded-full -ml-32 -mb-32 blur-3xl pointer-events-none" />
-
-                                <div className="relative z-10 w-full max-w-5xl">
-                                    <div className="w-full max-w-md mx-auto mb-8">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#014751] text-white text-[10px] font-black rounded-full uppercase tracking-widest mb-4 shadow-lg shadow-[#014751]/20">
-                                            <LuZap className="w-3 h-3" />
-                                            Analysis Ready
-                                        </div>
-
-                                        <div className="w-16 h-16 bg-gray-900 rounded-3xl flex items-center justify-center mb-5 mx-auto shadow-2xl rotate-3 transform group-hover:rotate-0 transition-transform">
-                                            <LuLock className="w-7 h-7 text-[#014751]" />
-                                        </div>
-
-                                        <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight leading-tight">
-                                            {previewData.isRenewal ? 'Renew Access' : previewData.isRetry ? 'Payment Failed' : 'Results Found!'}
-                                        </h2>
-
-                                        {/* Status Badge */}
-                                        {(previewData.isRenewal || previewData.isRetry) && (
-                                            <div className={`mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider ${previewData.isRenewal ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-red-50 text-red-600 border border-red-100'
-                                                }`}>
-                                                {previewData.isRenewal ? 'Views Subscription Ended' : 'Transaction Declined'}
-                                            </div>
-                                        )}
-
-                                        <p className="text-gray-500 font-medium mb-6 leading-relaxed px-4 text-sm">
-                                            {previewData.message || (previewData.totalHigh + previewData.totalMedium > 0
-                                                ? `We found ${previewData.totalHigh + previewData.totalMedium} opportunities for your profile.`
-                                                : "Analyzing your profile completed. No matches found.")}
-                                        </p>
-
-                                        <div className="mb-6 inline-flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
-                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">ID:</span>
-                                            <code className="text-xs font-mono font-black text-gray-900">{previewData.paymentId || previewData.previewId}</code>
-                                        </div>
-
-                                        {/* Warning about JAMB score lock */}
-                                        <div className="mb-6 p-4 bg-amber-50/50 border border-amber-100 rounded-2xl text-left shadow-sm">
-                                            <div className="flex items-start gap-3">
-                                                <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                                                    <LuInfo className="w-4 h-4 text-amber-600" />
-                                                </div>
-                                                <div>
-                                                    <p className="text-[10px] font-black text-amber-900 uppercase tracking-[0.1em] mb-0.5">Security Notice</p>
-                                                    <p className="text-[11px] text-amber-700/80 font-semibold leading-relaxed">
-                                                        Results are tied to Score <span className="text-amber-900 font-black">{jambScore}</span>.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-3 w-full mb-6">
-                                            <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 group hover:border-green-200 transition-all">
-                                                <div className="w-8 h-8 rounded-xl bg-green-50 text-green-600 flex items-center justify-center mb-2 mx-auto">
-                                                    <LuCheck className="w-4 h-4" strokeWidth={3} />
-                                                </div>
-                                                <div className="text-2xl font-black text-gray-900 mb-0">{previewData.totalHigh}</div>
-                                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">High Chance</div>
-                                            </div>
-                                            <div className="bg-white p-3.5 rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/20 group hover:border-[#014751]/20 transition-all">
-                                                <div className="w-8 h-8 rounded-xl bg-[#014751]/5 text-[#014751] flex items-center justify-center mb-2 mx-auto">
-                                                    <LuInfo className="w-4 h-4" />
-                                                </div>
-                                                <div className="text-2xl font-black text-gray-900 mb-0">{previewData.totalMedium}</div>
-                                                <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Medium Chance</div>
-                                            </div>
-                                        </div>
+                        {/* Preview / Pay */}
+                        <AnimatePresence>
+                            {previewData && (
+                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[3rem] border border-gray-100  p-10 text-center">
+                                    <div className="w-16 h-16 bg-[#014751]/5 rounded-2xl flex items-center justify-center text-[#014751] mx-auto mb-6"><LuZap className="w-8 h-8" /></div>
+                                    <div className="inline-flex items-center gap-2 bg-[#014751]/5 px-6 py-2 rounded-full text-[#014751] font-black uppercase tracking-widest text-xs mb-6">
+                                        <LuCheck className="w-4 h-4" />
+                                        {(previewData.totalEligible || 0) > 0
+                                            ? `${previewData.totalEligible} Strong Matches Found`
+                                            : `${previewData.totalResults || 0} Courses Analyzed`}
                                     </div>
 
-                                    {/* Plan Selection */}
-                                    {/* Pricing Table Section */}
-                                    {previewData.plans && previewData.plans.length > 0 && (
-                                        <div className="w-full max-w-4xl mb-8">
-                                            <div className="mb-8">
-                                                <h2 className="text-3xl font-black text-gray-900 mb-2">Our pricing</h2>
-                                                <p className="text-gray-500 font-medium text-sm">Choose the best plan for your admission success</p>
+                                    <h2 className="text-3xl font-black mb-2">Analysis Complete</h2>
+                                    <p className="text-gray-500 font-medium mb-10 text-sm">{previewData.message || "We've identified potential schools and courses where you meet the admission requirements."}</p>
 
-                                                {/* Toggle Mockup */}
-                                                <div className="mt-6 flex justify-center">
-                                                    <div className="bg-gray-100 p-1 rounded-full inline-flex items-center relative">
-                                                        <div className="px-4 py-1.5 rounded-full bg-gray-900 text-white text-xs font-bold shadow-sm z-10">One-time</div>
-                                                        <div className="px-4 py-1.5 rounded-full text-gray-500 text-xs font-medium">Bundle</div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
+                                        {previewData.plans?.map((p: any) => (
+                                            <button
+                                                key={p.id}
+                                                onClick={() => setSelectedPlanId(String(p.id))}
+                                                className={`p-6 rounded-[2.5rem] border-2 transition-all relative overflow-hidden group ${selectedPlanId === String(p.id)
+                                                    ? 'border-[#014751] bg-[#014751]/5 ring-4 ring-[#014751]/5'
+                                                    : 'border-gray-50 bg-gray-50/30'
+                                                    }`}
+                                            >
+                                                <div className="flex justify-between items-start mb-3">
+                                                    <div>
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-[#014751] mb-1">{p.name}</p>
+                                                        <p className="text-3xl font-black">₦{p.price}</p>
+                                                    </div>
+                                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${selectedPlanId === String(p.id) ? 'border-[#014751] bg-[#014751]' : 'border-gray-200'
+                                                        }`}>
+                                                        {selectedPlanId === String(p.id) && <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="w-2.5 h-2.5 bg-white rounded-full" />}
                                                     </div>
                                                 </div>
-                                            </div>
 
-                                            <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100 text-left">
-                                                {previewData.plans.map((p: any) => (
-                                                    <div key={p.id} className={`flex-1 p-8 flex flex-col relative ${selectedPlanId === p.id ? 'bg-[#014751]/10' : ''}`}>
-                                                        {selectedPlanId === p.id && (
-                                                            <div className="absolute top-0 left-0 right-0 h-1 bg-[#014751]"></div>
-                                                        )}
-                                                        <div className="mb-4">
-                                                            <h3 className="font-black text-lg text-gray-900 mb-1">{p.name}</h3>
-                                                            <p className="text-xs text-gray-500 font-medium">Essential tools for admission success</p>
+                                                <div className="space-y-2 mt-4 pt-4 border-t border-gray-100">
+                                                    {(p.planFeatures || []).map((feat: any, idx: number) => (
+                                                        <div key={idx} className="flex items-start gap-2 text-[11px] font-bold text-gray-500">
+                                                            <LuCheck className="text-green-500 mt-0.5 shrink-0" />
+                                                            <span>{feat.feature}</span>
                                                         </div>
-
-                                                        <div className="mb-6">
-                                                            <div className="flex items-baseline">
-                                                                <span className="text-3xl font-black text-gray-900">₦{p.price}</span>
-                                                                <span className="text-xs text-gray-400 ml-1 font-medium">/check</span>
+                                                    ))}
+                                                    {(!p.planFeatures || p.planFeatures.length === 0) && (
+                                                        <>
+                                                            <div className="flex items-start gap-2 text-[11px] font-bold text-gray-500">
+                                                                <LuCheck className="text-green-500 mt-0.5 shrink-0" />
+                                                                <span>Detailed Eligibility Report</span>
                                                             </div>
-                                                        </div>
+                                                            <div className="flex items-start gap-2 text-[11px] font-bold text-gray-500">
+                                                                <LuCheck className="text-green-500 mt-0.5 shrink-0" />
+                                                                <span>{p.name.toLowerCase().includes('premium') ? '10' : p.name.toLowerCase().includes('standard') ? '5' : '2'} Full Report Access</span>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
 
-                                                        <button
-                                                            onClick={() => setSelectedPlanId(p.id)}
-                                                            className={`w-full py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all mb-8 ${selectedPlanId === p.id
-                                                                ? 'bg-gray-900 text-white shadow-lg ring-2 ring-[#014751] ring-offset-2'
-                                                                : 'bg-black text-white hover:bg-gray-800'
-                                                                }`}
-                                                        >
-                                                            {selectedPlanId === p.id ? 'Selected' : 'Select'}
+                                    <button onClick={handleUnlock} disabled={isUnlocking} className="w-full py-5 rounded-3xl bg-[#014751] text-white font-black uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
+                                        {isUnlocking ? 'Please wait...' : previewData.insufficientCredits ? <>Get More Credit <LuZap /></> : <>Unlock Full Access <LuShoppingCart /></>}
+                                    </button>
+                                    {(() => {
+                                        const selectedPlan = previewData.plans?.find((p: any) => String(p.id) === selectedPlanId);
+                                        const planName = (selectedPlan?.name || '').toLowerCase();
+                                        const hasSuggestions = planName.includes('standard') || planName.includes('premium');
+                                        const totalCost = hasSuggestions ? 25 : 10;
+                                        return (
+                                            <p className="mt-4 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
+                                                ⚠️ Unlocking this report will use {totalCost} credits from your plan.
+                                            </p>
+                                        );
+                                    })()}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
+                        {/* Full Results */}
+                        {results && !previewData && (
+                            <div className="space-y-6">
+                                {(() => {
+                                    // Determine plan tier
+                                    const planName = (usageInfo?.planName || '').toLowerCase();
+                                    const isPremium = planName.includes('premium');
+                                    const isStandard = planName.includes('standard');
+                                    const isBasic = !isPremium && !isStandard;
+
+                                    // Define available tabs based on plan
+                                    let availableTabs: ('results' | 'suggestions' | 'comparison' | 'simulation')[] = ['results'];
+
+                                    if (isPremium) {
+                                        availableTabs = ['results', 'suggestions', 'comparison', 'simulation'];
+                                    } else if (isStandard) {
+                                        availableTabs = ['results', 'suggestions', 'comparison'];
+                                    }
+                                    // Basic: only 'results'
+
+                                    return (
+                                        <>
+                                            <div className="bg-white p-1 rounded-2xl md:rounded-[2rem] border border-gray-100 shadow-xl flex gap-1 overflow-x-auto no-scrollbar scroll-smooth">
+                                                {availableTabs.map(t => (
+                                                    <button key={t} onClick={() => setActiveTab(t as any)} className={`flex-1 min-w-[100px] md:min-w-0 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${activeTab === t ? 'bg-[#014751] text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}>{t}</button>
+                                                ))}
+                                            </div>
+                                        </>
+                                    );
+                                })()}
+
+                                <div className="bg-white rounded-3xl md:rounded-[3rem] border border-gray-100 p-4 md:p-8 min-h-[400px] md:min-h-[500px]">
+                                    {activeTab === 'results' && (
+                                        <div className="space-y-6">
+                                            <div className="flex justify-between items-center mb-8">
+                                                {showSearch ? (
+                                                    <div className="flex-1 flex items-center gap-2 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 mr-2">
+                                                        <LuSearch className="text-gray-400" />
+                                                        <input
+                                                            autoFocus
+                                                            type="text"
+                                                            placeholder="Search university or course..."
+                                                            className="flex-1 bg-transparent border-none outline-none text-sm font-bold placeholder:font-medium"
+                                                            value={searchTerm}
+                                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                                        />
+                                                        <button onClick={() => { setSearchTerm(''); setShowSearch(false); }} className="p-1 hover:bg-gray-200 rounded-full text-gray-400"><LuX /></button>
+                                                    </div>
+                                                ) : (
+                                                    <h2 className="text-2xl font-black">Eligibility Report</h2>
+                                                )}
+
+                                                <div className="flex gap-2">
+                                                    {!showSearch && (
+                                                        <button onClick={() => setShowSearch(true)} className="p-3 bg-gray-50 rounded-xl text-gray-400 border border-gray-100 hover:bg-gray-100 hover:text-gray-900 transition-colors">
+                                                            <LuSearch />
                                                         </button>
+                                                    )}
+                                                    {(() => {
+                                                        const planName = (usageInfo?.planName || '').toLowerCase();
+                                                        const isBasic = !planName.includes('premium') && !planName.includes('standard');
+                                                        return !isBasic && (
+                                                            <button onClick={generatePDF} className="p-3 bg-[#014751] text-white rounded-xl border border-[#014751] hover:opacity-90 transition-opacity">
+                                                                <LuDownload />
+                                                            </button>
+                                                        );
+                                                    })()}
+                                                </div>
+                                            </div>
+                                            {(() => {
+                                                const hasMore = page < totalPages;
 
-                                                        <div className="space-y-3 flex-1">
-                                                            {(p.features && p.features.length > 0 ? p.features : ['Admission Probability', 'Course Recommendations', 'O\'Level Analysis']).map((feat: string, i: number) => (
-                                                                <div key={i} className="flex items-start gap-3">
-                                                                    <LuCheck className="w-4 h-4 text-gray-900 shrink-0 mt-0.5" />
-                                                                    <span className="text-xs text-gray-600 font-medium">{feat}</span>
+                                                return isUnlocking ? (
+                                                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                                                        <div className="w-12 h-12 border-4 border-t-[#014751] border-gray-100 rounded-full animate-spin" />
+                                                        <p className="text-xs font-black uppercase tracking-widest text-gray-400">Analyzing Credentials...</p>
+                                                    </div>
+                                                ) : results.length > 0 ? (
+                                                    <div className="space-y-8">
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                            {results.map((r, i) => (
+                                                                <div key={i} onClick={() => setSelectedResult(r)} className="p-4 md:p-6 rounded-2xl md:rounded-3xl bg-gray-50/50 border border-transparent hover:border-[#014751]/20 hover:bg-white transition-all cursor-pointer group">
+                                                                    <div className={`w-16 md:w-20 py-1 rounded-full text-[9px] md:text-[10px] font-black text-center uppercase mb-3 md:mb-4 ${r.chance === 'High' ? 'bg-green-100 text-green-700' : r.chance === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-50 text-red-500'}`}>{r.chance || 'N/A'}</div>
+                                                                    <h3 className="font-black text-sm md:text-base text-gray-900 mb-1">{r.university || 'Unknown Institution'}</h3>
+                                                                    <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">{r.course || 'Unknown Course'}</p>
                                                                 </div>
                                                             ))}
                                                         </div>
+
+                                                        {hasMore && (
+                                                            <div className="flex justify-center pb-10">
+                                                                <button
+                                                                    onClick={() => fetchAdmissionResults(savedPaymentId, page + 1, searchTerm, true)}
+                                                                    disabled={isFetchingMore}
+                                                                    className="px-8 py-4 bg-white border border-[#014751]/10 text-[#014751] font-black rounded-3xl hover:bg-gray-50 transition-all disabled:opacity-50 flex items-center gap-2"
+                                                                >
+                                                                    {isFetchingMore ? (
+                                                                        <>
+                                                                            <div className="w-4 h-4 border-2 border-t-[#014751] border-gray-200 rounded-full animate-spin" />
+                                                                            Loading...
+                                                                        </>
+                                                                    ) : 'Load More Results'}
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
-                                                ))}
-                                            </div>
+                                                ) : (
+                                                    <div className="flex flex-col items-center justify-center py-20 text-center gap-6">
+                                                        <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center border border-gray-100">
+                                                            {hasError ? <LuInfo className="w-8 h-8 text-red-500" /> : <LuSearch className="w-8 h-8 text-gray-300" />}
+                                                        </div>
+                                                        <div className="max-w-md space-y-2">
+                                                            <h3 className="text-xl font-extrabold text-gray-900">{hasError ? 'Analysis Timeout' : 'No Eligible Report Found'}</h3>
+                                                            <p className="text-gray-500 font-medium">
+                                                                {hasError
+                                                                    ? "The analysis is taking longer than expected. Please wait a moment and try refreshing the results."
+                                                                    : searchTerm ? `No results match "${searchTerm}"` : "There is no report available for your current subject combination. Please try adjusting your subjects or selecting a different institution."}
+                                                            </p>
+                                                        </div>
+                                                        <div className="flex gap-4">
+                                                            {hasError && (
+                                                                <button onClick={() => fetchAdmissionResults(savedPaymentId || '', 1, '', false)} className="px-6 py-3 bg-[#014751] text-white font-black rounded-2xl shadow-lg hover:opacity-90">
+                                                                    Retry Analysis
+                                                                </button>
+                                                            )}
+                                                            {!hasError && savedPaymentId && (
+                                                                <button
+                                                                    onClick={() => fetchAdmissionResults(savedPaymentId, 1, '', false, true)}
+                                                                    disabled={isUnlocking}
+                                                                    className="px-6 py-3 border border-[#014751] text-[#014751] font-black rounded-2xl hover:bg-[#014751]/5 transition-all flex items-center gap-2 disabled:opacity-50"
+                                                                >
+                                                                    {isUnlocking ? (
+                                                                        <div className="w-4 h-4 border-2 border-t-[#014751] border-gray-200 rounded-full animate-spin" />
+                                                                    ) : null}
+                                                                    Resume My Session
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })()}
                                         </div>
                                     )}
 
-                                    <div className="w-full max-w-sm mx-auto mb-4">
-                                        <input
-                                            id="paymentEmail"
-                                            type="email"
-                                            value={userEmail}
-                                            onChange={(e) => setUserEmail(e.target.value)}
-                                            placeholder="Email Address (Optional)"
-                                            className="w-full px-5 py-2.5 bg-gray-50 border border-transparent focus:bg-white focus:border-[#014751] rounded-xl text-sm font-black transition-all text-center placeholder:text-gray-300 placeholder:uppercase placeholder:tracking-widest"
-                                        />
-                                    </div>
-
-                                    <button
-                                        onClick={handleUnlock}
-                                        disabled={isUnlocking}
-                                        className={`w-full max-w-sm mx-auto py-3.5 rounded-xl font-black uppercase tracking-[0.15em] transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50 ${selectedPlanId ? 'bg-[#014751] text-white shadow-[#014751]/20 hover:bg-[#013b43]' : 'bg-gray-900 text-white shadow-gray-900/10'
-                                            }`}
-                                    >
-                                        {isUnlocking ? (
-                                            <>
-                                                <LuActivity className="w-5 h-5 animate-spin" />
-                                                {previewData.isPaid ? 'Unlocking...' : 'Encrypting...'}
-                                            </>
-                                        ) : (
-                                            <>
-                                                {previewData.isPaid ? <LuBookOpen className="w-5 h-5" /> : <LuShoppingCart className="w-5 h-5" />}
-                                                {previewData.isPaid ? 'View Full Report' : previewData.isRenewal ? 'Renew Access' : previewData.isRetry ? 'Retry Setup' : 'Unlock Access'}
-                                            </>
-                                        )}
-                                    </button>
-
-                                    <div className="mt-4 flex items-center justify-center gap-4 text-[9px] font-black text-gray-400 uppercase tracking-widest">
-                                        <div className="flex items-center gap-1.5"><LuLock className="w-3 h-3 text-green-500" /> SECURE</div>
-                                        <div className="flex items-center gap-1.5"><LuZap className="w-3 h-3 text-[#014751]" /> INSTANT</div>
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
-
-                        {isChecking && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                className="h-full min-h-[500px] flex flex-col items-center justify-center p-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-2xl shadow-gray-200/50"
-                            >
-                                <div className="relative w-24 h-24 mb-8">
-                                    <div className="absolute inset-0 border-4 border-[#014751]/20 rounded-full"></div>
-                                    <div className="absolute inset-0 border-4 border-[#014751] border-t-transparent rounded-full animate-spin"></div>
-                                    <div className="absolute inset-0 flex items-center justify-center">
-                                        <LuActivity className="w-8 h-8 text-[#014751] animate-pulse" />
-                                    </div>
-                                </div>
-                                <h3 className="text-xl font-black text-gray-900 mb-2 uppercase tracking-tight">Crunching Data</h3>
-                                <p className="text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em] animate-pulse">Running institutional audit...</p>
-                            </motion.div>
-                        )}
-
-                        {results && results.length > 0 && (
-                            <div className="flex flex-col gap-3">
-                                {/* Search Summary */}
-                                <div className="bg-gray-900 text-white rounded-2xl p-5 mb-2 shadow-lg relative overflow-hidden">
-                                    <div className="absolute right-0 top-0 opacity-10 -mr-4 -mt-4">
-                                        <LuSearch className="w-24 h-24" />
-                                    </div>
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#014751] mb-3">Analysis Profile</h4>
-                                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                                        <div className="flex items-center gap-4">
-                                            <div>
-                                                <div className="text-2xl font-black">{jambScore}</div>
-                                                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">JAMB Score</div>
-                                            </div>
-                                            <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                                                {subjects.filter(s => s.name).map((s, i) => (
-                                                    <span key={i} className="px-2 py-1 bg-white/5 rounded text-[9px] sm:text-[10px] font-bold text-gray-300 whitespace-nowrap">
-                                                        {s.name} <span className="text-[#014751] ml-1">{s.grade}</span>
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Usage Info Banner */}
-                                {usageInfo && (
-                                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-2">
-                                        {/* Header */}
-                                        <div className="flex items-center gap-2 mb-3">
-                                            <LuInfo className="w-4 h-4 text-blue-600" />
-                                            <span className="text-xs font-bold text-blue-900">Usage Tracking</span>
-                                        </div>
-
-                                        {/* Stats Grid - Responsive */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                            {/* Usage Limit */}
-                                            <div className="flex items-center justify-between sm:justify-start gap-2 bg-white/50 rounded-lg px-3 py-2">
-                                                <span className="text-[11px] text-gray-600 font-medium">Usage:</span>
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="font-black text-blue-600 text-sm">{usageInfo.viewCount}/{usageInfo.totalViews || 3}</span>
-                                                    <span className="text-[10px] text-gray-400">({usageInfo.viewsRemaining} left)</span>
-                                                </div>
-                                            </div>
-
-                                            {/* Plan */}
-                                            <div className="flex items-center justify-between sm:justify-start gap-2 bg-white/50 rounded-lg px-3 py-2">
-                                                <span className="text-[11px] text-gray-600 font-medium">Plan:</span>
-                                                <span className="font-black text-blue-600 text-sm capitalize">{usageInfo.planName || 'Basic'}</span>
-                                            </div>
-
-                                            {/* Expires */}
-                                            <div className="flex items-center justify-between sm:justify-start gap-2 bg-white/50 rounded-lg px-3 py-2">
-                                                <span className="text-[11px] text-gray-600 font-medium">Expires:</span>
-                                                <span className="font-black text-blue-600 text-sm">
-                                                    {new Date(usageInfo.expiresAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        {/* Premium PDF Download Button */}
-                                        {usageInfo.planName?.toLowerCase().includes('premium') && (
-                                            <div className="mt-3 pt-3 border-t border-blue-200">
-                                                <button
-                                                    onClick={generatePDF}
-                                                    className="w-full sm:w-auto flex items-center justify-center gap-2 bg-gray-900 text-white px-5 py-2.5 rounded-xl hover:bg-black transition-all text-sm font-black uppercase tracking-widest shadow-lg shadow-gray-200"
-                                                >
-                                                    <LuBookOpen className="w-4 h-4 text-[#014751]" />
-                                                    <span>Download PDF Report</span>
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                                {results.map((result, idx) => (
-                                    <motion.div
-                                        key={idx}
-                                        initial="hidden"
-                                        animate="visible"
-                                        variants={fadeIn}
-                                        transition={{ duration: 0.5, delay: idx * 0.1 }}
-                                        onClick={() => setSelectedResult(result)}
-                                        className="cursor-pointer bg-white rounded-xl border border-gray-100 hover:border-[#014751]/20 hover:shadow-md transition-all duration-300 relative group overflow-hidden w-full"
-                                    >
-                                        {/* Status Strip (Left side) */}
-                                        <div className={`absolute left-0 top-0 bottom-0 w-1.5 ${result.chance === 'High' ? 'bg-green-500' :
-                                            result.chance === 'Medium' ? 'bg-[#014751]' : 'bg-red-500'
-                                            }`} />
-
-                                        <div className="p-4 pl-6 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-
-                                            <div className="flex-1">
-                                                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                                                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest ${result.chance === 'High' ? 'bg-green-500/10 text-green-500' :
-                                                        result.chance === 'Medium' ? 'bg-[#014751]/10 text-[#014751]' : 'bg-red-500/10 text-red-500'
-                                                        }`}>
-                                                        {result.chance} Chance
-                                                    </span>
-                                                    {result.postUtmeRequired && (
-                                                        <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-purple-500/10 text-purple-600">
-                                                            Post-UTME Required
-                                                        </span>
-                                                    )}
-                                                    {result.admissionStage && (
-                                                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest bg-gray-100 text-gray-600 border border-gray-200">
-                                                            {result.admissionStage}
-                                                        </span>
-                                                    )}
-                                                    {result.aggregateScore && (
-                                                        <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-blue-600 text-white shadow-sm">
-                                                            Aggregate: {result.aggregateScore}%
-                                                        </span>
+                                    {activeTab === 'suggestions' && (
+                                        <div className="space-y-6">
+                                            <h2 className="text-2xl font-black">Alternative Suggestions</h2>
+                                            {courseSuggestions.length > 0 ? (
+                                                <div className="space-y-4">
+                                                    {courseSuggestions.map((s, i) => (
+                                                        <div key={i} className="p-4 md:p-6 bg-[#014751]/5 rounded-2xl md:rounded-3xl border border-[#014751]/10">
+                                                            <div className="mb-4 pb-4 border-b border-[#014751]/10">
+                                                                <h3 className="font-black text-base md:text-lg text-[#014751] truncate">{s.institution}</h3>
+                                                                <p className="text-[9px] md:text-xs font-bold uppercase tracking-widest text-[#014751]/60 truncate">Alternatives for {s.failedCourse}</p>
+                                                            </div>
+                                                            <div className="space-y-3">
+                                                                {s.alternatives?.map((alt: any, j: number) => (
+                                                                    <div key={j} className="bg-white p-3 md:p-4 rounded-xl md:rounded-2xl border border-gray-100 shadow-sm">
+                                                                        <div className="flex justify-between items-start gap-4 mb-2">
+                                                                            <div className="min-w-0">
+                                                                                <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">{alt.course}</h4>
+                                                                                <p className="text-[9px] md:text-[10px] uppercase font-bold text-gray-400 truncate">{alt.faculty}</p>
+                                                                            </div>
+                                                                            {alt.cutoff && (
+                                                                                <span className="px-2 py-1 bg-green-50 text-green-700 text-[9px] md:text-[10px] font-black rounded-lg border border-green-100 shrink-0">
+                                                                                    {alt.cutoff} pts
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                        <p className="text-xs md:text-sm text-gray-600 leading-relaxed line-clamp-2 md:line-clamp-none">{alt.reason}</p>
+                                                                    </div>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {suggestionsPage < suggestionsTotalPages && (
+                                                        <div className="flex justify-center pt-4">
+                                                            <button
+                                                                onClick={handleLoadMoreSuggestions}
+                                                                disabled={isSuggestionsLoadingMore}
+                                                                className="px-8 py-4 bg-white border border-[#014751]/10 text-[#014751] font-black rounded-3xl hover:bg-gray-50 transition-all disabled:opacity-50 flex items-center gap-2"
+                                                            >
+                                                                {isSuggestionsLoadingMore ? (
+                                                                    <>
+                                                                        <div className="w-4 h-4 border-2 border-t-[#014751] border-gray-200 rounded-full animate-spin" />
+                                                                        Loading...
+                                                                    </>
+                                                                ) : 'Load More Suggestions'}
+                                                            </button>
+                                                        </div>
                                                     )}
                                                 </div>
-                                                <h3 className="text-base font-black uppercase tracking-tight text-gray-900 group-hover:text-[#014751] transition-colors mb-0.5">
-                                                    {result.university}
-                                                </h3>
-                                                <p className="text-xs font-medium text-gray-500">{result.course}</p>
-
-                                                <div className="mt-2 flex items-start gap-1.5 text-[11px] text-gray-600 leading-snug">
-                                                    <div className={`mt-0.5 w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${result.chance === 'High' ? 'bg-green-500/10 text-green-500' :
-                                                        result.chance === 'Medium' ? 'bg-[#014751]/10 text-[#014751]' : 'bg-red-500/10 text-red-500'
-                                                        }`}>
-                                                        {result.chance === 'High' ? <LuCheck className="w-2 h-2" strokeWidth={3} /> :
-                                                            result.chance === 'Medium' ? <LuInfo className="w-2 h-2" strokeWidth={3} /> :
-                                                                <LuX className="w-2 h-2" strokeWidth={3} />}
-                                                    </div>
-                                                    <span>{result.reason}</span>
-                                                </div>
-                                            </div>
-
-                                            {result.chance === 'High' && (
-                                                <button
-                                                    onClick={() => result.universityWebsite ? window.open(result.universityWebsite, '_blank') : showAlert('Website not found', 'Sorry, the website for this institution is not available.', 'info')}
-                                                    className="w-full sm:w-auto px-4 py-2 rounded-lg bg-gray-900 hover:bg-black text-white text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap"
-                                                >
-                                                    Apply Now
-                                                </button>
+                                            ) : (
+                                                (usageInfo?.planName?.toLowerCase().includes('premium') || usageInfo?.planName?.toLowerCase().includes('standard')) ? (
+                                                    <div className="p-12 text-center text-gray-400 border-2 border-dashed rounded-3xl">No alternative suggestions found for your profile.</div>
+                                                ) : (
+                                                    <div className="p-12 text-center text-gray-400 border-2 border-dashed rounded-3xl">Premium required for smart suggestions</div>
+                                                )
                                             )}
                                         </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        )}
+                                    )}
 
-                        {results && results.length === 0 && (
-                            <div className="text-center py-12 max-w-2xl mx-auto flex flex-col items-center">
-                                <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center text-red-500 mb-4">
-                                    <LuX className="w-8 h-8" />
+                                    {activeTab === 'comparison' && (
+                                        <div className="space-y-6">
+                                            <div className="flex justify-between items-center">
+                                                <h2 className="text-2xl font-black">Comparison</h2>
+                                                <button onClick={() => handleCompareRequest()} className="text-[10px] font-black uppercase text-[#014751]">Refresh</button>
+                                            </div>
+
+                                            {isComparing ? (
+                                                <div className="space-y-3 animate-pulse">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <div key={i} className="h-16 bg-gray-100 rounded-2xl w-full"></div>
+                                                    ))}
+                                                </div>
+                                            ) : comparisons.length > 0 ? (
+                                                <div className="space-y-3">
+                                                    {comparisons.map((c, i) => (
+                                                        <div key={i} className="flex justify-between items-center p-3 md:p-4 bg-gray-50 rounded-xl md:rounded-2xl gap-3">
+                                                            <div className="min-w-0">
+                                                                <p className="font-bold text-xs md:text-sm truncate">{c.institution || 'Unknown University'}</p>
+                                                                {c.course && <p className="text-[9px] md:text-[10px] text-gray-400 truncate">{c.course}</p>}
+                                                            </div>
+                                                            <div className={`px-2 md:px-3 py-1 rounded-lg text-[9px] md:text-[10px] font-black shrink-0 ${c.eligibility === 'High' ? 'bg-green-100 text-green-700' :
+                                                                c.eligibility === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                                                                    'bg-red-50 text-red-500'
+                                                                }`}>
+                                                                {c.eligibility || 'N/A'}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                    {comparisonPage < comparisonTotalPages && (
+                                                        <div className="flex justify-center pt-4">
+                                                            <button
+                                                                onClick={() => handleCompareRequest(true)}
+                                                                disabled={isComparingMore}
+                                                                className="px-8 py-4 bg-white border border-[#014751]/10 text-[#014751] font-black rounded-3xl hover:bg-gray-50 transition-all disabled:opacity-50 flex items-center gap-2"
+                                                            >
+                                                                {isComparingMore ? (
+                                                                    <>
+                                                                        <div className="w-4 h-4 border-2 border-t-[#014751] border-gray-200 rounded-full animate-spin" />
+                                                                        Loading...
+                                                                    </>
+                                                                ) : 'Load More Comparisons'}
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                usageInfo?.planName?.toLowerCase().includes('premium') ? (
+                                                    <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed rounded-3xl gap-4">
+                                                        <p className="text-sm text-gray-400 font-medium">See your admission chances for <span className="text-[#014751] font-bold">{targetCourseName || 'this course'}</span> across other top universities.</p>
+                                                        <button onClick={() => handleCompareRequest()} disabled={isComparing} className="px-6 py-3 rounded-xl bg-[#014751] text-white font-black uppercase text-xs shadow-lg shadow-[#014751]/20 active:scale-95 disabled:opacity-50">
+                                                            Run Comparison
+                                                        </button>
+                                                        <p className="text-[10px] text-gray-400 font-bold">⚠️ Comparing institutions will use 15 credits from your plan usage limit.</p>
+                                                    </div>
+                                                ) : (
+                                                    <div className="p-12 text-center text-gray-400 border-2 border-dashed rounded-3xl">Unlock comparison insights</div>
+                                                )
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {activeTab === 'simulation' && (
+                                        <div className="space-y-6">
+                                            <h2 className="text-xl md:text-2xl font-black">Simulator</h2>
+                                            <div className="flex flex-col gap-2">
+                                                <div className="flex flex-col sm:flex-row gap-3">
+                                                    <input type="number" value={simulatedScore} onChange={e => setSimulatedScore(Number(e.target.value))} className="flex-1 bg-gray-50 px-5 py-4 rounded-xl md:rounded-2xl outline-none font-black text-sm" placeholder="Simulated Score" />
+                                                    <button onClick={handleSimulationRequest} className="px-8 py-4 bg-[#014751] text-white rounded-xl md:rounded-2xl font-black uppercase text-xs tracking-widest whitespace-nowrap">Run Simulation</button>
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 font-bold ml-2">⚠️ This simulation will use 15 credits from your plan usage limit.</p>
+                                            </div>
+                                            {simulationResults && <p className="p-4 md:p-6 bg-green-50 text-green-700 rounded-2xl md:rounded-3xl font-bold text-xs md:text-sm">{simulationResults.message}</p>}
+                                        </div>
+                                    )}
                                 </div>
-                                <h3 className="text-lg font-black text-gray-900 mb-2">No Matches Found</h3>
-                                <p className="text-gray-500 font-medium">No university or department can accept this.</p>
-                                <p className="text-[10px] text-gray-400 mt-4 uppercase tracking-widest font-bold">Try adjusting your subjects or chosen course</p>
                             </div>
                         )}
                     </div>
-
                 </div>
             </main>
 
-            {/* Bottom Sheet Dialog */}
-            <AnimatePresence>
-                {selectedResult && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setSelectedResult(null)}
-                            className="fixed inset-0 bg-black/40 z-50 backdrop-blur-sm"
-                        />
-                        <motion.div
-                            initial={{ y: '100%' }}
-                            animate={{ y: 0 }}
-                            exit={{ y: '100%' }}
-                            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[2.5rem] p-8 shadow-2xl max-h-[85vh] overflow-y-auto"
-                        >
-                            <div className="max-w-3xl mx-auto relative">
-                                <div className="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 w-12 h-1.5 bg-gray-200 rounded-full" />
+            <Footer />
 
-                                <button
-                                    onClick={() => setSelectedResult(null)}
-                                    className="absolute right-0 top-0 p-2 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                                >
-                                    <LuX className="w-5 h-5 text-gray-500" />
-                                </button>
-
-                                <div className="mt-4">
-                                    <div className="flex items-start justify-between gap-4 mb-8">
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${selectedResult.chance === 'High' ? 'bg-green-500/10 text-green-500' :
-                                                    selectedResult.chance === 'Medium' ? 'bg-[#014751]/10 text-[#014751]' : 'bg-red-500/10 text-red-500'
-                                                    }`}>
-                                                    {selectedResult.chance} Probability
-                                                </span>
-                                            </div>
-                                            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight text-gray-900 leading-none mb-2">
-                                                {selectedResult.university}
-                                            </h2>
-                                            <p className="text-lg font-medium text-gray-500">{selectedResult.course}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-
-                                        {/* Status Card */}
-                                        <div className={`p-6 rounded-3xl ${selectedResult.chance === 'High' ? 'bg-green-50 border border-green-100' :
-                                            selectedResult.chance === 'Medium' ? 'bg-[#014751]/5 border border-[#014751]/20' : 'bg-red-50 border border-red-100'
-                                            }`}>
-                                            <h3 className={`text-sm font-black uppercase tracking-widest mb-4 ${selectedResult.chance === 'High' ? 'text-green-800' :
-                                                selectedResult.chance === 'Medium' ? 'text-[#014751]' : 'text-red-800'
-                                                }`}>Analysis Report</h3>
-
-                                            <div className="flex items-start gap-4">
-                                                <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${selectedResult.chance === 'High' ? 'bg-green-500 text-white shadow-lg shadow-green-500/30' :
-                                                    selectedResult.chance === 'Medium' ? 'bg-[#014751] text-white shadow-lg shadow-[#014751]/30' : 'bg-red-500 text-white shadow-lg shadow-red-500/30'
-                                                    }`}>
-                                                    {selectedResult.chance === 'High' ? <LuCheck className="w-5 h-5" strokeWidth={3} /> :
-                                                        selectedResult.chance === 'Medium' ? <LuInfo className="w-5 h-5" strokeWidth={3} /> :
-                                                            <LuX className="w-5 h-5" strokeWidth={3} />}
-                                                </div>
-                                                <p className="text-sm font-medium text-gray-800 leading-relaxed">
-                                                    {selectedResult.reason}
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Requirements / Info */}
-                                        <div className="space-y-6">
-                                            {(() => {
-                                                if (!selectedResult) return null;
-                                                return (
-                                                    <>
-                                                        <div>
-                                                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Faculty</h4>
-                                                            <div className="flex items-center gap-2">
-                                                                <LuSchool className="text-[#014751]" />
-                                                                <span className="font-bold text-gray-900">{selectedResult.faculty || 'N/A'}</span>
-                                                            </div>
-                                                        </div>
-                                                        <div className="h-px bg-gray-100" />
-                                                        <div>
-                                                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Required O&apos;Level Subjects ({selectedResult.requiredSubjects?.length || 0})</h4>
-                                                            <div className="flex flex-wrap gap-2">
-                                                                {(selectedResult.requiredSubjects || []).map((sub: string) => (
-                                                                    <span key={sub} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold">
-                                                                        {sub}
-                                                                    </span>
-                                                                ))}
-                                                                {(!selectedResult.requiredSubjects || selectedResult.requiredSubjects.length === 0) && (
-                                                                    <span className="text-xs text-gray-400 italic">No specific subjects listed</span>
-                                                                )}
-                                                            </div>
-                                                            {selectedResult.missingSubjects && selectedResult.missingSubjects.length > 0 && (
-                                                                <div className="mt-2 p-3 bg-red-50 rounded-xl border border-red-100">
-                                                                    <div className="flex items-center gap-1.5 text-red-600 text-[10px] font-black uppercase tracking-widest mb-1.5">
-                                                                        <LuX className="w-3 h-3" />
-                                                                        Missing O&apos;Level Subjects
-                                                                    </div>
-                                                                    <div className="flex flex-wrap gap-1.5">
-                                                                        {selectedResult.missingSubjects.map((sub: string) => (
-                                                                            <span key={sub} className="text-[11px] font-bold text-red-700">
-                                                                                • {sub}
-                                                                            </span>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                        <div className="h-px bg-gray-100" />
-                                                        <div>
-                                                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">UTME Subjects Requirement</h4>
-                                                            <div className="flex flex-wrap gap-2">
-                                                                {(selectedResult.requiredUtmeSubjects || []).map((sub: string) => (
-                                                                    <span key={sub} className="px-3 py-1.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-lg text-xs font-bold">
-                                                                        {sub}
-                                                                    </span>
-                                                                ))}
-                                                                {(!selectedResult.requiredUtmeSubjects || selectedResult.requiredUtmeSubjects.length === 0) && (
-                                                                    <span className="text-xs text-gray-400 italic">No specific UTME subjects listed</span>
-                                                                )}
-                                                            </div>
-                                                            {selectedResult.missingUtmeSubjects && selectedResult.missingUtmeSubjects.length > 0 && (
-                                                                <div className="mt-2 p-3 bg-red-50 rounded-xl border border-red-100">
-                                                                    <div className="flex items-center gap-1.5 text-red-600 text-[10px] font-black uppercase tracking-widest mb-1.5">
-                                                                        <LuX className="w-3 h-3" />
-                                                                        Missing UTME Subjects
-                                                                    </div>
-                                                                    <div className="flex flex-wrap gap-1.5">
-                                                                        {selectedResult.missingUtmeSubjects.map((sub: string) => (
-                                                                            <span key={sub} className="text-[11px] font-bold text-red-700">
-                                                                                • {sub}
-                                                                            </span>
-                                                                        ))}
-                                                                    </div>
-                                                                </div>
-                                                            )}
-                                                        </div>
-
-
-                                                        {selectedResult.postUtmeRequired && (
-                                                            <>
-                                                                <div className="h-px bg-gray-100" />
-                                                                <div className="p-5 bg-[#014751]/5 rounded-2xl border border-yellow-100 shadow-sm">
-                                                                    <div className="flex items-center gap-2 mb-3">
-                                                                        <div className="w-6 h-6 rounded-full bg-[#014751] flex items-center justify-center">
-                                                                            <LuInfo className="w-3.5 h-3.5 text-black" />
-                                                                        </div>
-                                                                        <h4 className="text-xs font-black uppercase tracking-widest text-yellow-900">Post-UTME Audit</h4>
-                                                                    </div>
-
-                                                                    <p className="text-[12px] font-bold text-yellow-800 leading-relaxed mb-4">
-                                                                        This university conducts Post-UTME. Your current results qualify you to apply, but your final admission depends on your Post-UTME score.
-                                                                    </p>
-
-                                                                    <div className="space-y-3 bg-white/50 p-3 rounded-xl border border-[#014751]/20/50">
-                                                                        {selectedResult.postUtmeInfo?.minUtmeScore && (
-                                                                            <div className="flex items-center justify-between">
-                                                                                <span className="text-[10px] font-black text-yellow-800/60 uppercase tracking-widest">Min JAMB Scored</span>
-                                                                                <span className="text-sm font-black text-yellow-900">{selectedResult.postUtmeInfo.minUtmeScore}</span>
-                                                                            </div>
-                                                                        )}
-                                                                        {selectedResult.postUtmeInfo?.fee && (
-                                                                            <div className="flex items-center justify-between">
-                                                                                <div className="flex flex-col">
-                                                                                    <span className="text-[10px] font-black text-yellow-800/60 uppercase tracking-widest leading-none">Registration Fee</span>
-                                                                                    <span className="text-[8px] font-bold text-[#014751] uppercase mt-1">Paid to School</span>
-                                                                                </div>
-                                                                                <span className="text-sm font-black text-gray-900">₦{selectedResult.postUtmeInfo.fee}</span>
-                                                                            </div>
-                                                                        )}
-                                                                        {selectedResult.postUtmeInfo?.date && (
-                                                                            <div className="flex items-center justify-between">
-                                                                                <span className="text-[10px] font-black text-yellow-800/60 uppercase tracking-widest">Period</span>
-                                                                                <span className="text-sm font-black text-gray-900">{selectedResult.postUtmeInfo.date}</span>
-                                                                            </div>
-                                                                        )}
-                                                                    </div>
-
-                                                                    <div className="mt-4 pt-3 border-t border-[#014751]/20/30">
-                                                                        <p className="text-[10px] font-bold text-yellow-700/70 italic text-center">
-                                                                            * Note: All registration fees are paid directly to the institution's official portal, not to SabiDub.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </>
-                                                        )}
-                                                        {selectedResult.courseDuration && (
-                                                            <>
-                                                                <div className="h-px bg-gray-100" />
-                                                                <div>
-                                                                    <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-3">Course Duration</h4>
-                                                                    <div className="flex items-center gap-2">
-                                                                        <LuBookOpen className="text-[#014751]" />
-                                                                        <span className="font-bold text-gray-900">{selectedResult.courseDuration} Years</span>
-                                                                    </div>
-                                                                </div>
-                                                            </>
-                                                        )}
-                                                    </>
-                                                );
-                                            })()}
-
-                                            <button
-                                                onClick={() => selectedResult.universityWebsite ? window.open(selectedResult.universityWebsite, '_blank') : showAlert('Website not found', 'Sorry, the website for this institution is not available.', 'info')}
-                                                className="w-full py-4 bg-gray-900 hover:bg-black text-white rounded-xl font-black uppercase tracking-widest transition-all"
-                                            >
-                                                Continue to Application
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+            {/* Modal Components (Alert, Toast, Result Detail) */}
             <AnimatePresence>
                 {alertConfig.isOpen && (
-                    <>
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-                            className="fixed inset-0 bg-black/40 z-[100] backdrop-blur-sm"
-                        />
-                        <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{ type: "spring", duration: 0.3 }}
-                            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[101] w-full max-w-sm px-4"
-                        >
-                            <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
-                                {/* Icon Section */}
-                                <div className={`pt-8 pb-6 px-6 flex flex-col items-center ${alertConfig.type === 'error' ? 'bg-gradient-to-b from-red-50 to-white' :
-                                    alertConfig.type === 'success' ? 'bg-gradient-to-b from-green-50 to-white' :
-                                        'bg-gradient-to-b from-blue-50 to-white'
-                                    }`}>
-                                    <div className={`w-14 h-14 rounded-full flex items-center justify-center mb-4 ${alertConfig.type === 'error' ? 'bg-red-100' :
-                                        alertConfig.type === 'success' ? 'bg-green-100' :
-                                            'bg-blue-100'
-                                        }`}>
-                                        {alertConfig.type === 'error' ? (
-                                            <LuX className={`w-7 h-7 text-red-600`} />
-                                        ) : alertConfig.type === 'success' ? (
-                                            <LuCheck className={`w-7 h-7 text-green-600`} />
-                                        ) : (
-                                            <LuInfo className={`w-7 h-7 text-blue-600`} />
-                                        )}
-                                    </div>
-
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2 text-center">
-                                        {alertConfig.title}
-                                    </h3>
-                                    <p className="text-sm text-gray-600 leading-relaxed text-center whitespace-pre-line">
-                                        {alertConfig.message}
-                                    </p>
-                                </div>
-
-                                {/* Action Button */}
-                                <div className="px-6 pb-6">
-                                    <button
-                                        onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
-                                        className={`w-full py-3 rounded-xl font-semibold transition-all active:scale-[0.98] ${alertConfig.type === 'error' ? 'bg-red-600 hover:bg-red-700 text-white' :
-                                            alertConfig.type === 'success' ? 'bg-green-600 hover:bg-green-700 text-white' :
-                                                'bg-gray-900 hover:bg-black text-white'
-                                            }`}
-                                    >
-                                        Got It
-                                    </button>
-                                </div>
-                            </div>
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-black/40 backdrop-blur-md">
+                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-3xl md:rounded-[3rem] p-6 md:p-10 max-w-lg w-full text-center">
+                            <h2 className="text-xl md:text-2xl font-black mb-4">{alertConfig.title}</h2>
+                            <p className="text-sm md:text-base text-gray-500 mb-6 md:mb-8">{alertConfig.message}</p>
+                            <button onClick={() => setAlertConfig({ ...alertConfig, isOpen: false })} className="w-full py-4 rounded-xl md:rounded-2xl bg-[#014751] text-white font-black uppercase text-xs md:text-sm tracking-widest">Got It</button>
                         </motion.div>
-                    </>
+                    </div>
                 )}
             </AnimatePresence>
 
-            {/* Snackbar / Toast Notification */}
+            {selectedResult && (
+                <div className="fixed inset-0 z-[150] flex items-end justify-center bg-black/40" onClick={() => setSelectedResult(null)}>
+                    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} className="bg-white w-full max-w-4xl rounded-t-3xl md:rounded-t-[3rem] p-6 md:p-10 max-h-[90vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
+                        <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+                            <div className="flex-1">
+                                <div className={`inline-block px-3 py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-3 ${selectedResult.chance === 'High' ? 'bg-green-100 text-green-700' : selectedResult.chance === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-50 text-red-500'}`}>
+                                    {selectedResult.chance} Chance
+                                </div>
+                                <h2 className="text-2xl md:text-3xl font-black mb-1 text-gray-900 leading-tight">{selectedResult.university}</h2>
+                                <p className="text-base md:text-lg font-bold text-gray-400">{selectedResult.course}</p>
+                            </div>
+                            {selectedResult.universityWebsite && (
+                                <a href={selectedResult.universityWebsite} target="_blank" rel="noopener noreferrer" className="p-4 bg-[#014751]/5 text-[#014751] rounded-2xl hover:bg-[#014751] hover:text-white transition-all flex items-center gap-2 font-black text-xs uppercase tracking-widest">
+                                    Visit Site <LuArrowRight className="-rotate-45 text-lg" />
+                                </a>
+                            )}
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-8">
+                            <div className="p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl">
+                                <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Faculty</p>
+                                <p className="font-bold text-xs md:text-sm truncate">{selectedResult.faculty || 'N/A'}</p>
+                            </div>
+                            <div className="p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl">
+                                <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Cutoff Mark</p>
+                                <p className="font-bold text-xs md:text-sm">{selectedResult.cutoffMark || 'N/A'}</p>
+                            </div>
+                            <div className="p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl col-span-2 md:col-span-1">
+                                <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Duration</p>
+                                <p className="font-bold text-xs md:text-sm">{selectedResult.courseDuration ? `${selectedResult.courseDuration} Years` : 'N/A'}</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-xs md:text-sm font-black uppercase text-gray-900 mb-3">Analysis</h3>
+                                <div className="p-5 md:p-6 bg-[#014751]/5 rounded-2xl md:rounded-3xl border border-[#014751]/10 text-xs md:text-sm font-medium leading-relaxed text-gray-700">
+                                    {selectedResult.reason}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                {selectedResult.requiredUtmeSubjects && selectedResult.requiredUtmeSubjects.length > 0 && (
+                                    <div>
+                                        <h3 className="text-xs font-black uppercase text-gray-400 mb-3 flex items-center gap-2"><LuBookOpen /> UTME Requirements</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedResult.requiredUtmeSubjects.map((s: string, i: number) => (
+                                                <span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold text-gray-600">{s}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {selectedResult.requiredSubjects && selectedResult.requiredSubjects.length > 0 && (
+                                    <div>
+                                        <h3 className="text-xs font-black uppercase text-gray-400 mb-3 flex items-center gap-2"><LuFileCheck /> O&apos;Level Requirements</h3>
+                                        <div className="flex flex-wrap gap-2">
+                                            {selectedResult.requiredSubjects.map((s: string, i: number) => (
+                                                <span key={i} className="px-3 py-1.5 bg-gray-50 border border-gray-100 rounded-xl text-xs font-bold text-gray-600">{s}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {(selectedResult.postUtmeInfo || selectedResult.postUtmeFee || selectedResult.postUtmeDate) && (
+                                <div>
+                                    <h3 className="text-xs md:text-sm font-black uppercase text-gray-900 mb-3">Post-UTME Details</h3>
+                                    <div className="p-5 md:p-6 bg-gray-50 rounded-2xl md:rounded-3xl border border-gray-100">
+                                        <div className="flex flex-wrap gap-2 md:gap-4 mb-6">
+                                            <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 shadow-sm">Type: {selectedResult.postUtmeType || 'Standard'}</span>
+                                            <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 shadow-sm">Stage: {selectedResult.admissionStage || 'N/A'}</span>
+                                            {selectedResult.postUtmeFee && (
+                                                <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 shadow-sm text-green-600">
+                                                    Fee: {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(selectedResult.postUtmeFee)}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-4">
+                                            {selectedResult.postUtmeDate && (
+                                                <div className="min-w-0">
+                                                    <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Date</p>
+                                                    <p className="font-bold text-xs md:text-sm truncate">{new Date(selectedResult.postUtmeDate).toLocaleDateString(undefined, { dateStyle: 'long' })}</p>
+                                                </div>
+                                            )}
+                                            {selectedResult.postUtmeVenue && (
+                                                <div className="min-w-0">
+                                                    <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Venue</p>
+                                                    <p className="font-bold text-xs md:text-sm truncate">{selectedResult.postUtmeVenue}</p>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {selectedResult.postUtmeTitle && <h4 className="font-bold text-sm md:text-base text-gray-900 mb-2 truncate">{selectedResult.postUtmeTitle}</h4>}
+                                        {selectedResult.postUtmeInfo && <p className="text-xs md:text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{selectedResult.postUtmeInfo}</p>}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+
             <AnimatePresence>
                 {toastConfig.isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, y: 50, x: 20 }}
-                        animate={{ opacity: 1, y: 0, x: 0 }}
-                        exit={{ opacity: 0, scale: 0.95 }}
-                        className="fixed bottom-6 right-6 z-[100]"
+                        initial={{ y: 50, opacity: 0, x: '-50%' }}
+                        animate={{ y: 0, opacity: 1, x: '-50%' }}
+                        exit={{ y: 50, opacity: 0, x: '-50%' }}
+                        className={`fixed bottom-10 left-1/2 z-[200] px-6 py-4 rounded-2xl shadow-2xl border flex items-center gap-4 min-w-[320px] max-w-[90vw] ${toastConfig.type === 'error' ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100'
+                            }`}
                     >
-                        <div className={`px-4 py-3 rounded-xl shadow-2xl border flex items-center gap-3 min-w-[280px] bg-white ${toastConfig.type === 'success' ? 'border-green-100' : toastConfig.type === 'error' ? 'border-red-100' : 'border-blue-100'
-                            }`}>
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${toastConfig.type === 'success' ? 'bg-green-50 text-green-600' : toastConfig.type === 'error' ? 'bg-red-50 text-red-600' : 'bg-blue-50 text-blue-600'
-                                }`}>
-                                {toastConfig.type === 'success' ? <LuCheck className="w-4 h-4" strokeWidth={3} /> :
-                                    toastConfig.type === 'error' ? <LuX className="w-4 h-4" strokeWidth={3} /> :
-                                        <LuInfo className="w-4 h-4" strokeWidth={3} />}
-                            </div>
-                            <div>
-                                <p className="text-sm font-black text-gray-900 leading-tight">
-                                    {toastConfig.type === 'success' ? 'Success' : toastConfig.type === 'error' ? 'Error' : 'Notification'}
-                                </p>
-                                <p className="text-[11px] font-medium text-gray-500">
-                                    {toastConfig.message}
-                                </p>
-                            </div>
-                            <button
-                                onClick={() => setToastConfig(prev => ({ ...prev, isOpen: false }))}
-                                className="ml-auto text-gray-400 hover:text-gray-600 transition-colors"
-                            >
-                                <LuX className="w-4 h-4" />
-                            </button>
-                        </div>
+                        {toastConfig.type === 'error' ? (
+                            <LuTriangleAlert className="text-red-500 w-5 h-5 shrink-0" />
+                        ) : (
+                            <LuCheck className="text-green-500 w-5 h-5 shrink-0" />
+                        )}
+                        <span className={`text-sm font-bold ${toastConfig.type === 'error' ? 'text-red-900' : 'text-gray-900'}`}>
+                            {toastConfig.message}
+                        </span>
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            <Footer />
+            <style jsx global>{`
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: #01475120; border-radius: 10px; }
+            `}</style>
         </div>
     );
 }

@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../components/Navbar";
-import { LuTrophy, LuBookOpen } from "react-icons/lu";
+import { FaTrophy as LuTrophy, FaBookOpen as LuBookOpen } from "react-icons/fa6";
 
 // Animation variants
 const fadeInUp = {
@@ -80,7 +80,7 @@ export default function About() {
                 transition={{ delay: 0.3 }}
                 className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto"
               >
-                We're revolutionizing education in Nigeria by bridging the gap between
+                We&apos;re revolutionizing education in Nigeria by bridging the gap between
                 secondary and tertiary education through innovative digital solutions.
               </motion.p>
             </motion.div>
@@ -132,7 +132,7 @@ export default function About() {
 
                 <p className="text-lg text-gray-600 mb-8 leading-relaxed">
                   Through innovative technology, expert-curated content, and a deep
-                  understanding of the Nigerian curriculum, we're transforming how
+                  understanding of the Nigerian curriculum, we&apos;re transforming how
                   students learn and succeed.
                 </p>
 
@@ -317,10 +317,10 @@ export default function About() {
                     Our Mission
                   </h3>
                   <p className="text-2xl text-gray-700 leading-relaxed font-light italic mb-8">
-                    "To democratize quality education in Nigeria by providing accessible, affordable, and comprehensive learning resources that empower students to achieve their full potential."
+                    &quot;To democratize quality education in Nigeria by providing accessible, affordable, and comprehensive learning resources that empower students to achieve their full potential.&quot;
                   </p>
                   <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                    We're bridging the critical gap between secondary and tertiary education, ensuring every student—regardless of their background—has the tools necessary for academic excellence. Our approach focuses on systemic impact, leveraging digital innovation to reach learners across the nation.
+                    We&apos;re bridging the critical gap between secondary and tertiary education, ensuring every student—regardless of their background—has the tools necessary for academic excellence. Our approach focuses on systemic impact, leveraging digital innovation to reach learners across the nation.
                   </p>
                 </div>
 
@@ -329,7 +329,7 @@ export default function About() {
                     Our Vision
                   </h4>
                   <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                    To become Nigeria's leading educational technology platform, recognized for transforming the educational landscape and creating a generation of confident, well-prepared students ready to excel in higher education and beyond.
+                    To become Nigeria&apos;s leading educational technology platform, recognized for transforming the educational landscape and creating a generation of confident, well-prepared students ready to excel in higher education and beyond.
                   </p>
                   <p className="text-lg text-gray-600 leading-relaxed">
                     By 2030, we aim to have impacted over 1 million Nigerian learners, setting the standard for digital curriculum delivery and student support systems in West Africa.
@@ -350,7 +350,7 @@ export default function About() {
                   </ul>
                 </div>
                 <div className="p-8 bg-gray-50 rounded-2xl">
-                  <p className="text-gray-900 font-bold mb-4 italic">"Growth is not just about numbers; it's about the depth of impact on every individual student."</p>
+                  <p className="text-gray-900 font-bold mb-4 italic">&quot;Growth is not just about numbers; it&apos;s about the depth of impact on every individual student.&quot;</p>
                   <p className="text-sm text-gray-500">— SabiDub Leadership Team</p>
                 </div>
               </div>

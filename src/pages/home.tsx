@@ -19,7 +19,7 @@ export default function Home() {
         <title>SabiDub | School Management System & Educational Excellence</title>
         <meta
           name="description"
-          content="SabiDub is Nigeria's leading school management system, bridging the gap between secondary and tertiary education with innovative management and diagnostic tools."
+          content="SabiDub is Nigeria&apos;s leading school management system, bridging the gap between secondary and tertiary education with innovative management and diagnostic tools."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -511,10 +511,10 @@ export default function Home() {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-                The Challenge We're Solving
+                The Challenge We&apos;re Solving
               </h2>
               <p className="text-gray-400 max-w-3xl mx-auto">
-                In Nigeria's educational landscape, we face a critical gap
+                In Nigeria&apos;s educational landscape, we face a critical gap
                 between secondary and tertiary education.
               </p>
             </div>
@@ -743,9 +743,11 @@ export default function Home() {
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 3c-2.33 0-4.31 1.46-5.11 3.5h10.22c-.8-2.04-2.78-3.5-5.11-3.5z" />
                       </svg>
                     </div>
-                    <img
+                    <Image
                       src="/images/favicon white.png"
                       alt="SabiDub"
+                      width={24}
+                      height={24}
                       className="h-6"
                     />
                   </div>
@@ -753,9 +755,11 @@ export default function Home() {
                   <div className="mt-10 relative">
                     <div className="absolute -left-6 -top-6">
                       <div className="w-12 h-12 rounded-full bg-[#1a1a1a] shadow-sm flex items-center justify-center overflow-hidden">
-                        <img
+                        <Image
                           src="/images/jnr.jpg"
                           alt="Student"
+                          width={48}
+                          height={48}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -783,9 +787,11 @@ export default function Home() {
 
                     <div className="absolute -right-4 -bottom-4">
                       <div className="w-12 h-12 rounded-full bg-[#1a1a1a] shadow-sm flex items-center justify-center overflow-hidden">
-                        <img
+                        <Image
                           src="/images/jnr.jpg"
                           alt="Student"
+                          width={48}
+                          height={48}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -981,9 +987,11 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="mt-6">
-                      <img
+                      <Image
                         src="/images/jnr.jpg"
                         alt="Student Profile"
+                        width={64}
+                        height={64}
                         className="w-16 h-16 rounded-full mx-auto"
                       />
                     </div>
@@ -998,7 +1006,7 @@ export default function Home() {
                 </h3>
                 <p className="text-gray-400 text-sm mb-6">
                   The growth rate is a crucial metric in educational management
-                  that measures the increase in a student's performance.
+                  that measures the increase in a student&apos;s performance.
                 </p>
                 <div className="flex flex-col items-center">
                   <div className="text-[#AFF8C8] text-4xl font-bold">36%</div>
@@ -1100,9 +1108,9 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-gray-400 mb-4">
-                  "SabiDub has been instrumental in my WAEC preparation. The
+                  &quot;SabiDub has been instrumental in my WAEC preparation. The
                   personalized study plans and practice tests have boosted my
-                  confidence significantly."
+                  confidence significantly.&quot;
                 </p>
                 <div className="text-[#FFEDB1] text-sm">Verified Student</div>
               </div>
@@ -1137,9 +1145,9 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-gray-400 mb-4">
-                  "The transition from secondary school to university was smooth
+                  &quot;The transition from secondary school to university was smooth
                   thanks to SabiDub. Their resources helped me maintain my
-                  academic excellence."
+                  academic excellence.&quot;
                 </p>
                 <div className="text-[#FFEDB1] text-sm">Verified Student</div>
               </div>
@@ -1170,9 +1178,9 @@ export default function Home() {
                   ))}
                 </div>
                 <p className="text-gray-400 mb-4">
-                  "The AI-powered assistance and personalized study plans have
-                  helped me improve my grades dramatically. I'm more confident
-                  than ever!"
+                  &quot;The AI-powered assistance and personalized study plans have
+                  helped me improve my grades dramatically. I&apos;m more confident
+                  than ever!&quot;
                 </p>
                 <div className="text-[#FFEDB1] text-sm">Verified Student</div>
               </div>
@@ -1268,8 +1276,8 @@ export default function Home() {
                       <div className="pb-4">
                         <p className="text-gray-400 text-sm">
                           You can update your profile information from your
-                          account dashboard. Navigate to "Profile Settings" and
-                          you'll be able to edit your personal details,
+                          account dashboard. Navigate to &quot;Profile Settings&quot; and
+                          you&apos;ll be able to edit your personal details,
                           educational information, and preferences.
                         </p>
                       </div>
@@ -1395,9 +1403,11 @@ export default function Home() {
                 <div className="bg-[#1a1a1a] p-6 rounded-lg shadow-sm">
                   <div className="flex justify-between mb-8">
                     <div>
-                      <img
+                      <Image
                         src="/images/favicon white.png"
                         alt="SabiDub"
+                        width={32}
+                        height={32}
                         className="w-8 h-8 mb-2"
                       />
                       <div className="text-xs text-gray-500">Study Tracker</div>
@@ -1480,7 +1490,7 @@ export default function Home() {
                 <div>
                   <div className="text-white font-bold">4.9</div>
                   <div className="text-xs text-gray-500">
-                    Our high rating proves our platform's quality and positive
+                    Our high rating proves our platform&apos;s quality and positive
                     user reviews
                   </div>
                 </div>
