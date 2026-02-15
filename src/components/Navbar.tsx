@@ -84,6 +84,21 @@ export default function Navbar() {
                             Blog
                         </Link>
 
+                        <div className="flex items-center space-x-4 ml-4">
+                            <Link
+                                href="https://portal.sabidub.com/auth/school/signin"
+                                className={`text-sm ${subTextColor} hover:text-[#AFF8C8] transition-colors font-bold border-l border-gray-200 pl-4`}
+                            >
+                                School Login
+                            </Link>
+                            <Link
+                                href="https://portal.sabidub.com/ambassador/login"
+                                className={`text-sm ${subTextColor} hover:text-[#AFF8C8] transition-colors font-bold`}
+                            >
+                                Ambassador
+                            </Link>
+                        </div>
+
 
                         <button className="bg-[#014751] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#026372] transition-all hover:scale-105 active:scale-95 shadow-lg">
                             Download App
@@ -173,11 +188,32 @@ export default function Navbar() {
                             </Link>
                             <Link
                                 href="/blog"
-                                className="text-gray-600 hover:text-[#014751] transition-colors py-2 border-b border-gray-200"
+                                className="text-gray-600 hover:text-[#014751] transition-colors py-2 border-b border-gray-200 font-medium"
                                 onClick={toggleMenu}
                             >
                                 Blog
                             </Link>
+                            <div className="pt-4 pb-2">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Portals</p>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <Link
+                                        href="https://portal.sabidub.com/auth/school/signin"
+                                        className="flex flex-col p-3 rounded-xl bg-gray-50 border border-gray-100 items-center justify-center text-center"
+                                        onClick={toggleMenu}
+                                    >
+                                        <span className="text-[10px] font-bold text-[#014751]">School</span>
+                                        <span className="text-[9px] text-gray-500">Management</span>
+                                    </Link>
+                                    <Link
+                                        href="https://portal.sabidub.com/ambassador/login"
+                                        className="flex flex-col p-3 rounded-xl bg-gray-50 border border-gray-100 items-center justify-center text-center"
+                                        onClick={toggleMenu}
+                                    >
+                                        <span className="text-[10px] font-bold text-[#014751]">Ambassador</span>
+                                        <span className="text-[9px] text-gray-500">Hub</span>
+                                    </Link>
+                                </div>
+                            </div>
                         </div>
 
                         <button className="w-full bg-[#014751] text-white px-4 py-3 rounded-xl font-bold hover:bg-[#026372] transition-colors">

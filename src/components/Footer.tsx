@@ -186,7 +186,28 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                 </Link>
               </li>
               <li>
-
+                <Link
+                  href="https://portal.sabidub.com/auth/school/signin"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  School Management
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://portal.sabidub.com/ambassador/login"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Ambassador Hub
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://portal.sabidub.com/ambassador/join"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Join as Ambassador
+                </Link>
               </li>
               <li>
                 <Link
@@ -202,6 +223,14 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   className="hover:text-yellow-600 transition-colors"
                 >
                   Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://portal.sabidub.com/auth/school/signup"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Register a School
                 </Link>
               </li>
             </ul>
