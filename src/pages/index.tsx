@@ -76,10 +76,10 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SabiDub | School Management System & Educational Excellence</title>
+        <title>SabiDub | Bridging Educational Gaps in Nigeria</title>
         <meta
           name="description"
-          content="SabiDub is Nigeria&apos;s leading school management system, bridging the gap between secondary and tertiary education with innovative management and diagnostic tools."
+          content="SabiDub is a student-first educational ecosystem that simplifies school management while providing students with advanced admission analysis and career guidance tools."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -732,6 +732,127 @@ export default function Home() {
                     <h4 className="font-bold text-gray-900 text-sm">Founder/CEO</h4>
                     <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Ijeaku Valentine Kelechi</p>
                   </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Digital Ecosystem Section - Explicit SEO and User Navigation */}
+        <section className="px-4 sm:px-6 py-24 bg-[#FAF9F6] relative overflow-hidden border-t border-gray-100">
+          <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#014751 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+
+          <div className="max-w-7xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" className="inline-block px-4 py-1.5 mb-6 rounded-full bg-[#014751]/5 border border-[#014751]/10">
+                <span className="text-[#014751] text-[10px] font-black uppercase tracking-widest">Our Network</span>
+              </motion.div>
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tighter">
+                One Ecosystem. <span className="text-[#014751] italic font-serif">Multiple Gateways.</span>
+              </h2>
+              <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
+                Whether you&apos;re managing an institution, leading as a student ambassador, or supporting our users, SabiDub provides tailored portals for every role.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto px-4">
+              {/* School Management Portal */}
+              <motion.div
+                variants={fadeInUp}
+                initial="initial"
+                whileInView="animate"
+                whileHover={{ scale: 1.01 }}
+                className="bg-[#FFEFE4] p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between"
+              >
+                {/* Status Badge */}
+                <div className="relative z-10 flex mb-12">
+                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
+                    <div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
+                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">Portal / Admin-priority</span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <h3 className="text-4xl font-bold text-gray-900 mb-6 tracking-tight">School Management</h3>
+                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
+                    High-performance administration tools. Manage student records, academic calendars, and institutional analytics with precision.
+                  </p>
+                </div>
+
+                {/* CTA */}
+                <div className="relative z-10 mt-12">
+                  <Link href="https://portal.sabidub.com/auth/school/signin" className="inline-block group/link">
+                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
+                      Access Portal <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
+                    </span>
+                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
+                  </Link>
+                </div>
+
+                {/* Geometric Shapes (Chevrons/Arrows) */}
+                <div className="absolute top-1/2 right-[-20px] -translate-y-1/2 pointer-events-none opacity-40">
+                  <svg width="340" height="340" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M180 50L280 170L180 290" stroke="url(#orange-grad)" strokeWidth="80" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
+                    <path d="M80 50L180 170L80 290" stroke="url(#orange-grad)" strokeWidth="80" strokeLinecap="round" strokeLinejoin="round" />
+                    <defs>
+                      <linearGradient id="orange-grad" x1="80" y1="170" x2="280" y2="170" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#F97316" />
+                        <stop offset="1" stopColor="#F97316" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+              </motion.div>
+
+              {/* Ambassador Hub */}
+              <motion.div
+                variants={fadeInUp}
+                initial="initial"
+                whileInView="animate"
+                transition={{ delay: 0.1 }}
+                whileHover={{ scale: 1.01 }}
+                className="bg-[#F1F1F0] p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between"
+              >
+                {/* Status Badge */}
+                <div className="relative z-10 flex mb-12">
+                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
+                    <div className="w-2.5 h-2.5 rounded-full bg-black"></div>
+                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">Open for applications</span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <h3 className="text-4xl font-bold text-gray-900 mb-6 tracking-tight">Ambassador Hub</h3>
+                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
+                    Dedicated space for student leaders. Coordinate campus activities, manage outreach, and track impact across the network.
+                  </p>
+                </div>
+
+                {/* CTA */}
+                <div className="relative z-10 mt-12">
+                  <Link href="https://portal.sabidub.com/ambassador/login" className="inline-block group/link">
+                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
+                      Join Hub <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
+                    </span>
+                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
+                  </Link>
+                </div>
+
+                {/* Geometric Shapes (Discs/Circles) */}
+                <div className="absolute top-0 right-0 h-full w-1/3 pointer-events-none opacity-20">
+                  <svg width="100%" height="100%" viewBox="0 0 200 600" preserveAspectRatio="xMidYMid slice" fill="none">
+                    <circle cx="200" cy="150" r="100" fill="url(#bw-grad)" />
+                    <circle cx="200" cy="350" r="100" fill="url(#bw-grad)" />
+                    <circle cx="200" cy="550" r="100" fill="url(#bw-grad)" />
+                    <defs>
+                      <linearGradient id="bw-grad" x1="100" y1="400" x2="200" y2="400" gradientUnits="userSpaceOnUse">
+                        <stop stopColor="#000" />
+                        <stop offset="1" stopColor="#000" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
                 </div>
               </motion.div>
             </div>

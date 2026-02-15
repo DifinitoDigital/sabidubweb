@@ -140,10 +140,10 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/admission-checker"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  Services
+                  Admission Checker
                 </Link>
               </li>
               <li>
@@ -225,6 +225,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   Privacy Policy
                 </Link>
               </li>
+
               <li>
                 <Link
                   href="https://portal.sabidub.com/auth/school/signup"
@@ -252,7 +253,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
               </li>
               <li>
                 <a
-                  href="mailto:info@sabidu.com"
+                  href="mailto:isabidub@gmail.com"
                   className="hover:text-yellow-600 transition-colors"
                 >
                   isabidub@gmail.com
