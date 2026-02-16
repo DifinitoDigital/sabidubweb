@@ -167,14 +167,9 @@ export default function BlogPostView() {
           </div>
           <div className="relative z-10 p-8 max-w-5xl mx-auto w-full">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }} className="inline-block bg-[#014751]/10 backdrop-blur-sm text-[#014751] px-4 py-2 rounded-full text-sm uppercase tracking-wider font-semibold mb-4">{post.category}</motion.div>
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">{post.title}</motion.h1>
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">{post.title}</motion.h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 rounded-full bg-[#AFF8C8]/30 flex items-center justify-center">
-                  <span className="text-[#014751] font-bold text-base">{post.author.name.charAt(0)}</span>
-                </div>
-                <span className="font-semibold text-gray-900">By {post.author.name}</span>
-              </div>
+
               <span className="text-gray-400">•</span>
               <span className="flex items-center gap-2 bg-[#014751]/10 px-3 py-1.5 rounded-full">
                 <svg className="w-4 h-4 text-[#014751]" fill="currentColor" viewBox="0 0 20 20">
@@ -202,12 +197,12 @@ export default function BlogPostView() {
             {/* Main Article */}
             <div className="lg:col-span-2">
               <div className="mb-12">
-                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">{post.title}</h2>
-                <p className="text-gray-700 text-xl leading-relaxed mb-6 max-w-3xl font-light">{post.excerpt}</p>
+                {/* <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 leading-tight">{post.title}</h2> */}
+                <p className="text-gray-700 text-lg leading-normal mb-6 max-w-3xl font-light">{post.excerpt}</p>
                 <div className="w-20 h-1 bg-[#AFF8C8] rounded-full"></div>
               </div>
               <article className="prose prose-invert max-w-none">
-                <div className="text-gray-700 text-lg leading-relaxed space-y-4">
+                <div className="text-gray-700 text-base leading-normal space-y-3">
                   {post.content.split('\n').map((line, i) => {
                     if (line.startsWith('### ')) {
                       return (
@@ -219,7 +214,7 @@ export default function BlogPostView() {
                       return <div key={i} className="h-2"></div>;
                     } else {
                       return (
-                        <p key={i} className="text-gray-700 leading-7">
+                        <p key={i} className="text-gray-700 leading-6">
                           {line}
                         </p>
                       );

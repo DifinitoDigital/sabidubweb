@@ -881,70 +881,86 @@ export default function Home() {
                 </div>
               </Link>
             </div>
+          </div>
 
-            {/* Horizontal Scroll Carousel */}
-            <div className="relative group/carousel">
-              {loadingPosts ? (
-                <div className="flex justify-center items-center py-20 w-full">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#014751]"></div>
-                </div>
-              ) : featuredPosts.length > 0 ? (
-                <div
-                  className="flex gap-6 pb-8 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
-                >
-                  {featuredPosts.map((post, index) => (
-                    <Link key={post.id} href={`/blog/${post.slug}`}>
-                      <motion.div
-                        className="snap-center flex-shrink-0 w-[90vw] sm:w-[600px] h-[500px] sm:h-[600px] rounded-[40px] relative overflow-hidden flex flex-col justify-end group shadow-2xl cursor-pointer"
-                      >
-                        {/* Background Image */}
-                        <div className="absolute inset-0 z-0 transition-transform duration-1000 group-hover:scale-110">
-                          <Image
-                            src={post.image || "/images/placeholder.png"}
-                            alt={post.title}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
 
-                        {/* Dynamic Glassmorphism Overlay */}
-                        <div className="relative z-10 mx-6 mb-6">
-                          <div className="bg-white/10 backdrop-blur-2xl border border-white/20 p-6 sm:p-10 rounded-[32px] overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
-                            {/* Label/Category */}
-                            <div className="relative z-10">
-                              <span className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] mb-2 sm:mb-3 block">Featured</span>
-                              <h3 className="text-xl sm:text-3xl font-bold text-white leading-[1.2] mb-3 tracking-tight">
-                                {post.title}
-                              </h3>
-                              <div className="flex items-center gap-3 text-white/80 text-[10px] sm:text-xs">
-                                <span className="uppercase tracking-widest font-medium">{post.author?.name || 'SabiDub Editor'}</span>
-                                <span className="w-1 h-1 rounded-full bg-white/50"></span>
-                                <span className="uppercase tracking-widest font-medium">{post.readingTime || '5 min read'}</span>
-                              </div>
-                            </div>
-
-                            {/* Inner Decorative Blob for glass effect */}
-                            <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none" />
+          {/* Horizontal Scroll Carousel */}
+          <div className="relative group/carousel w-full max-w-[1460px] mx-0 md:mx-auto md:mr-0 pl-4 sm:pl-6 md:pl-0">
+            {loadingPosts ? (
+              <div className="flex justify-center items-center py-20 w-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#014751]"></div>
+              </div>
+            ) : featuredPosts.length > 0 ? (
+              <div
+                className="flex gap-4 md:gap-6 pb-8 overflow-x-auto snap-x snap-mandatory no-scrollbar md:pl-[max(1rem,calc((100vw-80rem)/2+1rem))] md:sm:pl-[max(1.5rem,calc((100vw-80rem)/2+1.5rem))] md:lg:pl-[max(2rem,calc((100vw-80rem)/2+2rem))] pr-4 md:pr-20"
+              >
+                {featuredPosts.slice(0, 3).map((post, index) => (
+                  <Link key={post.id} href={`/blog/${post.slug}`}>
+                    <motion.div
+                      className={`snap-start flex-shrink-0 w-[85vw] md:w-[500px] h-[480px] md:h-[620px] rounded-[32px] md:rounded-[48px] overflow-hidden flex flex-col group cursor-pointer shadow-lg transition-all duration-500 hover:shadow-2xl ${index % 3 === 0 ? 'bg-[#D7FF40]' : index % 3 === 1 ? 'bg-[#F0F1EA]' : 'bg-[#E3E4DC]'
+                        }`}
+                    >
+                      {/* Top Content Area */}
+                      <div className="p-6 md:p-8 md:sm:p-12 flex-1 flex flex-col">
+                        {/* Tags and Icon */}
+                        <div className="flex justify-between items-start mb-4 md:mb-8">
+                          <div className="flex gap-2">
+                            <span className="px-4 py-1.5 bg-white/90 rounded-full text-[10px] font-bold uppercase tracking-wider text-black">
+                              {post.category || 'Featured'}
+                            </span>
+                          </div>
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center border ${index % 3 === 0 ? 'border-black/10' : 'border-black/5'}`}>
+                            <svg className="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                            </svg>
                           </div>
                         </div>
-                      </motion.div>
-                    </Link>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-20 bg-white/5 rounded-3xl border-2 border-dashed border-gray-200">
-                  <p className="text-gray-500 font-medium">No articles available at the moment.</p>
-                </div>
-              )}
 
-              {/* Drag Indicator Overlay */}
+                        {/* Text Content */}
+                        <div className="flex-1">
+                          <h3 className="text-2xl md:text-3xl md:sm:text-4xl md:lg:text-[42px] font-black text-black leading-[1.05] tracking-tighter mb-3 md:mb-4 group-hover:scale-[1.02] transition-transform origin-left line-clamp-3">
+                            {post.title}
+                          </h3>
+                          <p className="text-black/60 font-medium text-sm sm:text-base leading-relaxed line-clamp-2 max-w-[320px]">
+                            {post.excerpt || 'Empowering Nigerian students through holistic wellness and academic excellence.'}
+                          </p>
+                        </div>
+                      </div>
 
-            </div>
+                      {/* Bottom Image Area */}
+                      <div className="h-[240px] md:h-[280px] md:sm:h-[340px] relative mx-3 md:mx-4 mb-3 md:mb-4 rounded-[24px] md:rounded-[36px] overflow-hidden">
+                        <Image
+                          src={post.image || "/images/placeholder.png"}
+                          alt={post.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-700"
+                        />
+                        {/* Button Overlay */}
+                        <div className="absolute bottom-4 md:bottom-6 left-4 md:left-6">
+                          <div className="bg-white/20 backdrop-blur-xl border border-white/30 px-4 md:px-6 py-2 md:py-3 rounded-full flex items-center gap-2 md:gap-3 shadow-xl group-hover:bg-white transition-all duration-300">
+                            <span className="text-white group-hover:text-black text-[10px] md:text-[11px] font-black uppercase tracking-widest">Detail</span>
+                            <div className="w-5 md:w-6 h-5 md:h-6 rounded-full bg-white flex items-center justify-center">
+                              <svg className="w-2.5 md:w-3 h-2.5 md:h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-20 bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 mx-4 sm:mx-6 lg:mx-8">
+                <p className="text-gray-500 font-medium">No articles available at the moment.</p>
+              </div>
+            )}
           </div>
         </section>
 
         {/* FAQ Section */}
-        <section className="px-4 sm:px-6 py-8 sm:py-16 bg-white">
+        < section className="px-4 sm:px-6 py-8 sm:py-16 bg-white" >
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row gap-6 sm:gap-10">
               <div className="w-full md:w-1/3">
@@ -1090,11 +1106,11 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section>
+        </section >
 
         {/* Add Footer at the bottom of main */}
-        <Footer />
-      </main>
+        < Footer />
+      </main >
     </>
   );
 }
