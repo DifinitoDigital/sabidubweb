@@ -365,23 +365,27 @@ export default function AdmissionChecker() {
             setResults([]);
             setPreviewData(null);
 
-            if (data.preview) {
-                if (data.isPaid && (data.paymentId || data.previewId)) {
-                    const payId = data.paymentId || data.previewId;
-                    const success = await fetchAdmissionResults(payId, 1, '', false);
-                    if (success?.unlocked) {
-                        setActiveTab('results');
-                        return;
-                    }
-                    if (success?.preview) {
-                        setPreviewData(success);
-                        if (success.planId) setSelectedPlanId(success.planId);
-                        setActiveTab('results');
-                        return;
-                    }
+            // Initial check for existing payment/unlock
+            if (data.isPaid && (data.paymentId || data.previewId)) {
+                const payId = data.paymentId || data.previewId;
+                const success = await fetchAdmissionResults(payId, 1, '', false);
+                if (success?.unlocked) {
+                    setActiveTab('results');
+                    return;
                 }
+                if (success?.preview) {
+                    setPreviewData(success);
+                    if (success.planId) setSelectedPlanId(success.planId);
+                    setActiveTab('results');
+                    return;
+                }
+            }
+
+            if (data.isLocked && data.preview) {
+                // SECURITY ENHANCEMENT: Handle locked preview explicitly
                 setPreviewData(data);
                 if (data.planId) setSelectedPlanId(data.planId);
+                setResults([]);
             } else if (data.unlocked) {
                 setResults(data.results || []);
                 if (data.pagination) {
@@ -403,6 +407,10 @@ export default function AdmissionChecker() {
                     planName: data.planName
                 });
                 setActiveTab('results');
+            } else if (data.preview) {
+                // Fallback for non-locked previews
+                setPreviewData(data);
+                if (data.planId) setSelectedPlanId(data.planId);
             }
         } catch (err) {
             showAlert('Connection Error', "Could not reach the analysis server. Please check your internet connection and try again.", 'error');
