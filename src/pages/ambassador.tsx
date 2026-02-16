@@ -329,7 +329,7 @@ export default function AmbassadorInfo() {
                                             onClick={() => setIsGuidelinesOpen(false)}
                                             className="w-full py-5 bg-[#014751] text-white rounded-[24px] font-black hover:scale-[1.02] transition-transform active:scale-[0.98]"
                                         >
-                                            I've Read the Guidelines
+                                            I&apos;ve Read the Guidelines
                                         </button>
                                     </div>
                                 </div>
