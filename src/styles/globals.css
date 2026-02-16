@@ -85,4 +85,25 @@ body {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  /* Fancy Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(1, 71, 81, 0.05);
+    border-radius: 10px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #014751;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #026372;
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #014751 transparent;
+  }
 }

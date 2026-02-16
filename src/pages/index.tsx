@@ -781,12 +781,15 @@ export default function Home() {
                 </div>
 
                 {/* CTA */}
-                <div className="relative z-10 mt-12">
+                <div className="relative z-10 mt-12 flex flex-wrap items-center gap-6">
                   <Link href="https://portal.sabidub.com/auth/school/signin" className="inline-block group/link">
                     <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
                       Access Portal <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
                     </span>
                     <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
+                  </Link>
+                  <Link href="/schools" className="inline-block px-6 py-2.5 bg-white/50 backdrop-blur-sm border border-gray-200 rounded-full text-gray-900 text-[13px] font-bold uppercase tracking-widest hover:bg-white transition-all shadow-sm">
+                    Learn More
                   </Link>
                 </div>
 
@@ -831,12 +834,15 @@ export default function Home() {
                 </div>
 
                 {/* CTA */}
-                <div className="relative z-10 mt-12">
+                <div className="relative z-10 mt-12 flex flex-wrap items-center gap-6">
                   <Link href="https://portal.sabidub.com/ambassador/login" className="inline-block group/link">
                     <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
                       Join Hub <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
                     </span>
                     <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
+                  </Link>
+                  <Link href="/ambassador" className="inline-block px-6 py-2.5 bg-white/50 backdrop-blur-sm border border-black/10 rounded-full text-gray-900 text-[13px] font-bold uppercase tracking-widest hover:bg-white transition-all shadow-sm">
+                    Learn More
                   </Link>
                 </div>
 

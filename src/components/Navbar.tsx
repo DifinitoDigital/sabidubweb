@@ -86,13 +86,13 @@ export default function Navbar() {
 
                         <div className="flex items-center space-x-4 ml-4">
                             <Link
-                                href="https://portal.sabidub.com/auth/school/signin"
+                                href="/schools"
                                 className={`text-sm ${subTextColor} hover:text-[#AFF8C8] transition-colors font-bold border-l border-gray-200 pl-4`}
                             >
-                                School Login
+                                Schools
                             </Link>
                             <Link
-                                href="https://portal.sabidub.com/ambassador/login"
+                                href="/ambassador"
                                 className={`text-sm ${subTextColor} hover:text-[#AFF8C8] transition-colors font-bold`}
                             >
                                 Ambassador
@@ -194,23 +194,23 @@ export default function Navbar() {
                                 Blog
                             </Link>
                             <div className="pt-4 pb-2">
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Portals</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Explore</p>
                                 <div className="grid grid-cols-2 gap-3">
                                     <Link
-                                        href="https://portal.sabidub.com/auth/school/signin"
+                                        href="/schools"
                                         className="flex flex-col p-3 rounded-xl bg-gray-50 border border-gray-100 items-center justify-center text-center"
                                         onClick={toggleMenu}
                                     >
-                                        <span className="text-[10px] font-bold text-[#014751]">School</span>
-                                        <span className="text-[9px] text-gray-500">Management</span>
+                                        <span className="text-[10px] font-bold text-[#014751]">Schools</span>
+                                        <span className="text-[9px] text-gray-500">Learn More</span>
                                     </Link>
                                     <Link
-                                        href="https://portal.sabidub.com/ambassador/login"
+                                        href="/ambassador"
                                         className="flex flex-col p-3 rounded-xl bg-gray-50 border border-gray-100 items-center justify-center text-center"
                                         onClick={toggleMenu}
                                     >
                                         <span className="text-[10px] font-bold text-[#014751]">Ambassador</span>
-                                        <span className="text-[9px] text-gray-500">Hub</span>
+                                        <span className="text-[9px] text-gray-500">Program</span>
                                     </Link>
                                 </div>
                             </div>

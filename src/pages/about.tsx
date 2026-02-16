@@ -359,39 +359,45 @@ export default function About() {
         </motion.section>
 
         {/* Founder Section */}
-        <section className="relative w-full min-h-[550px] lg:min-h-[700px] bg-white overflow-hidden flex items-end pb-10 lg:pb-20">
+        <section className="relative w-full min-h-[600px] lg:min-h-[850px] bg-white overflow-hidden flex items-end pb-20 lg:pb-36">
+          {/* Background Watermark Text - Outline Style */}
+          <div className="absolute inset-0 z-0 flex items-center justify-center select-none pointer-events-none overflow-hidden">
+            <span className="text-[20vw] font-black text-gray-100/50 leading-none tracking-tighter uppercase italic opacity-20">
+              SABI DUB
+            </span>
+          </div>
+
           {/* Background Image with Heavy White Gradient */}
-          <div className="absolute inset-x-0 top-0 bottom-0 z-0 flex justify-center">
+          <div className="absolute inset-x-0 top-0 bottom-0 z-10 flex justify-center">
             <div className="relative w-full h-full max-w-6xl">
               <Image
-
                 src="/images/founder.png"
                 alt="Hamman Dlama Kwaji"
                 fill
                 className="object-contain object-top"
                 priority
               />
-              {/* Deep White Gradient Overlay */}
-              <div className="absolute inset-x-0 bottom-0 h-[80%] lg:h-[50%] bg-gradient-to-t from-white via-white/90 to-transparent z-10" />
+              {/* Deep White Gradient Overlay to blend the bottom */}
+              <div className="absolute inset-x-0 bottom-0 h-[70%] lg:h-[40%] bg-gradient-to-t from-white via-white/80 to-transparent z-10" />
             </div>
           </div>
 
-          <div className="max-w-5xl mx-auto px-6 relative z-20 w-full">
-            <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-6 lg:gap-8">
-              {/* Left Column - Headline */}
-              <div className="lg:w-5/12 text-left">
-                <div className="inline-flex items-center gap-2 mb-0 lg:mb-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">FOUNDER / CEO</span>
+          <div className="max-w-7xl mx-auto px-6 relative z-20 w-full">
+            <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-12 lg:gap-16">
+              {/* Left Column - Headline & Signature Look */}
+              <div className="lg:w-1/2 text-left">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                  <span className="text-[10px] font-extrabold text-[#014751] uppercase tracking-[0.3em]">FOUNDER / CEO</span>
                 </div>
-                <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-[1.2] tracking-tight font-grey-qo">
+                <h2 className="text-5xl lg:text-7xl font-normal text-gray-900 leading-[0.8] tracking-tight font-[var(--font-grey-qo)]">
                   Hamman Dlama Kwaji
                 </h2>
               </div>
 
               {/* Right Column - Bio */}
-              <div className="lg:w-5/12 flex flex-col items-start lg:items-end text-left lg:text-right">
-                <p className="text-gray-500 text-sm leading-relaxed font-medium">
+              <div className="lg:w-5/12 text-left lg:text-right pb-2">
+                <p className="text-gray-500 text-lg sm:text-xl leading-relaxed font-light max-w-lg lg:ml-auto">
                   A visionary leader dedicated to transforming education in Nigeria. Hamman combines technical expertise with a passion for student success to bridge the critical gap between secondary and tertiary learning.
                 </p>
               </div>

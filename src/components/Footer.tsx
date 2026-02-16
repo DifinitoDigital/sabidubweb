@@ -1,6 +1,7 @@
 import Link from "next/link";
+import { useState } from "react";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 
 interface FooterProps {
@@ -8,6 +9,7 @@ interface FooterProps {
 }
 
 const Footer = ({ showAppDownload = true }: FooterProps) => {
+  const [isComingSoonOpen, setIsComingSoonOpen] = useState(false);
   return (
     <footer className="bg-white text-gray-600 py-24 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -33,7 +35,9 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
 
                   <div className="flex flex-wrap gap-4">
                     <Link
-                      href="#"
+                      href="https://play.google.com/store/apps/details?id=com.difinito.digital.sabidub&hl=en"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="flex items-center gap-3 bg-black text-white px-6 py-3 rounded-2xl hover:bg-gray-900 transition-all duration-300 group shadow-lg"
                     >
                       <div className="w-8 h-8 relative">
@@ -47,8 +51,8 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                       </div>
                     </Link>
 
-                    <Link
-                      href="#"
+                    <button
+                      onClick={() => setIsComingSoonOpen(true)}
                       className="flex items-center gap-3 bg-black text-white px-6 py-3 rounded-2xl hover:bg-gray-900 transition-all duration-300 group shadow-lg"
                     >
                       <div className="w-8 h-8 relative">
@@ -60,7 +64,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                         <p className="text-[10px] uppercase tracking-wider opacity-60 leading-none mb-1">Download on the</p>
                         <p className="text-sm font-bold leading-none">App Store</p>
                       </div>
-                    </Link>
+                    </button>
                   </div>
                 </div>
 
@@ -68,7 +72,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#FFEDB1] rounded-full blur-[100px] opacity-20" />
                   <div className="relative z-10 w-full h-[400px] rounded-3xl overflow-hidden shadow-2xl transform rotate-2">
                     <Image
-                      src="/images/work.jpg"
+                      src="/images/footer image.png"
                       alt="App Interface"
                       fill
                       className="object-cover"
@@ -83,7 +87,16 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-16">
           {/* Company Info */}
           <div className="space-y-6">
-            <h3 className="text-gray-900 font-semibold text-xl">SabiDub</h3>
+            <Link href="/" className="inline-block">
+              <div className="relative w-40 h-12">
+                <Image
+                  src="/images/black.png"
+                  alt="SabiDub Logo"
+                  fill
+                  className="object-contain object-left"
+                />
+              </div>
+            </Link>
             <p className="text-base">
               Empowering Nigerian students with comprehensive educational
               resources and personalized learning experiences.
@@ -273,6 +286,43 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
           <p suppressHydrationWarning>&copy; {new Date().getFullYear()} SabiDub. All rights reserved.</p>
         </div>
       </div>
+
+      {/* Coming Soon Modal */}
+      <AnimatePresence>
+        {isComingSoonOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsComingSoonOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-sm bg-white rounded-[40px] shadow-2xl overflow-hidden p-10 text-center"
+            >
+              <div className="w-20 h-20 bg-[#FFEDB1]/30 rounded-full flex items-center justify-center mx-auto mb-8">
+                <svg className="w-10 h-10 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-black text-gray-900 mb-4 tracking-tight">Coming Soon!</h3>
+              <p className="text-gray-500 font-medium leading-relaxed mb-10">
+                We&apos;re currently polishing the iOS version of SabiDub to ensure you get the best experience. Stay tuned!
+              </p>
+              <button
+                onClick={() => setIsComingSoonOpen(false)}
+                className="w-full py-4 bg-[#014751] text-white rounded-2xl font-black hover:scale-[1.02] transition-transform active:scale-[0.98]"
+              >
+                Got it
+              </button>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </footer>
   );
 };
