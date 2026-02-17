@@ -42,22 +42,10 @@ const fadeInUp = {
   transition: { duration: 0.5 },
 };
 
-const authorInfo = {
-  name: "Jane Doe",
-  avatar: "/images/jnr.jpg",
-  bio: "Jane is an experienced educator and exam coach, passionate about helping students succeed in WAEC and JAMB.",
-  socials: [
-    { name: "Twitter", url: "https://twitter.com/", icon: "twitter" },
-    { name: "Facebook", url: "https://facebook.com/", icon: "facebook" },
-    { name: "LinkedIn", url: "https://linkedin.com/", icon: "linkedin" },
-  ],
-};
-
-const moreContent = `\n\n### Why Early Preparation Matters\n\nStarting your exam preparation early gives you enough time to cover all topics, revise, and practice. It reduces stress and boosts your confidence.\n\n### Top Resources for WAEC and JAMB\n\n- Official syllabuses\n- Past questions and answers\n- Online study groups\n- Educational apps like SabiDub\n\n### Common Mistakes to Avoid\n\n1. Procrastinating until the last minute\n2. Ignoring weak subjects\n3. Not practicing with past questions\n4. Poor time management during the exam\n\n### Final Tips\n\nStay positive, believe in yourself, and remember to take breaks. Good luck!`;
 
 export default function BlogPostView() {
   const router = useRouter();
-  const { id } = router.query;
+  const { slug } = router.query;
   const [post, setPost] = useState<BlogPost | null>(null);
   const [related, setRelated] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,13 +54,13 @@ export default function BlogPostView() {
 
   useEffect(() => {
     const fetchPost = async () => {
-      if (!id) return;
+      if (!slug) return;
 
       try {
         setLoading(true);
         // First try to fetch by slug
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
-        const response = await fetch(`${baseUrl}/blog/posts/${id}`);
+        const response = await fetch(`${baseUrl}/blog/posts/${slug}`);
 
         if (!response.ok) {
           throw new Error('Post not found');
@@ -85,7 +73,7 @@ export default function BlogPostView() {
         const relatedResponse = await fetch(`${baseUrl}/blog/posts?limit=3&category=${postData.category}`);
         if (relatedResponse.ok) {
           const relatedData = await relatedResponse.json();
-          const filteredRelated = relatedData.posts.filter((p: BlogPost) => p.slug !== id).slice(0, 2);
+          const filteredRelated = relatedData.posts.filter((p: BlogPost) => p.slug !== slug).slice(0, 2);
           setRelated(filteredRelated);
         }
       } catch (err) {
@@ -97,7 +85,7 @@ export default function BlogPostView() {
     };
 
     fetchPost();
-  }, [id]);
+  }, [slug]);
 
   if (loading) {
     return (

@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/router";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -9,12 +10,15 @@ import Footer from "@/components/Footer";
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
 
 export default function VerifyEmailSuccess() {
+  const router = useRouter();
   const [result, setResult] = useState<{ error?: boolean; message?: string; redirectType?: string } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!router.isReady) return;
+
     const params = new URLSearchParams(window.location.search);
     const email = params.get('email');
     const token = params.get('token');
@@ -25,21 +29,32 @@ export default function VerifyEmailSuccess() {
       setUserType(userTypeParam);
     }
 
-    fetch(`${apiUrl}/auth/school/verify-email?email=${email}&token=${token}`, {
-      headers: {
-        'ngrok-skip-browser-warning': '69420'
-      },
-    })
-      .then(res => res.json())
-      .then(data => {
-        setResult(data);
-        setLoading(false);
+    if (email && token) {
+      // Clear URL parameters immediately
+      router.replace('/verify-email-success', undefined, { shallow: true });
+
+      fetch(`${apiUrl}/auth/school/verify-email?email=${email}&token=${token}`, {
+        headers: {
+          'ngrok-skip-browser-warning': '69420'
+        },
       })
-      .catch(err => {
-        setResult({ error: true, message: "Verification failed." });
-        setLoading(false);
-      });
-  }, []);
+        .then(res => res.json())
+        .then(data => {
+          setResult(data);
+          setLoading(false);
+        })
+        .catch(err => {
+          setResult({ error: true, message: "Verification failed." });
+          setLoading(false);
+        });
+    } else if (!result) {
+      // If no params and no result (e.g. direct access), show error or handle appropriately
+      // For now, we'll just let it show loading or nothing, or maybe checking if we already have result
+      // But since strict mode might run effect twice, we valid checks.
+      // Assuming if params are missing, it might be a reload or direct access.
+      if (!loading) setLoading(false);
+    }
+  }, [router.isReady, router, result, loading]);
 
   useEffect(() => {
     // Confetti effect on load

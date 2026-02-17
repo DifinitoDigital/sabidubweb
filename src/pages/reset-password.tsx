@@ -31,15 +31,22 @@ export default function ResetPassword() {
   const [token, setToken] = useState<string>('');
 
   useEffect(() => {
+    if (!router.isReady) return;
+
     // Get token from URL parameters
+    // We can also use router.query.token if we prefer, but window.location.search is fine too
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
+
     if (urlToken) {
       setToken(urlToken);
-    } else {
+      // Clear token from URL for security
+      router.replace('/reset-password', undefined, { shallow: true });
+    } else if (!token) {
+      // Check if token is already set to avoid overwriting error on re-renders
       setResult({ error: true, message: "Invalid or missing reset token." });
     }
-  }, []);
+  }, [router.isReady, router, token]);
 
   const validateForm = () => {
     const newErrors: { newPassword?: string; confirmPassword?: string } = {};
