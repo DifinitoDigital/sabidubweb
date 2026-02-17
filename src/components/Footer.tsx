@@ -15,7 +15,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* App Download Section - Premium Design */}
         {showAppDownload && (
-          <section className="py-12 bg-white">
+          <section id="download-app" className="py-12 bg-white">
             <div className="relative bg-[#F8F9FA] rounded-[40px] p-8 sm:p-16 overflow-hidden">
               {/* Decorative Circles */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFEDB1]/30 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />

@@ -190,7 +190,7 @@ export default function Home() {
                 { name: "University of Nigeria", type: 'text' },
                 { name: "WAEC Nigeria", type: 'text' },
               ].map((brand, i) => (
-                <div key={i} className="flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer opacity-50 hover:opacity-100">
+                <div key={i} className="flex items-center justify-center transition-all cursor-pointer opacity-70 hover:opacity-100">
                   {brand.type === 'image' ? (
                     <Image src={brand.src as string} alt={brand.name} width={120} height={48} className="h-10 sm:h-12 object-contain" />
                   ) : (
@@ -212,7 +212,7 @@ export default function Home() {
                 { name: "University of Nigeria", type: 'text' },
                 { name: "WAEC Nigeria", type: 'text' },
               ].map((brand, i) => (
-                <div key={`dup-${i}`} className="flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer opacity-50 hover:opacity-100">
+                <div key={`dup-${i}`} className="flex items-center justify-center transition-all cursor-pointer opacity-70 hover:opacity-100">
                   {brand.type === 'image' ? (
                     <Image src={brand.src as string} alt={brand.name} width={120} height={48} className="h-10 sm:h-12 object-contain" />
                   ) : (
@@ -245,18 +245,18 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-[240px]">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-auto md:auto-rows-[240px]">
 
               {/* Card 1: Success Analytics (Large) */}
-              <div className="md:col-span-8 md:row-span-2 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 overflow-hidden relative group">
+              <div className="md:col-span-12 lg:col-span-8 md:row-span-2 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-6 sm:p-8 overflow-hidden relative group min-h-[320px] sm:min-h-0">
                 <div className="relative z-10">
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#014751]/10 border border-[#014751]/20 text-[#014751] text-[10px] font-bold uppercase tracking-wider mb-4">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#014751] animate-pulse"></span>
-                    Real-time Tracking
+                    Academic Analytics
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Design optimized for peak performance</h3>
-                  <p className="text-gray-500 max-w-md text-sm leading-relaxed font-medium">
-                    Track your academic progress with precision. From WAEC prep to University GPAs, we visualize your growth.
+                  <h3 className="text-2xl sm:text-3xl font-black text-gray-900 mb-2">Predictive intelligence for every academic step</h3>
+                  <p className="text-gray-500 max-w-md text-sm sm:text-base leading-relaxed font-medium">
+                    Precision monitoring from O-Level to Degree. SabiDub maps your growth with data-driven clarity.
                   </p>
                   <div className="flex gap-4 mt-4">
                     <div className="flex items-center gap-1.5">
@@ -286,45 +286,45 @@ export default function Home() {
               </div>
 
               {/* Card 2: Modular Learning (Small/Tall) */}
-              <div className="md:col-span-4 md:row-span-2 bg-gray-900 border border-gray-800 rounded-[32px] p-8 flex flex-col justify-between group overflow-hidden">
+              <div className="md:col-span-6 lg:col-span-4 md:row-span-2 bg-gray-900 border border-gray-800 rounded-[32px] p-8 flex flex-col justify-between group overflow-hidden min-h-[320px] sm:min-h-0">
                 <div className="relative z-10">
-                  <h3 className="text-xl font-bold text-white mb-4">Modular Success</h3>
+                  <h3 className="text-xl font-bold text-white mb-4">Modular Mastery</h3>
                   <div className="space-y-3 font-mono text-[10px] text-gray-400">
-                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-teal-400">
-                      <span className="text-gray-500">01</span> .waec-prep {"{"} ... {"}"}
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-emerald-400">
+                      <span className="text-gray-500">01</span> .core-foundation {"{"} ... {"}"}
                     </div>
-                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-teal-400">
-                      <span className="text-gray-500">02</span> .jamb-mastery {"{"} ... {"}"}
+                    <div className="p-3 rounded-xl bg-white/5 border border-white/10 text-emerald-400">
+                      <span className="text-gray-500">02</span> .admission-bridge {"{"} ... {"}"}
                     </div>
                     <div className="p-3 rounded-xl bg-[#014751]/40 border border-[#014751]/50 text-white group-hover:scale-105 transition-transform shadow-lg">
-                      <span className="text-white/60">03</span> .uni-admission {"{"} ... {"}"}
+                      <span className="text-white/60">03</span> .success-protocol {"{"} ... {"}"}
                     </div>
                   </div>
                 </div>
                 <div className="mt-8 relative z-10">
-                  <p className="text-xs text-gray-500 mb-2 font-bold uppercase tracking-widest">Next Step</p>
-                  <p className="text-sm text-gray-300">Automated pathways for every Nigerian student.</p>
+                  <p className="text-xs text-gray-500 mb-2 font-bold uppercase tracking-widest">Architecting Paths</p>
+                  <p className="text-sm text-gray-300">Defining clear success routes for every Nigerian scholar.</p>
                 </div>
               </div>
 
               {/* Card 3: Seamless Transition (Small) */}
-              <div className="md:col-span-4 md:row-span-1 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 flex flex-col justify-center items-center text-center overflow-hidden group relative">
+              <div className="md:col-span-6 lg:col-span-4 md:row-span-1 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 flex flex-col justify-center items-center text-center overflow-hidden group relative min-h-[220px] sm:min-h-0">
                 <div className="absolute top-4 right-6 flex gap-1">
                   <div className="w-1 h-1 rounded-full bg-teal-500/30 animate-ping"></div>
                   <div className="w-1 h-1 rounded-full bg-teal-500/20"></div>
                 </div>
-                <div className="text-5xl font-black text-gray-900 tracking-tighter group-hover:scale-110 transition-transform duration-500 blur-[0.5px] group-hover:blur-0">
-                  Smooooooth.
+                <div className="text-5xl sm:text-6xl font-black text-gray-900 tracking-tighter group-hover:scale-110 transition-transform duration-500 blur-[0.5px] group-hover:blur-0">
+                  Fluid.
                 </div>
                 <div className="flex items-center gap-3 mt-4">
-                  <p className="text-xs text-gray-400 uppercase tracking-[0.2em] font-bold">Secondary</p>
-                  <svg className="w-4 h-4 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 8l4 4m0 0l-4 4m4-4H3" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  <p className="text-xs text-gray-400 uppercase tracking-[0.2em] font-bold">Tertiary</p>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold">Secondary</p>
+                  <svg className="w-4 h-4 text-[#014751]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 8l4 4m0 0l-4 4m4-4H3" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold">Tertiary</p>
                 </div>
               </div>
 
               {/* Card 4: Integrations (Small) */}
-              <div className="md:col-span-4 md:row-span-1 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 flex flex-col justify-between group relative overflow-hidden">
+              <div className="md:col-span-6 lg:col-span-4 md:row-span-1 bg-[#F8F9FA] border border-gray-200/50 rounded-[32px] p-8 flex flex-col justify-between group relative overflow-hidden min-h-[220px] sm:min-h-0">
                 {/* Decorative background grid/dots */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#014751 1px, transparent 0)', backgroundSize: '15px 15px' }}></div>
 
@@ -342,10 +342,10 @@ export default function Home() {
                 </div>
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <h4 className="text-sm font-bold text-gray-900">Neat integrations</h4>
+                    <h4 className="text-sm font-bold text-gray-900">Universal Sync</h4>
                     <span className="text-[7px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full font-black uppercase tracking-tighter">API ACTIVE</span>
                   </div>
-                  <p className="text-[10px] text-gray-500 font-bold leading-relaxed">Direct links with JAMB, WAEC & Institutional Portals for real-time verification.</p>
+                  <p className="text-[10px] text-gray-500 font-bold leading-relaxed">Instant verification across JAMB, WAEC & Institutional databases.</p>
                   <div className="mt-4 flex items-center gap-2">
                     <div className="h-[2px] w-8 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-green-500 w-2/3 animate-[shimmer_2s_infinite]"></div>
@@ -356,7 +356,7 @@ export default function Home() {
               </div>
 
               {/* Card 5: Profile/CMS (Small) */}
-              <div className="md:col-span-4 md:row-span-1 bg-white border border-gray-100 rounded-[32px] p-6 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500">
+              <div className="md:col-span-6 lg:col-span-4 md:row-span-1 bg-white border border-gray-100 rounded-[32px] p-6 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] sm:min-h-0">
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[#014751] text-white flex items-center justify-center text-xs font-black border-2 border-white shadow-sm">
@@ -458,7 +458,7 @@ export default function Home() {
 
                 <div className="absolute inset-x-0 bottom-0 top-[45%] px-4 pb-4">
                   <div className="relative w-full h-full rounded-[30px] overflow-hidden shadow-sm">
-                    <Image src="/images/2149156427.jpg" alt="Pathways" fill className="object-cover" />
+                    <Image src="/images/digital evolution.png" alt="Pathways" fill className="object-cover" />
 
                     {/* Tags Overlay - Matching the image design */}
                     <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center px-4">
@@ -491,7 +491,7 @@ export default function Home() {
                   <div className="w-56 h-56 relative">
                     {/* Central Avatar */}
                     <div className="absolute inset-0 m-auto w-20 h-20 rounded-full border-[6px] border-white shadow-2xl z-20 overflow-hidden ring-4 ring-[#AFF8C8]/20">
-                      <Image src="/images/jnr.jpg" alt="Avatar" fill className="object-cover" />
+                      <Image src="/images/1vs1 center.png" alt="Avatar" fill className="object-cover" />
                     </div>
 
                     {/* Connecting Lines */}
@@ -503,20 +503,20 @@ export default function Home() {
                     </svg>
 
                     {/* Surrounding Avatars with status icons */}
-                    <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden ring-2 ring-gray-100 bg-white">
-                      <Image src="/images/128895.jpg" alt="M1" fill className="object-cover" />
+                    <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
+                      <Image src="/images/1-1.png" alt="M1" fill className="object-cover" />
                     </div>
                     <div className="absolute top-10 right-2 w-10 h-10 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-                      <Image src="/images/146757.jpg" alt="M2" fill className="object-cover" />
+                      <Image src="/images/1v1.png" alt="M2" fill className="object-cover" />
                     </div>
                     <div className="absolute bottom-5 left-0 w-14 h-14 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white transition-transform hover:scale-110">
-                      <Image src="/images/2151104075.jpg" alt="M3" fill className="object-cover" />
+                      <Image src="/images/1_1.png" alt="M3" fill className="object-cover" />
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#AFF8C8] rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-[10px] saturate-150">✍️</span>
                       </div>
                     </div>
                     <div className="absolute bottom-4 right-6 w-11 h-11 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-                      <Image src="/images/freepik__the-style-is-candid-image-photography-with-natural__83832.jpeg" alt="M4" fill className="object-cover" />
+                      <Image src="/images/1vs1.png" alt="M4" fill className="object-cover" />
                     </div>
                   </div>
                 </div>
@@ -566,7 +566,7 @@ export default function Home() {
                 {/* Topographic Waves Visual - Complex Green Style */}
                 <div className="mt-auto relative h-[300px] sm:h-[400px] md:h-[610px] w-full">
                   <div className="absolute inset-0 z-0">
-                    <Image src="/images/backgroundw.png" alt="Waves" fill className="object-cover object-bottom" />
+                    <Image src="/images/Discover.png" alt="Waves" fill className="object-cover object-bottom" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#40916C]/10 to-transparent"></div>
                   </div>
                   {/* Brand Badges at bottom */}
@@ -597,14 +597,14 @@ export default function Home() {
                     <div className="absolute top-0 -right-4 w-[380px] h-[480px] transform rotate-2 z-10 transition-transform hover:rotate-0 duration-500">
                       <div className="bg-white rounded-3xl shadow-[0_30px_60px_rgba(0,0,0,0.12)] p-8 h-full border border-gray-100 overflow-hidden">
                         <div className="w-12 h-1.5 bg-gray-100 rounded-full mb-8"></div>
-                        <p className="text-xs text-gray-400 font-bold mb-4 uppercase tracking-wider">Creative Strategy for: SabiDub</p>
-                        <h4 className="text-sm font-bold text-gray-800 mb-6">(hypothetical company)</h4>
+                        <p className="text-xs text-gray-400 font-bold mb-4 uppercase tracking-wider">Strategic Framework for: Student Excellence</p>
+                        <h4 className="text-sm font-bold text-gray-800 mb-6">Advanced Educational Protocol</h4>
 
                         <div className="space-y-4">
                           <div className="h-2 w-full bg-gray-50 rounded"></div>
                           <div className="h-2 w-11/12 bg-gray-50 rounded"></div>
                           <div className="h-40 w-full bg-[#AFF8C8]/10 rounded-2xl my-6 overflow-hidden relative">
-                            <Image src="/images/IMG_5569.JPG" alt="Edu" fill className="object-cover" />
+                            <Image src="/images/packed.png" alt="Edu" fill className="object-cover" />
                           </div>
                           <div className="h-2 w-full bg-gray-50 rounded"></div>
                           <div className="h-2 w-4/5 bg-gray-50 rounded"></div>
@@ -615,7 +615,7 @@ export default function Home() {
                             <Image src="/images/jnr.jpg" alt="P1" fill className="object-cover" />
                           </div>
                           <div className="w-10 h-10 rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-100">
-                            <Image src="/images/128895.jpg" alt="P2" fill className="object-cover" />
+                            <Image src="/images/1-1.png" alt="P2" fill className="object-cover" />
                           </div>
                         </div>
                       </div>
@@ -655,13 +655,15 @@ export default function Home() {
             <div className="flex overflow-x-auto gap-8 pb-8 no-scrollbar snap-x snap-mandatory">
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
-                  <Image src="/images/difinito.png" alt="Difinito" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                  <Image src="/images/difinito.png" alt="Difinito" width={120} height={40} className="object-contain transition-all" />
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
                   SabiDub is a visionary platform that bridges the gap for Nigerian students. We are proud to support their efforts in enhancing educational accessibility.
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">D</div>
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
+                    <Image src="/images/founder.jpg" alt="Founder" fill className="object-cover" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm">Founder</h4>
                     <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Hamman Dlama</p>
@@ -671,13 +673,15 @@ export default function Home() {
 
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.1 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
-                  <Image src="/images/thevoice2u.png" alt="Voice2u" width={140} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                  <Image src="/images/thevoice2u.png" alt="Voice2u" width={140} height={40} className="object-contain transition-all" />
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
                   The future of education is digital. SabiDub is at the forefront of this change, and we are excited to be part of their journey in transforming student lives.
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">V</div>
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
+                    <Image src="/images/2151104075.jpg" alt="CEO" fill className="object-cover" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm">CEO</h4>
                     <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Voice2u</p>
@@ -687,13 +691,13 @@ export default function Home() {
 
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
-                  <Image src="/images/facesta.png" alt="Facesta" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                  <Image src="/images/facesta.png" alt="Facesta" width={120} height={40} className="object-contain transition-all" />
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
                   SabiDub is redefining how students prepare for their future. We are proud to be part of this transformation in the Nigerian educational ecosystem.
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
                     <Image src="/images/jnr.jpg" alt="CEO" fill className="object-cover" />
                   </div>
                   <div>
@@ -705,13 +709,15 @@ export default function Home() {
 
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.3 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
-                  <Image src="/images/melab.png" alt="MELAB" width={120} height={40} className="object-contain grayscale group-hover:grayscale-0 transition-all" />
+                  <Image src="/images/melab.png" alt="MELAB" width={120} height={40} className="object-contain transition-all" />
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
                   The innovation SabiDub brings to the table is exactly what the education sector needs. Their commitment to student success is unparalleled.
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">M</div>
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
+                    <Image src="/images/abafoni.jpg" alt="CEO" fill className="object-cover" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm">Founder/CEO</h4>
                     <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751] leading-tight">Abafoni Jesse Jackson</p>
@@ -721,13 +727,15 @@ export default function Home() {
 
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.4 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
-                  <span className="font-black text-gray-900 text-3xl tracking-tighter grayscale group-hover:grayscale-0 transition-all">Venndoor</span>
+                  <span className="font-black text-gray-900 text-3xl tracking-tighter transition-all">Venndoor</span>
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
                   SabiDub&apos;s ecosystem is perfectly positioned to capture the next wave of digital transformation in African education. We believe in their vision.
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
-                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-200 flex items-center justify-center text-[#014751] font-bold text-lg">V</div>
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
+                    <Image src="/images/146757.jpg" alt="CEO" fill className="object-cover" />
+                  </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm">Founder/CEO</h4>
                     <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Ijeaku Valentine Kelechi</p>

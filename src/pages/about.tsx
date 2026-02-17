@@ -67,7 +67,7 @@ export default function About() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight"
+                className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-[1.1] tracking-tight"
               >
                 Empowering the Next
                 <br />
@@ -116,12 +116,13 @@ export default function About() {
                   OUR STORY
                 </span>
 
-                <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+                <h2 className="text-3xl sm:text-5xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">
                   Building the Future of
                   <span className="block mt-2 bg-gradient-to-r from-[#014751] to-[#023840] bg-clip-text text-transparent">
                     Nigerian Education
                   </span>
                 </h2>
+                Broadway-
 
                 <p className="text-lg text-gray-600 mb-6 leading-relaxed">
                   At SabiDub, we believe every Nigerian student deserves access to
@@ -270,8 +271,8 @@ export default function About() {
             {/* Header Block */}
             <div className="flex flex-col md:flex-row justify-between items-start border-b border-gray-100 pb-12 mb-12">
               <div className="max-w-3xl">
-                <h2 className="text-5xl sm:text-7xl font-bold text-gray-900 leading-[1.1] mb-6">
-                  Our Purpose & <br />
+                <h2 className="text-4xl sm:text-7xl font-bold text-gray-900 leading-[1.1] mb-6 tracking-tighter">
+                  Our Purpose & <br className="hidden sm:block" />
                   Defining Principles
                 </h2>
                 <p className="text-xl text-gray-500 max-w-xl">
@@ -390,7 +391,7 @@ export default function About() {
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
                   <span className="text-[10px] font-extrabold text-[#014751] uppercase tracking-[0.3em]">FOUNDER / CEO</span>
                 </div>
-                <h2 className="text-5xl lg:text-7xl font-normal text-gray-900 leading-[0.8] tracking-tight font-[var(--font-grey-qo)]">
+                <h2 className="text-4xl sm:text-5xl lg:text-7xl font-normal text-gray-900 leading-[0.9] lg:leading-[0.8] tracking-tight font-[var(--font-grey-qo)]">
                   Hamman Dlama Kwaji
                 </h2>
               </div>

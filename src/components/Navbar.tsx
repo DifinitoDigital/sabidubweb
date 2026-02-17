@@ -36,7 +36,7 @@ export default function Navbar() {
     return (
         <>
             <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${bgColor}`}>
-                <div className="px-4 sm:px-6 py-4 sm:py-6 flex items-center justify-between max-w-7xl mx-auto">
+                <div className="px-4 sm:px-6 lg:px-8 py-4 sm:py-6 flex items-center justify-between max-w-7xl mx-auto">
                     <Link href="/" className="flex items-center">
                         <div className="relative w-40 h-10">
                             <Image
@@ -50,7 +50,7 @@ export default function Navbar() {
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center space-x-8">
+                    <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
                         <Link
                             href="/"
                             className={`${textColor} hover:text-[#AFF8C8] transition-colors font-medium`}
@@ -100,15 +100,25 @@ export default function Navbar() {
                         </div>
 
 
-                        <button className="bg-[#014751] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#026372] transition-all hover:scale-105 active:scale-95 shadow-lg">
-                            Download App
-                        </button>
+                        <Link
+                            href="#download-app"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                document.getElementById('download-app')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="bg-[#014751] text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#026372] transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2 group"
+                        >
+                            <span>Download App</span>
+                            <svg className="w-3 h-3 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
                     <button
                         onClick={toggleMenu}
-                        className={`md:hidden flex flex-col items-center justify-center w-10 h-10 ${isTransparent ? 'bg-white/10' : 'bg-white border border-gray-100 shadow-sm'} rounded-lg transition-colors relative z-50`}
+                        className={`lg:hidden flex flex-col items-center justify-center w-10 h-10 ${isTransparent ? 'bg-white/10' : 'bg-white border border-gray-100 shadow-sm'} rounded-lg transition-colors relative z-50`}
                     >
                         <span
                             className={`w-5 h-0.5 ${isTransparent ? 'bg-white' : 'bg-black'} mb-1 transition-transform ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""
@@ -126,9 +136,9 @@ export default function Navbar() {
                 </div>
             </nav>
 
-            {/* Mobile Menu */}
+            {/* Mobile/Tablet Menu */}
             <div
-                className={`md:hidden fixed top-0 right-0 w-full sm:w-80 h-full bg-white border border-gray-100 shadow-sm z-[60] transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"
+                className={`lg:hidden fixed top-0 right-0 w-full sm:w-80 md:w-96 h-full bg-white border border-gray-100 shadow-sm z-[60] transform transition-transform duration-300 ease-in-out ${isMenuOpen ? "translate-x-0" : "translate-x-full"
                     }`}
             >
                 <div className="p-6 h-full overflow-y-auto">
@@ -216,9 +226,20 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        <button className="w-full bg-[#014751] text-white px-4 py-3 rounded-xl font-bold hover:bg-[#026372] transition-colors">
-                            Download App
-                        </button>
+                        <Link
+                            href="#download-app"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setIsMenuOpen(false);
+                                document.getElementById('download-app')?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="w-full bg-[#014751] text-white px-4 py-4 rounded-xl font-black uppercase tracking-widest text-center text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
+                        >
+                            <span>Download App</span>
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </Link>
                     </div>
                 </div>
             </div>

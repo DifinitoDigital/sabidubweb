@@ -135,7 +135,7 @@ export default function BlogPage() {
                 variants={fadeInUp}
                 initial="initial"
                 animate="animate"
-                className="relative w-full h-[500px] sm:h-[650px] rounded-[50px] overflow-hidden mb-24 group shadow-3xl cursor-pointer"
+                className="relative w-full h-[450px] sm:h-[650px] rounded-[32px] sm:rounded-[50px] overflow-hidden mb-16 sm:mb-24 group shadow-3xl cursor-pointer"
               >
                 <Image
                   src={featured.image || "/images/placeholder.png"}
@@ -146,19 +146,19 @@ export default function BlogPage() {
                 />
 
                 {/* Refined Glassmorphism Overlay */}
-                <div className="absolute inset-x-6 bottom-6 sm:inset-x-12 sm:bottom-12">
-                  <div className="bg-white/10 backdrop-blur-3xl border border-white/20 p-6 sm:p-10 rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+                <div className="absolute inset-x-4 bottom-4 sm:inset-x-12 sm:bottom-12">
+                  <div className="bg-white/10 backdrop-blur-3xl border border-white/20 p-6 sm:p-10 rounded-[24px] sm:rounded-[40px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
                     <div className="relative z-10">
                       <span className="text-white/70 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.2em] mb-2 sm:mb-3 block">Featured</span>
-                      <h2 className="text-2xl sm:text-4xl font-bold text-white mb-3 sm:mb-4 leading-[1.2] tracking-tight max-w-5xl">
+                      <h2 className="text-xl sm:text-4xl font-bold text-white mb-2 sm:mb-4 leading-tight tracking-tight max-w-5xl">
                         {featured.title}
                       </h2>
-                      <p className="text-white/80 text-xs sm:text-sm line-clamp-2 max-w-4xl leading-relaxed mb-6">
+                      <p className="text-white/80 text-[11px] sm:text-sm line-clamp-2 max-w-4xl leading-relaxed mb-4 sm:mb-6">
                         {featured.excerpt}
                       </p>
                       <div className="flex items-center gap-2 group/link">
-                        <span className="text-white text-xs font-bold uppercase tracking-widest">Read more</span>
-                        <div className="p-1.5 rounded-full bg-white/10 group-hover/link:bg-white group-hover/link:rotate-45 transition-all duration-300">
+                        <span className="text-white text-[10px] sm:text-xs font-bold uppercase tracking-widest">Read more</span>
+                        <div className="p-1 rounded-full bg-white/10 group-hover/link:bg-white group-hover/link:rotate-45 transition-all duration-300">
                           <svg className="w-3 h-3 text-white group-hover/link:text-gray-900 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7-7 7" />
                           </svg>
@@ -207,7 +207,7 @@ export default function BlogPage() {
                     className="group relative flex flex-col"
                   >
                     <Link href={`/blog/${post.slug}`} className="block">
-                      <div className="relative w-full aspect-[4/3] rounded-[32px] overflow-hidden mb-6 shadow-sm border border-gray-100">
+                      <div className="relative w-full aspect-[4/3] rounded-[24px] sm:rounded-[32px] overflow-hidden mb-4 sm:mb-6 shadow-sm border border-gray-100">
                         <Image
                           src={post.image || "/images/placeholder.png"}
                           alt={post.title}
@@ -226,12 +226,12 @@ export default function BlogPage() {
                       </div>
 
                       <div>
-                        <div className="flex items-center gap-3 mb-3">
-                          <span className="text-xs font-black uppercase tracking-widest text-[#014751] bg-[#014751]/5 px-3 py-1 rounded-full">{post.category}</span>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{post.readingTime} read</span>
+                        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                          <span className="text-[10px] font-black uppercase tracking-widest text-[#014751] bg-[#014751]/5 px-2.5 py-1 rounded-full">{post.category}</span>
+                          <span className="text-[9px] sm:text-[10px] font-bold text-gray-400 uppercase tracking-widest">{post.readingTime} read</span>
                         </div>
-                        <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#014751] transition-colors leading-tight">{post.title}</h3>
-                        <p className="text-gray-500 text-sm line-clamp-2">{post.excerpt}</p>
+                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-[#014751] transition-colors leading-tight">{post.title}</h3>
+                        <p className="text-gray-500 text-xs sm:text-sm line-clamp-2">{post.excerpt}</p>
                       </div>
                     </Link>
                   </motion.div>
@@ -263,7 +263,7 @@ export default function BlogPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                   disabled={currentPage === totalPages}
-                  className="w-12 h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                  className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-gray-200 flex items-center justify-center hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </button>
@@ -281,8 +281,8 @@ export default function BlogPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l9 6 9-6" />
                   </svg>
                 </div>
-                <h2 className="text-3xl sm:text-5xl font-black text-white mb-6">Stay ahead of the curve</h2>
-                <p className="text-gray-400 text-lg mb-10 leading-relaxed">Join 5,000+ students and educators receiving our weekly newsletter on the future of Nigerian education.</p>
+                <h2 className="text-3xl sm:text-5xl font-black text-white mb-4 sm:mb-6">Stay ahead of the curve</h2>
+                <p className="text-gray-400 text-base sm:text-lg mb-8 sm:mb-10 leading-relaxed">Join 5,000+ students and educators receiving our weekly newsletter on the future of Nigerian education.</p>
                 <form className="w-full max-w-md flex flex-col sm:flex-row gap-4">
                   <input
                     type="email"

@@ -27,26 +27,26 @@ export default function AmbassadorInfo() {
                 <section className="relative pt-32 pb-12 sm:pt-48 sm:pb-16 bg-white overflow-hidden">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         {/* Split Header */}
-                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 mb-20 lg:mb-28">
+                        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 lg:gap-12 mb-16 lg:mb-28">
                             <motion.div initial="initial" animate="animate" variants={fadeInUp} className="flex-1">
-                                <span className="text-gray-400 font-bold text-sm tracking-widest mb-6 block uppercase">/ Join the 1% of Student Leaders</span>
-                                <h1 className="text-6xl sm:text-7xl md:text-[90px] font-black text-gray-900 leading-[0.85] tracking-tighter">
-                                    Empowering <br />
+                                <span className="text-gray-400 font-bold text-xs sm:text-sm tracking-widest mb-4 sm:mb-6 block uppercase">/ Join the 1% of Student Leaders</span>
+                                <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-[90px] font-black text-gray-900 leading-[0.9] lg:leading-[0.85] tracking-tighter">
+                                    Empowering <br className="hidden sm:block" />
                                     Future Leaders
                                 </h1>
                             </motion.div>
 
                             <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }} className="lg:max-w-sm">
-                                <p className="text-gray-500 text-[15px] font-medium leading-relaxed mb-8">
+                                <p className="text-gray-500 text-sm sm:text-[15px] font-medium leading-relaxed mb-6 sm:mb-8">
                                     Become a SabiDub Ambassador and spearhead the educational revolution in Nigeria. Join our elite network and drive change across your campus.
                                 </p>
-                                <div className="flex items-center gap-6">
-                                    <Link href="https://portal.sabidub.com/ambassador/login" className="text-[#014751] font-black text-[11px] uppercase tracking-widest flex items-center gap-1 group">
+                                <div className="flex flex-wrap items-center gap-4 sm:gap-6">
+                                    <Link href="https://portal.sabidub.com/ambassador/login" className="text-[#014751] font-black text-[10px] sm:text-[11px] uppercase tracking-widest flex items-center gap-1 group">
                                         Join THE Hub <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
                                     </Link>
                                     <button
                                         onClick={() => setIsGuidelinesOpen(true)}
-                                        className="text-[#014751] font-black text-[11px] uppercase tracking-widest flex items-center gap-1 group cursor-pointer"
+                                        className="text-[#014751] font-black text-[10px] sm:text-[11px] uppercase tracking-widest flex items-center gap-1 group cursor-pointer"
                                     >
                                         View Guidelines <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
                                     </button>
@@ -55,7 +55,7 @@ export default function AmbassadorInfo() {
                         </div>
 
                         {/* Feature Cards Grid (5 Cards like the image) */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                             {[
                                 { title: "Campus Outreach", img: "/images/campus outreach.png", color: "bg-[#D7FF40]", iconColor: "text-black" },
                                 { title: "Academic Support", img: "/images/academic support.png", color: "bg-[#014751]", iconColor: "text-white" },
@@ -89,9 +89,9 @@ export default function AmbassadorInfo() {
                 </section>
 
                 {/* Testimonials Section */}
-                <section className="py-12 bg-white">
+                <section className="py-16 sm:py-24 bg-white">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16">
                             {[
                                 {
                                     quote: "Being a SabiDub Ambassador has completely transformed my campus experience. I've built a network of brilliant students and learned leadership skills that aren't taught in class.",
@@ -149,16 +149,16 @@ export default function AmbassadorInfo() {
                 </section>
 
                 {/* Role Description - Bento Style */}
-                <section className="py-32 bg-white relative">
+                <section className="py-20 sm:py-32 bg-white relative">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-24">
-                            <h2 className="text-4xl sm:text-6xl font-black text-gray-900 tracking-tighter">Your Role in the <span className="text-[#014751]">Ecosystem.</span></h2>
-                            <p className="mt-4 text-gray-500 font-medium text-lg">Lead with purpose. Grow with SabiDub.</p>
+                        <div className="text-center mb-16 sm:mb-24">
+                            <h2 className="text-3xl sm:text-6xl font-black text-gray-900 tracking-tighter leading-none">Your Role in the <br className="sm:hidden" /> <span className="text-[#014751]">Ecosystem.</span></h2>
+                            <p className="mt-4 text-gray-500 font-medium text-base sm:text-lg">Lead with purpose. Grow with SabiDub.</p>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
+                        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto">
                             {/* Card 1: Advocacy (Large Tall) */}
-                            <motion.div whileHover={{ y: -10 }} className="md:col-span-4 bg-[#F8F9FA] rounded-[48px] p-10 flex flex-col justify-between border border-gray-100 group overflow-hidden relative">
+                            <motion.div whileHover={{ y: -10 }} className="md:col-span-4 bg-[#F8F9FA] rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 flex flex-col justify-between border border-gray-100 group overflow-hidden relative">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#D7FF40]/10 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
                                 <div>
                                     <div className="w-16 h-16 bg-[#014751] text-white rounded-2xl flex items-center justify-center mb-8 shadow-lg">
@@ -178,7 +178,7 @@ export default function AmbassadorInfo() {
                             </motion.div>
 
                             {/* Card 2: Leadership (Wide) */}
-                            <motion.div whileHover={{ y: -10 }} className="md:col-span-8 bg-[#014751] rounded-[48px] p-10 flex flex-col md:flex-row gap-10 items-center border border-gray-100 group relative overflow-hidden">
+                            <motion.div whileHover={{ y: -10 }} className="md:col-span-8 bg-[#014751] rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 flex flex-col md:flex-row gap-8 sm:gap-10 items-center border border-gray-100 group relative overflow-hidden">
                                 <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#FFF 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
                                 <div className="flex-1 relative z-10 text-white">
                                     <div className="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center mb-8 border border-white/20">
@@ -186,8 +186,8 @@ export default function AmbassadorInfo() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
                                     </div>
-                                    <h3 className="text-4xl font-black mb-6 tracking-tight">Leadership</h3>
-                                    <p className="text-white/70 text-lg leading-relaxed font-medium">
+                                    <h3 className="text-3xl sm:text-4xl font-black mb-4 sm:mb-6 tracking-tight">Leadership</h3>
+                                    <p className="text-white/70 text-base sm:text-lg leading-relaxed font-medium">
                                         Organize campus workshops, coordinate outreach programs, and build a thriving community of excellence within your institution.
                                     </p>
                                 </div>
@@ -212,7 +212,7 @@ export default function AmbassadorInfo() {
                             </motion.div>
 
                             {/* Card 3: Impact (Wide Half) */}
-                            <motion.div whileHover={{ y: -10 }} className="md:col-span-6 bg-[#AFF8C8]/20 rounded-[48px] p-10 flex flex-col justify-between border border-[#AFF8C8]/30 group overflow-hidden">
+                            <motion.div whileHover={{ y: -10 }} className="md:col-span-6 bg-[#AFF8C8]/20 rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 flex flex-col justify-between border border-[#AFF8C8]/30 group overflow-hidden">
                                 <div className="flex items-center gap-6">
                                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#014751] shadow-md border border-gray-100">
                                         <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -227,7 +227,7 @@ export default function AmbassadorInfo() {
                             </motion.div>
 
                             {/* Card 4: Community (Small Half) */}
-                            <motion.div whileHover={{ y: -10 }} className="md:col-span-6 bg-[#D7FF40] rounded-[48px] p-10 flex items-center justify-between group overflow-hidden relative">
+                            <motion.div whileHover={{ y: -10 }} className="md:col-span-6 bg-[#D7FF40] rounded-[32px] sm:rounded-[48px] p-8 sm:p-10 flex items-center justify-between group overflow-hidden relative min-h-[160px]">
                                 <div className="relative z-10">
                                     <h3 className="text-4xl font-black text-gray-900 tracking-tighter leading-none mb-2">Network.</h3>
                                     <p className="text-gray-900/60 font-bold uppercase text-[10px] tracking-widest">Connect with 500+ Ambassadors</p>
@@ -243,8 +243,8 @@ export default function AmbassadorInfo() {
                 </section>
 
                 {/* Call to Action */}
-                <section className="py-24 bg-white relative">
-                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-900 rounded-[48px] p-12 sm:p-20 relative overflow-hidden text-center">
+                <section className="py-20 sm:py-24 bg-white relative">
+                    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 bg-gray-900 rounded-[32px] sm:rounded-[48px] p-10 sm:p-20 relative overflow-hidden text-center">
                         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(#FFF 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
                         <h2 className="text-4xl sm:text-5xl font-black text-white mb-8 relative z-10">Ready to lead the future of education?</h2>
                         <p className="text-white/60 text-lg mb-12 max-w-2xl mx-auto relative z-10 font-medium">
@@ -273,13 +273,13 @@ export default function AmbassadorInfo() {
                                 initial={{ opacity: 0, scale: 0.9, y: 20 }}
                                 animate={{ opacity: 1, scale: 1, y: 0 }}
                                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                className="relative w-full max-w-4xl bg-white rounded-[40px] shadow-2xl overflow-hidden"
+                                className="relative w-full max-w-4xl bg-white rounded-t-[32px] sm:rounded-[40px] shadow-2xl overflow-hidden mt-auto sm:mt-0"
                             >
-                                <div className="p-8 sm:p-14 overflow-y-auto max-h-[85vh] custom-scrollbar">
+                                <div className="p-6 sm:p-14 overflow-y-auto max-h-[85vh] custom-scrollbar">
                                     <div className="flex justify-between items-center mb-10">
-                                        <div>
+                                        <div className="max-w-[calc(100%-48px)]">
                                             <span className="text-[#014751] font-black text-[10px] uppercase tracking-widest mb-2 block">/ SabiDub Ambassador Program</span>
-                                            <h2 className="text-4xl font-black text-gray-900 tracking-tight">Our Guidelines.</h2>
+                                            <h2 className="text-2xl sm:text-4xl font-black text-gray-900 tracking-tight leading-tight">Our Guidelines.</h2>
                                         </div>
                                         <button
                                             onClick={() => setIsGuidelinesOpen(false)}
@@ -314,10 +314,10 @@ export default function AmbassadorInfo() {
                                                 desc: "Track your network growth in real-time. Secure monthly base compensation and performance scaling as you drive educational change."
                                             }
                                         ].map((item, idx) => (
-                                            <div key={idx} className="flex gap-8 group">
-                                                <div className="text-4xl font-black text-[#014751]/10 group-hover:text-[#014751]/20 transition-colors shrink-0 leading-none">{item.step}</div>
+                                            <div key={idx} className="flex flex-col sm:flex-row gap-4 sm:gap-8 group">
+                                                <div className="text-3xl sm:text-4xl font-black text-[#014751]/10 group-hover:text-[#014751]/20 transition-colors shrink-0 leading-none">{item.step}</div>
                                                 <div>
-                                                    <h3 className="font-black text-gray-900 mb-2">{item.title}</h3>
+                                                    <h3 className="font-black text-gray-900 mb-1 sm:mb-2 text-lg sm:text-xl">{item.title}</h3>
                                                     <p className="text-gray-500 text-sm leading-relaxed font-medium">{item.desc}</p>
                                                 </div>
                                             </div>
