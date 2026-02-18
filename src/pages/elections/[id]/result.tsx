@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
 import Head from "next/head";
 import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
@@ -51,13 +52,14 @@ function Avatar({ src, name, size = 64 }: { src?: string | null; name: string; s
     const initials = name.split(" ").map(n => n[0]).join("").slice(0, 2).toUpperCase();
     if (src) {
         return (
-            <img
+            <Image
                 src={src}
                 alt={name}
                 width={size}
                 height={size}
                 className="rounded-full object-cover"
                 style={{ width: size, height: size }}
+                unoptimized // Use unoptimized if the source isn't pre-configured in next.config.js
             />
         );
     }
@@ -318,7 +320,7 @@ export default function PublicElectionResultsPage() {
                                                 )}
                                             </div>
                                             {candidate.campaignSlogan && (
-                                                <p className="text-xs text-gray-500 italic truncate mt-0.5">"{candidate.campaignSlogan}"</p>
+                                                <p className="text-xs text-gray-500 italic truncate mt-0.5">&quot;{candidate.campaignSlogan}&quot;</p>
                                             )}
 
                                             {/* Progress bar */}
