@@ -16,6 +16,20 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/home',
+        destination: '/',
+        permanent: true,
+      },
+      {
+        source: '/competition',
+        destination: '/leaderboard',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

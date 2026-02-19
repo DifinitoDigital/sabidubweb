@@ -153,6 +153,22 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
               </li>
               <li>
                 <Link
+                  href="/services"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Our Services
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/leaderboard"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  School Leaderboard
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/admission-checker"
                   className="hover:text-yellow-600 transition-colors"
                 >

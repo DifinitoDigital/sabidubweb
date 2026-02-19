@@ -64,26 +64,6 @@ export default function Navbar() {
                             About
                         </Link>
 
-                        <Link
-                            href="/pricing"
-                            className={`${subTextColor} hover:text-[#AFF8C8] transition-colors font-medium`}
-                        >
-                            Pricing
-                        </Link>
-                        <Link
-                            href="/admission-checker"
-                            className={`${subTextColor} hover:text-[#AFF8C8] transition-colors font-medium`}
-                        >
-                            Admission Checker
-                        </Link>
-
-                        <Link
-                            href="/blog"
-                            className={`${subTextColor} hover:text-[#AFF8C8] transition-colors font-medium`}
-                        >
-                            Blog
-                        </Link>
-
                         <div className="flex items-center space-x-4 ml-4">
                             <Link
                                 href="/schools"
@@ -182,6 +162,7 @@ export default function Navbar() {
                             >
                                 About
                             </Link>
+
                             <Link
                                 href="/pricing"
                                 className="text-gray-600 hover:text-[#014751] transition-colors py-2 border-b border-gray-200"
@@ -195,13 +176,6 @@ export default function Navbar() {
                                 onClick={toggleMenu}
                             >
                                 Admission Checker
-                            </Link>
-                            <Link
-                                href="/blog"
-                                className="text-gray-600 hover:text-[#014751] transition-colors py-2 border-b border-gray-200 font-medium"
-                                onClick={toggleMenu}
-                            >
-                                Blog
                             </Link>
                             <div className="pt-4 pb-2">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Explore</p>
