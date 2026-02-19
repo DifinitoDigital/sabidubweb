@@ -122,30 +122,30 @@ export default function Leaderboard() {
                 </section>
 
                 {/* ── CONTROLS ── */}
-                <section className="sticky top-[64px] z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 px-6 py-4 shadow-sm">
-                    <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+                <section className="sm:sticky sm:top-[64px] z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 py-4 shadow-sm">
+                    <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
                         {/* Tab toggle */}
                         <div className="flex bg-gray-100 rounded-2xl p-1 gap-1">
                             {(["universities", "secondary"] as Tab[]).map(t => (
                                 <button
                                     key={t}
                                     onClick={() => setTab(t)}
-                                    className={`px-5 py-2.5 rounded-xl text-sm font-extrabold transition-all ${tab === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                                    className={`flex-1 sm:flex-none px-3 sm:px-5 py-2.5 rounded-xl text-[11px] sm:text-sm font-extrabold transition-all ${tab === t ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
                                         }`}
                                 >
-                                    {t === "universities" ? "🎓 Universities" : "🏫 Secondary Schools"}
+                                    {t === "universities" ? "🎓 Universities" : "🏫 Secondary"}
                                 </button>
                             ))}
                         </div>
 
                         {/* Filters */}
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <div className="flex bg-gray-100 rounded-xl p-1 gap-1">
+                        <div className="flex items-center gap-3 sm:justify-end">
+                            <div className="flex bg-gray-100 rounded-xl p-1 gap-1 w-full sm:w-auto">
                                 {([["passRate", "Pass Rate"], ["avgScore", "Avg Score"]] as const).map(([v, l]) => (
                                     <button
                                         key={v}
                                         onClick={() => setSortBy(v)}
-                                        className={`px-4 py-2 rounded-lg text-xs font-extrabold transition-all ${sortBy === v ? "bg-[#014751] text-white shadow-sm" : "text-gray-500"
+                                        className={`flex-1 sm:flex-none px-4 py-2 rounded-lg text-xs font-extrabold transition-all ${sortBy === v ? "bg-[#014751] text-white shadow-sm" : "text-gray-500"
                                             }`}
                                     >
                                         {l}

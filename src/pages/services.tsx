@@ -97,6 +97,52 @@ const services = [
             "Career acceleration opportunities",
         ],
     },
+    {
+        id: "ecosystem",
+        tag: "05 — Network",
+        title: "Community & Network",
+        headline: "Connect. Compete. Commemorate.",
+        description:
+            "Experience a unified network connecting students across departments, institutions, and countries. From real-time world challenges to digital yearbooks, SabiDub is your gateway to a global academic community.",
+        color: "#6366F1",
+        light: "#EEF2FF",
+        link: "/services",
+        cta: "Explore Ecosystem",
+        stats: [
+            { value: "Global", label: "1vs1 Challenges" },
+            { value: "24/7", label: "Community access" },
+            { value: "Forever", label: "Memory storage" },
+        ],
+        features: [
+            "1vs1 World Competitions (Cross-country)",
+            "Digital Yearbooks & Publication Storage",
+            "Inter-departmental & Inter-school Hubs",
+            "Student-led Academic Societies",
+        ],
+    },
+    {
+        id: "academic",
+        tag: "06 — Academic Admin",
+        title: "Academic Services",
+        headline: "Stay Informed. Stay Engaged.",
+        description:
+            "From secure digital elections and voting to real-time academic calendar notifications and collaborative study circles, SabiDub provides the infrastructure for a modern student experience.",
+        color: "#F97316",
+        light: "#FFF7ED",
+        link: "https://portal.sabidub.com",
+        cta: "Access Hub",
+        stats: [
+            { value: "Secure", label: "Election Voting" },
+            { value: "Live", label: "Calendar Sync" },
+            { value: "Active", label: "Study Circles" },
+        ],
+        features: [
+            "Secure Digital Voting & Election Systems",
+            "Real-time Academic Calendar Push Notifications",
+            "Collaborative Study Circles & Group Hubs",
+            "Exam & Academic Event Reminders",
+        ],
+    },
 ];
 
 export default function Services() {
@@ -382,18 +428,31 @@ export default function Services() {
                                     <span className="text-[#FFEDB1]">Upgraded.</span>
                                 </h2>
                                 <p className="text-white/50 text-lg mb-14 max-w-xl mx-auto font-medium">
-                                    Join over 100,000 Nigerian students and educators who use SabiDub every day to learn, grow, and lead.
+                                    A unified gateway for <span className="text-white">Schools, Ambassadors, and Students</span>. Join the ecosystem building the future of Nigerian education.
                                 </p>
-                                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
                                     <Link
-                                        href="https://portal.sabidub.com"
-                                        className="px-10 py-5 bg-[#FFEDB1] text-[#011F24] rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl"
+                                        href="https://portal.sabidub.com/auth/school/signin"
+                                        className="w-full lg:w-auto px-8 py-5 bg-[#FFEDB1] text-[#011F24] rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center"
                                     >
-                                        Get Started Free
+                                        Register School
+                                    </Link>
+                                    <Link
+                                        href="https://portal.sabidub.com/ambassador/login"
+                                        className="w-full lg:w-auto px-8 py-5 bg-white text-[#011F24] rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center"
+                                    >
+                                        Join as Ambassador
+                                    </Link>
+                                    <Link
+                                        href="#download-app"
+                                        className="w-full lg:w-auto px-8 py-5 bg-teal-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center flex items-center justify-center gap-2"
+                                    >
+                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 2H6.5C5.12 2 4 3.12 4 4.5v15C4 20.88 5.12 22 6.5 22h11c1.38 0 2.5-1.12 2.5-2.5v-15C20 3.12 18.88 2 17.5 2zM12 20c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm5-4H7V5h10v11z" /></svg>
+                                        Download App
                                     </Link>
                                     <Link
                                         href="/contact"
-                                        className="px-10 py-5 border border-white/10 text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-white/5 transition-all"
+                                        className="w-full lg:w-auto px-8 py-5 border border-white/10 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/5 transition-all text-center"
                                     >
                                         Contact Us
                                     </Link>
