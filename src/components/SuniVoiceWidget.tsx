@@ -44,9 +44,35 @@ export default function SuniVoiceWidget({
     onReplayIntro,
     onFirstGesture,
 }: Props) {
+    // Chip stays visible until user taps × — independent of autoplay state
+    const [chipDismissed, setChipDismissed] = useState(false);
+    const [chipStarted, setChipStarted] = useState(false); // true once user tapped play
+
+    // Popover + transcript state
     const [showPopover, setShowPopover] = useState(false);
     const [showTranscript, setShowTranscript] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
+
+    const handleChipPlay = () => {
+        setChipStarted(true);
+        onFirstGesture();
+    };
+
+    const handleChipDismiss = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setChipDismissed(true);
+    };
+
+    // Show chip when: autoplay was blocked and not yet dismissed
+    const showChip = autoplayBlocked && !chipDismissed && !disabled;
+    // After user has tapped and chip is still open, show playing state
+    const chipIsPlaying = chipStarted && isPlaying;
+
+    // Respect prefers-reduced-motion
+    const prefersReducedMotion =
+        typeof window !== 'undefined'
+            ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            : false;
 
     // Current section's line for transcript
     const activeSection = suniSections.find(
@@ -64,26 +90,52 @@ export default function SuniVoiceWidget({
         return () => document.removeEventListener('mousedown', handleClick);
     }, []);
 
-    // Respect prefers-reduced-motion
-    const prefersReducedMotion =
-        typeof window !== 'undefined'
-            ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            : false;
-
     return (
         <>
-            {/* ── Autoplay Blocked Chip ─────────────────────────────────────── */}
-            {autoplayBlocked && !disabled && (
-                <button
+            {/* ── Persistent Floating Chip ────────────────────────────────── */}
+            {showChip && (
+                <div
                     id="suni-autoplay-chip"
-                    onClick={onFirstGesture}
-                    className={`suni-chip ${prefersReducedMotion ? 'suni-chip--no-anim' : ''}`}
+                    className={`suni-chip ${chipIsPlaying ? 'suni-chip--playing' : ''
+                        } ${prefersReducedMotion ? 'suni-chip--no-anim' : ''}`}
+                    role="complementary"
+                    aria-label="Suni voice guide"
                     aria-live="polite"
-                    aria-label="Tap to hear Suni speak"
                 >
-                    <span className="suni-chip__avatar" aria-hidden="true">🎧</span>
-                    <span className="suni-chip__text">Tap to hear Suni</span>
-                </button>
+                    {/* Dismiss × button */}
+                    <button
+                        className="suni-chip__dismiss"
+                        onClick={handleChipDismiss}
+                        aria-label="Dismiss Suni chip"
+                        title="Dismiss"
+                    >
+                        ✕
+                    </button>
+
+                    {/* Avatar + tap-to-play area */}
+                    <button
+                        className="suni-chip__play-area"
+                        onClick={handleChipPlay}
+                        disabled={chipStarted}
+                        aria-label={chipStarted ? 'Suni is speaking' : 'Tap to hear Suni'}
+                    >
+                        <span className="suni-chip__avatar" aria-hidden="true">
+                            {chipIsPlaying ? '🔊' : '🎧'}
+                        </span>
+                        <span className="suni-chip__text">
+                            {chipIsPlaying
+                                ? 'Suni is speaking…'
+                                : chipStarted
+                                    ? 'Suni is ready'
+                                    : 'Tap to hear Suni'}
+                        </span>
+                        {chipIsPlaying && (
+                            <span className="suni-chip__wave" aria-hidden="true">
+                                <span /><span /><span />
+                            </span>
+                        )}
+                    </button>
+                </div>
             )}
 
             {/* ── Web Speech API Not Supported Notice ──────────────────────── */}
@@ -291,48 +343,136 @@ export default function SuniVoiceWidget({
 
             {/* ── Styles ───────────────────────────────────────────────────────── */}
             <style jsx>{`
-        /* Autoplay chip */
+        /* ── Persistent floating chip ───────────────────────────────────── */
         .suni-chip {
           position: fixed;
-          /* Desktop: just above the bottom */
-          bottom: 88px;
+          bottom: 28px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 9999;
           display: flex;
           align-items: center;
-          gap: 8px;
-          background: rgba(1, 71, 81, 0.95);
+          gap: 0;
+          background: rgba(1, 71, 81, 0.96);
           color: #fff;
-          border: none;
           border-radius: 999px;
-          padding: 10px 20px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
-          backdrop-filter: blur(12px);
-          animation: suni-chip-bounce 1.8s ease-in-out infinite;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.08);
+          backdrop-filter: blur(14px);
           white-space: nowrap;
           font-family: inherit;
+          overflow: hidden;
+          animation: suni-chip-in 0.35s cubic-bezier(0.34,1.56,0.64,1);
         }
-        /* On mobile, push chip higher (above the widget at bottom) */
-        @media (max-width: 1023px) {
-          .suni-chip {
-            bottom: 144px;
-            font-size: 13px;
-            padding: 9px 16px;
-          }
+        /* Speaking state — slightly brighter */
+        .suni-chip--playing {
+          background: rgba(1, 85, 98, 0.97);
+          box-shadow: 0 8px 32px rgba(1,71,81,0.45), 0 0 0 1px rgba(175,248,200,0.2);
         }
         .suni-chip--no-anim {
           animation: none;
         }
-        .suni-chip:hover { background: rgba(1, 91, 101, 0.98); }
-        .suni-chip__avatar { font-size: 18px; }
-
+        @keyframes suni-chip-in {
+          from { opacity: 0; transform: translateX(-50%) translateY(16px) scale(0.9); }
+          to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+        }
+        /* Bounce only when idle (not playing) */
+        @media (prefers-reduced-motion: no-preference) {
+          .suni-chip:not(.suni-chip--playing):not(.suni-chip--no-anim) {
+            animation: suni-chip-bounce 2s ease-in-out infinite;
+          }
+        }
         @keyframes suni-chip-bounce {
           0%, 100% { transform: translateX(-50%) translateY(0); }
-          50% { transform: translateX(-50%) translateY(-6px); }
+          50%       { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Dismiss × button */
+        .suni-chip__dismiss {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255,255,255,0.12);
+          border: none;
+          color: rgba(255,255,255,0.7);
+          cursor: pointer;
+          font-size: 12px;
+          width: 32px;
+          height: 44px;
+          flex-shrink: 0;
+          font-family: inherit;
+          transition: background 0.15s, color 0.15s;
+        }
+        .suni-chip__dismiss:hover {
+          background: rgba(255,255,255,0.22);
+          color: #fff;
+        }
+        .suni-chip__dismiss:focus-visible {
+          outline: 2px solid #AFF8C8;
+          outline-offset: -2px;
+        }
+
+        /* Tap-to-play area (the main pill body) */
+        .suni-chip__play-area {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          background: none;
+          border: none;
+          color: #fff;
+          cursor: pointer;
+          padding: 10px 18px 10px 14px;
+          font-size: 14px;
+          font-weight: 600;
+          font-family: inherit;
+          transition: background 0.15s;
+        }
+        .suni-chip__play-area:hover:not(:disabled) {
+          background: rgba(255,255,255,0.08);
+        }
+        .suni-chip__play-area:disabled {
+          cursor: default;
+        }
+        .suni-chip__play-area:focus-visible {
+          outline: 2px solid #AFF8C8;
+          outline-offset: -2px;
+        }
+
+        .suni-chip__avatar { font-size: 17px; }
+        .suni-chip__text   { letter-spacing: 0.01em; }
+
+        /* Animated wave bars shown when speaking */
+        .suni-chip__wave {
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          height: 14px;
+          margin-left: 2px;
+        }
+        .suni-chip__wave span {
+          display: block;
+          width: 3px;
+          background: #AFF8C8;
+          border-radius: 99px;
+          animation: suni-bar 0.8s ease-in-out infinite;
+        }
+        .suni-chip__wave span:nth-child(1) { height: 6px;  animation-delay: 0s;    }
+        .suni-chip__wave span:nth-child(2) { height: 12px; animation-delay: 0.15s; }
+        .suni-chip__wave span:nth-child(3) { height: 8px;  animation-delay: 0.3s;  }
+        @keyframes suni-bar {
+          0%, 100% { transform: scaleY(1);   }
+          50%       { transform: scaleY(0.4); }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 1023px) {
+          .suni-chip {
+            bottom: 144px;
+            font-size: 13px;
+          }
+          .suni-chip__play-area {
+            font-size: 13px;
+            padding: 9px 14px 9px 12px;
+          }
         }
 
         /* Not supported notice */
