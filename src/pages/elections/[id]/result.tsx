@@ -134,7 +134,7 @@ export default function PublicElectionResultsPage() {
         return (
             <div className="min-h-screen bg-white flex flex-col">
                 <Navbar />
-                <div className="flex-1 flex items-center justify-center p-8">
+                <div className="flex-1 flex items-center justify-center p-8 pt-32">
                     <div className="text-center space-y-4 max-w-md">
                         <AlertCircle className="w-16 h-16 text-red-400 mx-auto" />
                         <h2 className="text-2xl font-black text-gray-900">Results Not Found</h2>

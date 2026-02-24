@@ -1,10 +1,14 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { motion } from "framer-motion";
+import SuniVoiceWidget from "../components/SuniVoiceWidget";
+import { useSuniNarration } from "../hooks/useSuniNarration";
+import { useSectionObserver } from "../hooks/useSectionObserver";
+import { suniSections } from "../data/suniScript";
 
 interface Author {
   id: string;
@@ -42,12 +46,80 @@ const fadeInUp = {
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
-
   const [userName, setUserName] = useState("Guest");
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? -1 : index);
   };
+
+  // ── Suni narration ─────────────────────────────────────────────────────
+  const sectionIds = suniSections.map((s) => s.id);
+  const {
+    prefs,
+    updatePrefs,
+    isPlaying,
+    autoplayBlocked,
+    currentSectionId,
+    isSupported,
+    attemptAutoplay,
+    handleFirstGesture,
+    onSectionActive,
+    replaySection,
+    replayIntro,
+  } = useSuniNarration();
+
+  const activeSectionId = useSectionObserver(sectionIds);
+
+  // Autoplay on mount
+  useEffect(() => {
+    attemptAutoplay();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Handle first-gesture on the whole document to unblock autoplay
+  // Ignore if the target is the chip itself (chip has its own onClick)
+  useEffect(() => {
+    if (!autoplayBlocked) return;
+    const handler = (e: PointerEvent) => {
+      const chip = document.getElementById('suni-autoplay-chip');
+      if (chip && chip.contains(e.target as Node)) return; // chip handles it
+      handleFirstGesture();
+    };
+    document.addEventListener('pointerdown', handler, { once: true });
+    return () => document.removeEventListener('pointerdown', handler);
+  }, [autoplayBlocked, handleFirstGesture]);
+
+  // Fire narration when scroll section changes
+  useEffect(() => {
+    if (activeSectionId) {
+      onSectionActive(activeSectionId);
+    }
+  }, [activeSectionId, onSectionActive]);
+
+  const handleMuteToggle = useCallback(() => {
+    updatePrefs({ muted: !prefs.muted });
+  }, [prefs.muted, updatePrefs]);
+
+  const handleVolumeChange = useCallback((v: number) => {
+    updatePrefs({ volume: v, muted: v === 0 });
+  }, [updatePrefs]);
+
+  const handleRateChange = useCallback((v: number) => {
+    updatePrefs({ rate: v });
+  }, [updatePrefs]);
+
+  const handleDisableToggle = useCallback(() => {
+    updatePrefs({ disabled: !prefs.disabled });
+  }, [prefs.disabled, updatePrefs]);
+
+  const handleVoiceModeToggle = useCallback(() => {
+    updatePrefs({ voiceMode: prefs.voiceMode === 'audio' ? 'speech' : 'audio' });
+  }, [prefs.voiceMode, updatePrefs]);
+
+  const handleReplaySection = useCallback(() => {
+    if (activeSectionId) replaySection(activeSectionId);
+  }, [activeSectionId, replaySection]);
+  // ── End Suni ───────────────────────────────────────────────────────────
 
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
@@ -86,10 +158,32 @@ export default function Home() {
       </Head>
       <main className="min-h-screen bg-white relative">
 
+        {/* Suni Voice Widget — always visible */}
+        <SuniVoiceWidget
+          isPlaying={isPlaying}
+          muted={prefs.muted}
+          volume={prefs.volume}
+          rate={prefs.rate}
+          disabled={prefs.disabled}
+          voiceMode={prefs.voiceMode}
+          autoplayBlocked={autoplayBlocked}
+          isSupported={isSupported}
+          currentSectionId={currentSectionId}
+          activeSectionId={activeSectionId}
+          onMuteToggle={handleMuteToggle}
+          onVolumeChange={handleVolumeChange}
+          onRateChange={handleRateChange}
+          onDisableToggle={handleDisableToggle}
+          onVoiceModeToggle={handleVoiceModeToggle}
+          onReplaySection={handleReplaySection}
+          onReplayIntro={replayIntro}
+          onFirstGesture={handleFirstGesture}
+        />
+
         <Navbar />
 
-        {/* Hero Section */}
-        <section className="relative px-4 sm:px-6 pt-32 sm:pt-48 pb-12 sm:pb-24 min-h-[90vh] flex flex-col justify-center overflow-hidden bg-black">
+        {/* Hero Section — intro narration */}
+        <section data-suni-section="intro" className="relative px-4 sm:px-6 pt-32 sm:pt-48 pb-12 sm:pb-24 min-h-[90vh] flex flex-col justify-center overflow-hidden bg-black">
           {/* Background Image & Overlays */}
           <div className="absolute inset-0">
             <Image
@@ -230,8 +324,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Unified Product Showcase - Light Bento Grid */}
-        <section className="px-4 sm:px-6 py-24 bg-white relative overflow-hidden border-t border-gray-100">
+        {/* Unified Product Showcase — whatwedo narration */}
+        <section data-suni-section="whatwedo" className="px-4 sm:px-6 py-24 bg-white relative overflow-hidden border-t border-gray-100">
           <div className="max-w-7xl mx-auto relative z-10">
             <div className="text-center mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-900 mb-6 tracking-tighter">
@@ -403,8 +497,8 @@ export default function Home() {
 
 
 
-        {/* Vision Section - Simplified Typography */}
-        <section className="py-24 bg-white overflow-hidden">
+        {/* Vision Section — problem narration */}
+        <section data-suni-section="problem" className="py-24 bg-white overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex flex-col items-center justify-center text-center">
               <div className="bg-[#014751]/5 px-4 py-1.5 rounded-full text-[10px] text-[#014751] font-bold uppercase tracking-widest border border-[#014751]/10 mb-8">
@@ -421,8 +515,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Premium Benefits Section - Redesigned Bento Grid */}
-        <section className="px-4 sm:px-6 py-16 sm:py-24 bg-white">
+        {/* Premium Benefits Section — secondary narration */}
+        <section data-suni-section="secondary" className="px-4 sm:px-6 py-16 sm:py-24 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="mb-12">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
@@ -713,8 +807,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Partners Section */}
-        <section className="px-4 sm:px-6 py-24 bg-white relative z-10 border-t border-gray-100">
+        {/* Partners Section — partners narration */}
+        <section data-suni-section="partners" className="px-4 sm:px-6 py-24 bg-white relative z-10 border-t border-gray-100">
           <div className="max-w-7xl mx-auto">
             <div className="mb-16">
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight" suppressHydrationWarning>Backed by strong global partners</h2>
@@ -817,8 +911,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Digital Ecosystem Section - Explicit SEO and User Navigation */}
-        <section className="px-4 sm:px-6 py-24 bg-[#FAF9F6] relative overflow-hidden border-t border-gray-100">
+        {/* Digital Ecosystem Section — schooltools narration */}
+        <section data-suni-section="schooltools" className="px-4 sm:px-6 py-24 bg-[#FAF9F6] relative overflow-hidden border-t border-gray-100">
           <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#014751 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
 
           <div className="max-w-7xl mx-auto relative z-10">
@@ -980,8 +1074,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Blog/Featured Articles Section */}
-        <section className="py-20 bg-gray-50/50 overflow-hidden">
+        {/* Blog/Featured Articles Section — community narration */}
+        <section data-suni-section="community" className="py-20 bg-gray-50/50 overflow-hidden">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-end mb-12">
               <div>
@@ -1080,8 +1174,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* FAQ Section */}
-        < section className="px-4 sm:px-6 py-8 sm:py-16 bg-white" >
+        {/* FAQ Section — cta narration */}
+        <section data-suni-section="cta" className="px-4 sm:px-6 py-8 sm:py-16 bg-white">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row gap-6 sm:gap-10">
               <div className="w-full md:w-1/3">
@@ -1227,7 +1321,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section >
+        </section>
 
         {/* Add Footer at the bottom of main */}
         < Footer />
