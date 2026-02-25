@@ -4,345 +4,345 @@ import type { VoiceMode } from '../types/suni';
 import { suniSections } from '../data/suniScript';
 
 interface Props {
-    isPlaying: boolean;
-    muted: boolean;
-    volume: number;
-    rate: number;
-    disabled: boolean;
-    voiceMode: VoiceMode;
-    autoplayBlocked: boolean;
-    isSupported: boolean;
-    currentSectionId: string | null;
-    activeSectionId: string | null;
-    onMuteToggle: () => void;
-    onVolumeChange: (v: number) => void;
-    onRateChange: (v: number) => void;
-    onDisableToggle: () => void;
-    onVoiceModeToggle: () => void;
-    onReplaySection: () => void;
-    onReplayIntro: () => void;
-    onFirstGesture: () => void;
+  isPlaying: boolean;
+  muted: boolean;
+  volume: number;
+  rate: number;
+  disabled: boolean;
+  voiceMode: VoiceMode;
+  autoplayBlocked: boolean;
+  isSupported: boolean;
+  currentSectionId: string | null;
+  activeSectionId: string | null;
+  onMuteToggle: () => void;
+  onVolumeChange: (v: number) => void;
+  onRateChange: (v: number) => void;
+  onDisableToggle: () => void;
+  onVoiceModeToggle: () => void;
+  onReplaySection: () => void;
+  onReplayIntro: () => void;
+  onFirstGesture: () => void;
 }
 
 export default function SuniVoiceWidget({
-    isPlaying,
-    muted,
-    volume,
-    rate,
-    disabled,
-    voiceMode,
-    autoplayBlocked,
-    isSupported,
-    currentSectionId,
-    activeSectionId,
-    onMuteToggle,
-    onVolumeChange,
-    onRateChange,
-    onDisableToggle,
-    onVoiceModeToggle,
-    onReplaySection,
-    onReplayIntro,
-    onFirstGesture,
+  isPlaying,
+  muted,
+  volume,
+  rate,
+  disabled,
+  voiceMode,
+  autoplayBlocked,
+  isSupported,
+  currentSectionId,
+  activeSectionId,
+  onMuteToggle,
+  onVolumeChange,
+  onRateChange,
+  onDisableToggle,
+  onVoiceModeToggle,
+  onReplaySection,
+  onReplayIntro,
+  onFirstGesture,
 }: Props) {
-    // Chip stays visible until user taps × — independent of autoplay state
-    const [chipDismissed, setChipDismissed] = useState(false);
-    const [chipStarted, setChipStarted] = useState(false); // true once user tapped play
+  // Chip stays visible until user taps × — independent of autoplay state
+  const [chipDismissed, setChipDismissed] = useState(false);
+  const [chipStarted, setChipStarted] = useState(false); // true once user tapped play
 
-    // Popover + transcript state
-    const [showPopover, setShowPopover] = useState(false);
-    const [showTranscript, setShowTranscript] = useState(false);
-    const popoverRef = useRef<HTMLDivElement>(null);
+  // Popover + transcript state
+  const [showPopover, setShowPopover] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
-    const handleChipPlay = () => {
-        setChipStarted(true);
-        onFirstGesture();
-    };
+  const handleChipPlay = () => {
+    setChipStarted(true);
+    onFirstGesture();
+  };
 
-    const handleChipDismiss = (e: React.MouseEvent) => {
-        e.stopPropagation();
-        setChipDismissed(true);
-    };
+  const handleChipDismiss = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setChipDismissed(true);
+  };
 
-    // Show chip when: autoplay was blocked and not yet dismissed
-    const showChip = autoplayBlocked && !chipDismissed && !disabled;
-    // After user has tapped and chip is still open, show playing state
-    const chipIsPlaying = chipStarted && isPlaying;
+  // Show chip until user taps × — independent of autoplay blocking state, but only if supported
+  const showChip = !chipDismissed && !disabled && isSupported;
+  // After user has tapped and chip is still open, show playing state
+  const chipIsPlaying = chipStarted && isPlaying;
 
-    // Respect prefers-reduced-motion
-    const prefersReducedMotion =
-        typeof window !== 'undefined'
-            ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-            : false;
+  // Respect prefers-reduced-motion
+  const prefersReducedMotion =
+    typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false;
 
-    // Current section's line for transcript
-    const activeSection = suniSections.find(
-        (s) => s.id === (activeSectionId ?? currentSectionId)
-    );
+  // Current section's line for transcript
+  const activeSection = suniSections.find(
+    (s) => s.id === (activeSectionId ?? currentSectionId)
+  );
 
-    // Close popover on outside click
-    useEffect(() => {
-        function handleClick(e: MouseEvent) {
-            if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
-                setShowPopover(false);
-            }
-        }
-        document.addEventListener('mousedown', handleClick);
-        return () => document.removeEventListener('mousedown', handleClick);
-    }, []);
+  // Close popover on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(e.target as Node)) {
+        setShowPopover(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
-    return (
-        <>
-            {/* ── Persistent Floating Chip ────────────────────────────────── */}
-            {showChip && (
-                <div
-                    id="suni-autoplay-chip"
-                    className={`suni-chip ${chipIsPlaying ? 'suni-chip--playing' : ''
-                        } ${prefersReducedMotion ? 'suni-chip--no-anim' : ''}`}
-                    role="complementary"
-                    aria-label="Suni voice guide"
-                    aria-live="polite"
-                >
-                    {/* Dismiss × button */}
-                    <button
-                        className="suni-chip__dismiss"
-                        onClick={handleChipDismiss}
-                        aria-label="Dismiss Suni chip"
-                        title="Dismiss"
-                    >
-                        ✕
-                    </button>
+  return (
+    <>
+      {/* ── Persistent Floating Chip ────────────────────────────────── */}
+      {showChip && (
+        <div
+          id="suni-autoplay-chip"
+          className={`suni-chip ${chipIsPlaying ? 'suni-chip--playing' : ''
+            } ${prefersReducedMotion ? 'suni-chip--no-anim' : ''}`}
+          role="complementary"
+          aria-label="Suni voice guide"
+          aria-live="polite"
+        >
+          {/* Dismiss × button */}
+          <button
+            className="suni-chip__dismiss"
+            onClick={handleChipDismiss}
+            aria-label="Dismiss Suni chip"
+            title="Dismiss"
+          >
+            ✕
+          </button>
 
-                    {/* Avatar + tap-to-play area */}
-                    <button
-                        className="suni-chip__play-area"
-                        onClick={handleChipPlay}
-                        disabled={chipStarted}
-                        aria-label={chipStarted ? 'Suni is speaking' : 'Tap to hear Suni'}
-                    >
-                        <span className="suni-chip__avatar" aria-hidden="true">
-                            {chipIsPlaying ? '🔊' : '🎧'}
-                        </span>
-                        <span className="suni-chip__text">
-                            {chipIsPlaying
-                                ? 'Suni is speaking…'
-                                : chipStarted
-                                    ? 'Suni is ready'
-                                    : 'Tap to hear Suni'}
-                        </span>
-                        {chipIsPlaying && (
-                            <span className="suni-chip__wave" aria-hidden="true">
-                                <span /><span /><span />
-                            </span>
-                        )}
-                    </button>
-                </div>
+          {/* Avatar + tap-to-play area */}
+          <button
+            className="suni-chip__play-area"
+            onClick={handleChipPlay}
+            disabled={chipStarted}
+            aria-label={chipStarted ? 'Suni is speaking' : 'Tap to hear Suni'}
+          >
+            <span className="suni-chip__avatar" aria-hidden="true">
+              {chipIsPlaying ? '🔊' : '🎧'}
+            </span>
+            <span className="suni-chip__text">
+              {chipIsPlaying
+                ? 'Suni is speaking…'
+                : chipStarted
+                  ? 'Suni is ready'
+                  : 'Tap to hear Suni'}
+            </span>
+            {chipIsPlaying && (
+              <span className="suni-chip__wave" aria-hidden="true">
+                <span /><span /><span />
+              </span>
             )}
+          </button>
+        </div>
+      )}
 
-            {/* ── Web Speech API Not Supported Notice ──────────────────────── */}
-            {!isSupported && (
-                <div
-                    id="suni-not-supported"
-                    className="suni-no-support"
-                    role="status"
-                    aria-label="Voice not available, showing transcript"
-                >
-                    <span aria-hidden="true">📝</span> Voice unavailable — transcript shown below
-                </div>
-            )}
+      {/* ── Web Speech API Not Supported Notice ──────────────────────── */}
+      {!isSupported && (
+        <div
+          id="suni-not-supported"
+          className="suni-no-support"
+          role="status"
+          aria-label="Voice not available, showing transcript"
+        >
+          <span aria-hidden="true">📝</span> Voice unavailable — transcript shown below
+        </div>
+      )}
 
-            {/* ── Fixed Top-Right Widget ────────────────────────────────────── */}
-            <div
-                ref={popoverRef}
-                id="suni-voice-widget"
-                className="suni-widget"
-                role="region"
-                aria-label="Suni voice controls"
-            >
-                {/* Mute / Unmute button */}
-                <button
-                    id="suni-mute-btn"
-                    className={`suni-widget__btn ${muted || disabled ? 'suni-widget__btn--muted' : ''}`}
-                    onClick={onMuteToggle}
-                    aria-label={muted ? 'Unmute Suni' : 'Mute Suni'}
-                    aria-pressed={muted}
-                >
-                    {disabled ? (
-                        <SuniOffIcon />
-                    ) : muted ? (
-                        <MuteIcon />
-                    ) : isPlaying ? (
-                        <WaveIcon animate={!prefersReducedMotion} />
-                    ) : (
-                        <SpeakerIcon />
-                    )}
-                </button>
+      {/* ── Fixed Top-Right Widget ────────────────────────────────────── */}
+      <div
+        ref={popoverRef}
+        id="suni-voice-widget"
+        className="suni-widget"
+        role="region"
+        aria-label="Suni voice controls"
+      >
+        {/* Mute / Unmute button */}
+        <button
+          id="suni-mute-btn"
+          className={`suni-widget__btn ${muted || disabled ? 'suni-widget__btn--muted' : ''}`}
+          onClick={onMuteToggle}
+          aria-label={muted ? 'Unmute Suni' : 'Mute Suni'}
+          aria-pressed={muted}
+        >
+          {disabled ? (
+            <SuniOffIcon />
+          ) : muted ? (
+            <MuteIcon />
+          ) : isPlaying ? (
+            <WaveIcon animate={!prefersReducedMotion} />
+          ) : (
+            <SpeakerIcon />
+          )}
+        </button>
 
-                {/* Settings / Volume popover toggle */}
-                <button
-                    id="suni-settings-btn"
-                    className="suni-widget__settings-btn"
-                    onClick={() => setShowPopover((p) => !p)}
-                    aria-label={showPopover ? 'Close Suni settings' : 'Open Suni settings'}
-                    aria-expanded={showPopover}
-                >
-                    <ChevronIcon open={showPopover} reduced={prefersReducedMotion} />
-                </button>
+        {/* Settings / Volume popover toggle */}
+        <button
+          id="suni-settings-btn"
+          className="suni-widget__settings-btn"
+          onClick={() => setShowPopover((p) => !p)}
+          aria-label={showPopover ? 'Close Suni settings' : 'Open Suni settings'}
+          aria-expanded={showPopover}
+        >
+          <ChevronIcon open={showPopover} reduced={prefersReducedMotion} />
+        </button>
 
-                {/* Popover panel */}
-                {showPopover && (
-                    <div
-                        className="suni-popover"
-                        role="dialog"
-                        aria-label="Suni voice settings"
-                    >
-                        {/* Header */}
-                        <div className="suni-popover__header">
-                            <span className="suni-popover__avatar" aria-hidden="true">🎙</span>
-                            <span className="suni-popover__title">Suni</span>
-                            <span
-                                className={`suni-popover__status ${isPlaying && !muted && !disabled ? 'suni-popover__status--active' : ''
-                                    }`}
-                                aria-live="polite"
-                            >
-                                {disabled ? 'Off' : isPlaying && !muted ? 'Speaking…' : 'Ready'}
-                            </span>
-                        </div>
-
-                        {/* Volume slider */}
-                        <label className="suni-popover__label" htmlFor="suni-volume-slider">
-                            Volume
-                            <input
-                                id="suni-volume-slider"
-                                type="range"
-                                min={0}
-                                max={1}
-                                step={0.05}
-                                value={muted ? 0 : volume}
-                                disabled={disabled}
-                                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
-                                className="suni-popover__slider"
-                                aria-label="Suni volume"
-                                aria-valuemin={0}
-                                aria-valuemax={1}
-                                aria-valuenow={muted ? 0 : volume}
-                            />
-                        </label>
-
-                        {/* Rate slider */}
-                        <label className="suni-popover__label" htmlFor="suni-rate-slider">
-                            Speed
-                            <input
-                                id="suni-rate-slider"
-                                type="range"
-                                min={0.8}
-                                max={1.1}
-                                step={0.05}
-                                value={rate}
-                                disabled={disabled}
-                                onChange={(e) => onRateChange(parseFloat(e.target.value))}
-                                className="suni-popover__slider"
-                                aria-label="Suni speaking rate"
-                                aria-valuemin={0.8}
-                                aria-valuemax={1.1}
-                                aria-valuenow={rate}
-                            />
-                            <span className="suni-popover__slider-value">
-                                {rate <= 0.85 ? 'Slow' : rate <= 0.95 ? 'Normal' : 'Fast'}
-                            </span>
-                        </label>
-
-                        {/* Replay actions */}
-                        <div className="suni-popover__actions">
-                            <button
-                                id="suni-replay-intro-btn"
-                                className="suni-popover__action-btn"
-                                onClick={() => { onReplayIntro(); setShowPopover(false); }}
-                                disabled={disabled}
-                                aria-label="Replay Suni introduction"
-                            >
-                                ↩ Replay intro
-                            </button>
-                            {activeSectionId && activeSectionId !== 'intro' && (
-                                <button
-                                    id="suni-replay-section-btn"
-                                    className="suni-popover__action-btn"
-                                    onClick={() => { onReplaySection(); setShowPopover(false); }}
-                                    disabled={disabled}
-                                    aria-label="Replay current section narration"
-                                >
-                                    ↺ Replay section
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Mode toggle (only show if speech is supported) */}
-                        {isSupported && (
-                            <div className="suni-popover__mode">
-                                <span className="suni-popover__mode-label">Mode</span>
-                                <button
-                                    id="suni-mode-toggle"
-                                    className={`suni-popover__mode-toggle ${voiceMode === 'speech' ? 'active' : ''}`}
-                                    onClick={onVoiceModeToggle}
-                                    aria-label={`Switch to ${voiceMode === 'speech' ? 'audio' : 'speech'} mode`}
-                                    aria-pressed={voiceMode === 'speech'}
-                                >
-                                    {voiceMode === 'speech' ? '🗣 Speech' : '🔊 Audio'}
-                                </button>
-                            </div>
-                        )}
-
-                        {/* Transcript toggle */}
-                        <button
-                            id="suni-transcript-btn"
-                            className="suni-popover__action-btn"
-                            onClick={() => { setShowTranscript((p) => !p); setShowPopover(false); }}
-                            aria-label={showTranscript ? 'Hide transcript' : 'Show transcript'}
-                            aria-expanded={showTranscript}
-                        >
-                            📄 {showTranscript ? 'Hide' : 'Show'} transcript
-                        </button>
-
-                        {/* Disable toggle */}
-                        <button
-                            id="suni-disable-btn"
-                            className={`suni-popover__disable-btn ${disabled ? 'suni-popover__disable-btn--on' : ''}`}
-                            onClick={onDisableToggle}
-                            aria-label={disabled ? 'Enable Suni voice guide' : 'Disable Suni voice guide'}
-                            aria-pressed={disabled}
-                        >
-                            {disabled ? '✓ Enable Suni' : 'Disable Suni'}
-                        </button>
-                    </div>
-                )}
+        {/* Popover panel */}
+        {showPopover && (
+          <div
+            className="suni-popover"
+            role="dialog"
+            aria-label="Suni voice settings"
+          >
+            {/* Header */}
+            <div className="suni-popover__header">
+              <span className="suni-popover__avatar" aria-hidden="true">🎙</span>
+              <span className="suni-popover__title">Suni</span>
+              <span
+                className={`suni-popover__status ${isPlaying && !muted && !disabled ? 'suni-popover__status--active' : ''
+                  }`}
+                aria-live="polite"
+              >
+                {disabled ? 'Off' : isPlaying && !muted ? 'Speaking…' : 'Ready'}
+              </span>
             </div>
 
-            {/* ── Inline Replay Button (bottom-right) ───────────────────────── */}
-            {activeSectionId && !disabled && isSupported && (
+            {/* Volume slider */}
+            <label className="suni-popover__label" htmlFor="suni-volume-slider">
+              Volume
+              <input
+                id="suni-volume-slider"
+                type="range"
+                min={0}
+                max={1}
+                step={0.05}
+                value={muted ? 0 : volume}
+                disabled={disabled}
+                onChange={(e) => onVolumeChange(parseFloat(e.target.value))}
+                className="suni-popover__slider"
+                aria-label="Suni volume"
+                aria-valuemin={0}
+                aria-valuemax={1}
+                aria-valuenow={muted ? 0 : volume}
+              />
+            </label>
+
+            {/* Rate slider */}
+            <label className="suni-popover__label" htmlFor="suni-rate-slider">
+              Speed
+              <input
+                id="suni-rate-slider"
+                type="range"
+                min={0.8}
+                max={1.1}
+                step={0.05}
+                value={rate}
+                disabled={disabled}
+                onChange={(e) => onRateChange(parseFloat(e.target.value))}
+                className="suni-popover__slider"
+                aria-label="Suni speaking rate"
+                aria-valuemin={0.8}
+                aria-valuemax={1.1}
+                aria-valuenow={rate}
+              />
+              <span className="suni-popover__slider-value">
+                {rate <= 0.85 ? 'Slow' : rate <= 0.95 ? 'Normal' : 'Fast'}
+              </span>
+            </label>
+
+            {/* Replay actions */}
+            <div className="suni-popover__actions">
+              <button
+                id="suni-replay-intro-btn"
+                className="suni-popover__action-btn"
+                onClick={() => { onReplayIntro(); setShowPopover(false); }}
+                disabled={disabled}
+                aria-label="Replay Suni introduction"
+              >
+                ↩ Replay intro
+              </button>
+              {activeSectionId && activeSectionId !== 'intro' && (
                 <button
-                    id="suni-replay-active-btn"
-                    className="suni-replay-btn"
-                    onClick={onReplaySection}
-                    aria-label="Replay Suni for this section"
+                  id="suni-replay-section-btn"
+                  className="suni-popover__action-btn"
+                  onClick={() => { onReplaySection(); setShowPopover(false); }}
+                  disabled={disabled}
+                  aria-label="Replay current section narration"
                 >
-                    <ReplayIcon /> Replay
+                  ↺ Replay section
                 </button>
-            )}
+              )}
+            </div>
 
-            {/* ── Transcript panel ─────────────────────────────────────────── */}
-            {showTranscript && activeSection && (
-                <div
-                    id="suni-transcript"
-                    className="suni-transcript"
-                    role="complementary"
-                    aria-label="Suni transcript"
+            {/* Mode toggle (only show if speech is supported) */}
+            {isSupported && (
+              <div className="suni-popover__mode">
+                <span className="suni-popover__mode-label">Mode</span>
+                <button
+                  id="suni-mode-toggle"
+                  className={`suni-popover__mode-toggle ${voiceMode === 'speech' ? 'active' : ''}`}
+                  onClick={onVoiceModeToggle}
+                  aria-label={`Switch to ${voiceMode === 'speech' ? 'audio' : 'speech'} mode`}
+                  aria-pressed={voiceMode === 'speech'}
                 >
-                    <p className="suni-transcript__section">{activeSection.title}</p>
-                    <p className="suni-transcript__line">&ldquo;{activeSection.suniLine}&rdquo;</p>
-                </div>
+                  {voiceMode === 'speech' ? '🗣 Speech' : '🔊 Audio'}
+                </button>
+              </div>
             )}
 
-            {/* ── Styles ───────────────────────────────────────────────────────── */}
-            <style jsx>{`
+            {/* Transcript toggle */}
+            <button
+              id="suni-transcript-btn"
+              className="suni-popover__action-btn"
+              onClick={() => { setShowTranscript((p) => !p); setShowPopover(false); }}
+              aria-label={showTranscript ? 'Hide transcript' : 'Show transcript'}
+              aria-expanded={showTranscript}
+            >
+              📄 {showTranscript ? 'Hide' : 'Show'} transcript
+            </button>
+
+            {/* Disable toggle */}
+            <button
+              id="suni-disable-btn"
+              className={`suni-popover__disable-btn ${disabled ? 'suni-popover__disable-btn--on' : ''}`}
+              onClick={onDisableToggle}
+              aria-label={disabled ? 'Enable Suni voice guide' : 'Disable Suni voice guide'}
+              aria-pressed={disabled}
+            >
+              {disabled ? '✓ Enable Suni' : 'Disable Suni'}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* ── Inline Replay Button (bottom-right) ───────────────────────── */}
+      {activeSectionId && !disabled && isSupported && (
+        <button
+          id="suni-replay-active-btn"
+          className="suni-replay-btn"
+          onClick={onReplaySection}
+          aria-label="Replay Suni for this section"
+        >
+          <ReplayIcon /> Replay
+        </button>
+      )}
+
+      {/* ── Transcript panel ─────────────────────────────────────────── */}
+      {showTranscript && activeSection && (
+        <div
+          id="suni-transcript"
+          className="suni-transcript"
+          role="complementary"
+          aria-label="Suni transcript"
+        >
+          <p className="suni-transcript__section">{activeSection.title}</p>
+          <p className="suni-transcript__line">&ldquo;{activeSection.suniLine}&rdquo;</p>
+        </div>
+      )}
+
+      {/* ── Styles ───────────────────────────────────────────────────────── */}
+      <style jsx>{`
         /* ── Persistent floating chip ───────────────────────────────────── */
         .suni-chip {
           position: fixed;
@@ -850,107 +850,107 @@ export default function SuniVoiceWidget({
           margin: 0;
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }
 
 // ── Icon Components ────────────────────────────────────────────────────────
 
 function WaveIcon({ animate }: { animate: boolean }) {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <rect x="2" y="8" width="3" height="8" rx="1.5">
-                {animate && (
-                    <>
-                        <animate attributeName="height" values="4;14;4" dur="0.8s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="10;5;10" dur="0.8s" repeatCount="indefinite" />
-                    </>
-                )}
-            </rect>
-            <rect x="7" y="5" width="3" height="14" rx="1.5">
-                {animate && (
-                    <>
-                        <animate attributeName="height" values="14;4;14" dur="0.8s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="5;10;5" dur="0.8s" repeatCount="indefinite" />
-                    </>
-                )}
-            </rect>
-            <rect x="12" y="3" width="3" height="18" rx="1.5">
-                {animate && (
-                    <>
-                        <animate attributeName="height" values="18;8;18" dur="0.7s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="3;8;3" dur="0.7s" repeatCount="indefinite" />
-                    </>
-                )}
-            </rect>
-            <rect x="17" y="6" width="3" height="12" rx="1.5">
-                {animate && (
-                    <>
-                        <animate attributeName="height" values="12;5;12" dur="0.9s" repeatCount="indefinite" />
-                        <animate attributeName="y" values="6;9;6" dur="0.9s" repeatCount="indefinite" />
-                    </>
-                )}
-            </rect>
-        </svg>
-    );
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <rect x="2" y="8" width="3" height="8" rx="1.5">
+        {animate && (
+          <>
+            <animate attributeName="height" values="4;14;4" dur="0.8s" repeatCount="indefinite" />
+            <animate attributeName="y" values="10;5;10" dur="0.8s" repeatCount="indefinite" />
+          </>
+        )}
+      </rect>
+      <rect x="7" y="5" width="3" height="14" rx="1.5">
+        {animate && (
+          <>
+            <animate attributeName="height" values="14;4;14" dur="0.8s" repeatCount="indefinite" />
+            <animate attributeName="y" values="5;10;5" dur="0.8s" repeatCount="indefinite" />
+          </>
+        )}
+      </rect>
+      <rect x="12" y="3" width="3" height="18" rx="1.5">
+        {animate && (
+          <>
+            <animate attributeName="height" values="18;8;18" dur="0.7s" repeatCount="indefinite" />
+            <animate attributeName="y" values="3;8;3" dur="0.7s" repeatCount="indefinite" />
+          </>
+        )}
+      </rect>
+      <rect x="17" y="6" width="3" height="12" rx="1.5">
+        {animate && (
+          <>
+            <animate attributeName="height" values="12;5;12" dur="0.9s" repeatCount="indefinite" />
+            <animate attributeName="y" values="6;9;6" dur="0.9s" repeatCount="indefinite" />
+          </>
+        )}
+      </rect>
+    </svg>
+  );
 }
 
 function SpeakerIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-        </svg>
-    );
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+    </svg>
+  );
 }
 
 function MuteIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-            <line x1="23" y1="9" x2="17" y2="15" />
-            <line x1="17" y1="9" x2="23" y2="15" />
-        </svg>
-    );
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <line x1="23" y1="9" x2="17" y2="15" />
+      <line x1="17" y1="9" x2="23" y2="15" />
+    </svg>
+  );
 }
 
 function SuniOffIcon() {
-    return (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <line x1="1" y1="1" x2="23" y2="23" />
-            <path d="M9 9v6l5 4V5L9 9zM2 9h4" />
-            <path d="M2 15h4" />
-        </svg>
-    );
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="1" y1="1" x2="23" y2="23" />
+      <path d="M9 9v6l5 4V5L9 9zM2 9h4" />
+      <path d="M2 15h4" />
+    </svg>
+  );
 }
 
 function ChevronIcon({ open, reduced }: { open: boolean; reduced: boolean }) {
-    return (
-        <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{
-                transform: open ? 'rotate(180deg)' : 'none',
-                transition: reduced ? 'none' : 'transform 0.2s',
-            }}
-            aria-hidden="true"
-        >
-            <polyline points="6 9 12 15 18 9" />
-        </svg>
-    );
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      style={{
+        transform: open ? 'rotate(180deg)' : 'none',
+        transition: reduced ? 'none' : 'transform 0.2s',
+      }}
+      aria-hidden="true"
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
 }
 
 function ReplayIcon() {
-    return (
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <polyline points="1 4 1 10 7 10" />
-            <path d="M3.51 15a9 9 0 1 0 .49-4.5" />
-        </svg>
-    );
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <polyline points="1 4 1 10 7 10" />
+      <path d="M3.51 15a9 9 0 1 0 .49-4.5" />
+    </svg>
+  );
 }

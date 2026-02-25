@@ -95,6 +95,10 @@ export function useSuniNarration() {
     /** Set to true after user's first gesture unlocks audio */
     const unlockedRef = useRef(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    /** Specifically track if the VERY first intro ever finished */
+    const introFinishedRef = useRef(false);
+    /** If user scrolls during intro, we capture the target section here to play it LATER */
+    const pendingSectionIdRef = useRef<string | null>(null);
 
     // ── Load preferences from localStorage (client only) ──────────────────
     useEffect(() => {
@@ -150,7 +154,7 @@ export function useSuniNarration() {
     }, []);
 
     // ── Low-level: speak text via speechSynthesis ─────────────────────────
-    const speakText = useCallback((text: string) => {
+    const speakText = useCallback((text: string, onEnd?: () => void) => {
         if (typeof window === 'undefined' || !window.speechSynthesis) return;
         const p = prefsRef.current;
 
@@ -164,9 +168,13 @@ export function useSuniNarration() {
         utterance.pitch = 1.05;
 
         utterance.onstart = () => setIsPlaying(true);
-        utterance.onend = () => setIsPlaying(false);
+        utterance.onend = () => {
+            setIsPlaying(false);
+            onEnd?.();
+        };
         utterance.onerror = (e) => {
             if (e.error !== 'interrupted') setIsPlaying(false);
+            onEnd?.(); // Consider it "ended" if errored so we don't hang
         };
 
         window.speechSynthesis.speak(utterance);
@@ -174,7 +182,7 @@ export function useSuniNarration() {
 
     // ── Play a section (speech-first, audio-file optional fallback) ────────
     const playSection = useCallback(
-        (sectionId: string) => {
+        (sectionId: string, onEnd?: () => void) => {
             const p = prefsRef.current;
             if (p.disabled) return;
             const section = suniSections.find((s) => s.id === sectionId);
@@ -189,16 +197,25 @@ export function useSuniNarration() {
                     audio.src = section.audioFile;
                     audio.volume = p.muted ? 0 : p.volume;
                     audio.muted = p.muted;
+
+                    const handleAudioEnd = () => {
+                        setIsPlaying(false);
+                        onEnd?.();
+                        audio.removeEventListener('ended', handleAudioEnd);
+                    };
+                    audio.addEventListener('ended', handleAudioEnd);
+
                     audio
                         .play()
                         .then(() => setIsPlaying(true))
                         .catch(() => {
                             // Audio file not available – fall back to speech
-                            speakText(section.suniLine);
+                            audio.removeEventListener('ended', handleAudioEnd);
+                            speakText(section.suniLine, onEnd);
                         });
                 }
             } else {
-                speakText(section.suniLine);
+                speakText(section.suniLine, onEnd);
             }
         },
         [stopAll, speakText]
@@ -213,7 +230,20 @@ export function useSuniNarration() {
         const intro = suniSections[0];
         setCurrentSectionId(intro.id);
 
-        speakText(intro.suniLine);
+        const onIntroEnd = () => {
+            introFinishedRef.current = true;
+            if (pendingSectionIdRef.current) {
+                const nextId = pendingSectionIdRef.current;
+                pendingSectionIdRef.current = null;
+                // Only play if they haven't manually spoken it or something
+                if (!spokenRef.current.has(nextId)) {
+                    spokenRef.current.add(nextId);
+                    playSection(nextId);
+                }
+            }
+        };
+
+        speakText(intro.suniLine, onIntroEnd);
 
         // After 800 ms, check whether speech actually started
         const timer = setTimeout(() => {
@@ -227,7 +257,7 @@ export function useSuniNarration() {
                 window.speechSynthesis?.cancel();
                 setAutoplayBlocked(true);
                 setIsPlaying(false);
-                // Do NOT mark intro as spoken — it hasn't been heard yet
+                introFinishedRef.current = false;
             } else {
                 setIsPlaying(true);
                 setAutoplayBlocked(false);
@@ -238,7 +268,7 @@ export function useSuniNarration() {
 
         return () => clearTimeout(timer);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isSupported]);
+    }, [isSupported, playSection]);
 
     // ── First user gesture (tap chip, or first pointerdown) ───────────────
     const handleFirstGesture = useCallback(() => {
@@ -247,8 +277,21 @@ export function useSuniNarration() {
         const intro = suniSections[0];
         spokenRef.current.add(intro.id);      // mark as spoken so scroll-back doesn't repeat
         setCurrentSectionId(intro.id);
-        speakText(intro.suniLine);
-    }, [speakText]);
+
+        const onIntroEnd = () => {
+            introFinishedRef.current = true;
+            if (pendingSectionIdRef.current) {
+                const nextId = pendingSectionIdRef.current;
+                pendingSectionIdRef.current = null;
+                if (!spokenRef.current.has(nextId)) {
+                    spokenRef.current.add(nextId);
+                    playSection(nextId);
+                }
+            }
+        };
+
+        speakText(intro.suniLine, onIntroEnd);
+    }, [speakText, playSection]);
 
     // ── Called by scroll observer ─────────────────────────────────────────
     //    Fires once per section per session.
@@ -259,6 +302,16 @@ export function useSuniNarration() {
             // don't queue narration behind the blocked intro
             if (autoplayBlocked) return;
             if (spokenRef.current.has(sectionId)) return;
+
+            // CRITICAL: Intro must finish before anything else plays
+            if (!introFinishedRef.current) {
+                // If it's already intro, do nothing
+                if (sectionId === 'intro') return;
+                // Otherwise, capture as pending and wait
+                pendingSectionIdRef.current = sectionId;
+                return;
+            }
+
             spokenRef.current.add(sectionId);
             playSection(sectionId);
         },
