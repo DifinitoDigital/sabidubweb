@@ -214,6 +214,8 @@ export default function AdmissionChecker() {
     const [isSimulating, setIsSimulating] = useState(false);
     const [simulatedScore, setSimulatedScore] = useState<number | ''>('');
     const [activeTab, setActiveTab] = useState<'results' | 'suggestions' | 'comparison' | 'simulation' | 'form'>('results');
+    const [showPaymentIdModal, setShowPaymentIdModal] = useState(false);
+    const [paymentIdToCopy, setPaymentIdToCopy] = useState('');
 
     const router = useRouter();
     const verifyingRef = useRef<string | null>(null);
@@ -386,6 +388,13 @@ export default function AdmissionChecker() {
                 setPreviewData(data);
                 if (data.planId) setSelectedPlanId(data.planId);
                 setResults([]);
+
+                // Show Payment ID to user
+                const payId = data.paymentId || data.previewId;
+                if (payId) {
+                    setPaymentIdToCopy(payId);
+                    setShowPaymentIdModal(true);
+                }
             } else if (data.unlocked) {
                 setResults(data.results || []);
                 if (data.pagination) {
@@ -399,6 +408,13 @@ export default function AdmissionChecker() {
                 }
                 setIsPaid(true);
                 setSavedPaymentId(data.paymentId);
+
+                // Show Payment ID for record
+                if (data.paymentId) {
+                    setPaymentIdToCopy(data.paymentId);
+                    setShowPaymentIdModal(true);
+                }
+
                 setUsageInfo({
                     viewCount: data.viewCount,
                     totalViews: data.totalViews,
@@ -411,6 +427,12 @@ export default function AdmissionChecker() {
                 // Fallback for non-locked previews
                 setPreviewData(data);
                 if (data.planId) setSelectedPlanId(data.planId);
+
+                const payId = data.paymentId || data.previewId;
+                if (payId) {
+                    setPaymentIdToCopy(payId);
+                    setShowPaymentIdModal(true);
+                }
             }
         } catch (err) {
             showAlert('Connection Error', "Could not reach the analysis server. Please check your internet connection and try again.", 'error');
@@ -1667,6 +1689,72 @@ export default function AdmissionChecker() {
             <Footer />
 
             {/* Modal Components (Alert, Toast, Result Detail) */}
+            {/* Loading Overlay */}
+            <AnimatePresence>
+                {isUnlocking && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[300] flex items-center justify-center bg-white/80 backdrop-blur-sm"
+                    >
+                        <div className="flex flex-col items-center gap-6">
+                            <div className="relative">
+                                <div className="w-20 h-20 border-4 border-[#014751]/10 rounded-full" />
+                                <div className="absolute top-0 w-20 h-20 border-4 border-t-[#014751] rounded-full animate-spin" />
+                            </div>
+                            <div className="text-center">
+                                <h3 className="text-lg font-black text-gray-900 uppercase tracking-widest mb-1">Confirming Payment</h3>
+                                <p className="text-xs font-bold text-gray-400">Please do not close this window...</p>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Payment ID Modal */}
+            <AnimatePresence>
+                {showPaymentIdModal && (
+                    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-md w-full text-center shadow-2xl"
+                        >
+                            <div className="w-16 h-16 bg-[#014751]/5 rounded-2xl flex items-center justify-center text-[#014751] mx-auto mb-6">
+                                <LuFileCheck className="w-8 h-8" />
+                            </div>
+                            <h2 className="text-2xl font-black mb-3 text-gray-900">Copy Payment ID</h2>
+                            <p className="text-sm font-medium text-gray-500 mb-8 leading-relaxed">
+                                Please copy and save your Payment ID. You will need it to resume your session or if you encounter any payment issues.
+                            </p>
+
+                            <div className="bg-gray-50 rounded-2xl p-4 mb-8 flex items-center justify-between border border-gray-100 group hover:border-[#014751]/20 transition-colors" title="Copy Payment ID">
+                                <code className="text-[#014751] font-black text-lg tracking-wider mr-4">{paymentIdToCopy}</code>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(paymentIdToCopy);
+                                        showToast("Payment ID copied to clipboard");
+                                    }}
+                                    className="p-3 bg-white rounded-xl shadow-sm text-[#014751] hover:bg-[#014751] hover:text-white transition-all active:scale-95"
+                                    title="Copy to clipboard"
+                                >
+                                    <LuCopy className="w-4 h-4" />
+                                </button>
+                            </div>
+
+                            <button
+                                onClick={() => setShowPaymentIdModal(false)}
+                                className="w-full py-4 rounded-2xl bg-[#014751] text-white font-black uppercase text-sm tracking-widest shadow-xl shadow-[#014751]/20 active:scale-95 transition-all"
+                            >
+                                Continue to Report
+                            </button>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
             <AnimatePresence>
                 {alertConfig.isOpen && (
                     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-black/40 backdrop-blur-md">
@@ -1681,8 +1769,23 @@ export default function AdmissionChecker() {
 
             {selectedResult && (
                 <div className="fixed inset-0 z-[150] flex items-end justify-center bg-black/40" onClick={() => setSelectedResult(null)}>
-                    <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} className="bg-white w-full max-w-4xl rounded-t-3xl md:rounded-t-[3rem] p-6 md:p-10 max-h-[90vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar" onClick={e => e.stopPropagation()}>
-                        <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+                    <motion.div
+                        initial={{ y: '100%' }}
+                        animate={{ y: 0 }}
+                        exit={{ y: '100%' }}
+                        drag="y"
+                        dragConstraints={{ top: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={(_, info) => {
+                            if (info.offset.y > 150) setSelectedResult(null);
+                        }}
+                        className="bg-white w-full max-w-4xl rounded-t-3xl md:rounded-t-[3rem] p-6 md:p-10 max-h-[90vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar relative"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        {/* Drag Handle */}
+                        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-gray-200 rounded-full" />
+
+                        <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8 mt-4">
                             <div className="flex-1">
                                 <div className={`inline-block px-3 py-1 rounded-full text-[9px] md:text-[10px] font-black uppercase tracking-widest mb-3 ${selectedResult.chance === 'High' ? 'bg-green-100 text-green-700' : selectedResult.chance === 'Medium' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-50 text-red-500'}`}>
                                     {selectedResult.chance} Chance
