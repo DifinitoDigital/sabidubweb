@@ -47,6 +47,8 @@ const fadeInUp = {
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0);
   const [userName, setUserName] = useState("Guest");
+  const [institutionCount, setInstitutionCount] = useState<number | null>(null);
+  const [featuredInstitutions, setFeaturedInstitutions] = useState<any[]>([]);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? -1 : index);
@@ -141,6 +143,42 @@ export default function Home() {
     };
 
     fetchPosts();
+  }, []);
+
+  // Fetch total institution count and specific featured logos (UniAbuja, Unilag, OAU)
+  useEffect(() => {
+    const fetchInstitutionData = async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+        // 1. Fetch total count
+        const countRes = await fetch(`${baseUrl}/institutions/all?page=1&limit=1&slim=true`);
+        if (countRes.ok) {
+          const countData = await countRes.json();
+          if (countData?.meta?.total !== undefined) {
+            setInstitutionCount(countData.meta.total);
+          }
+        }
+
+        // 2. Fetch specific universities for the hero logos
+        const searchTerms = ["University of Abuja", "University of Lagos", "Obafemi Awolowo University"];
+        const featuredResults = await Promise.all(
+          searchTerms.map(async (term) => {
+            const res = await fetch(`${baseUrl}/institutions/all?search=${encodeURIComponent(term)}&limit=1&slim=true`);
+            if (res.ok) {
+              const data = await res.json();
+              return data?.data?.[0] || { name: term, id: term };
+            }
+            return { name: term, id: term };
+          })
+        );
+
+        setFeaturedInstitutions(featuredResults);
+      } catch (err) {
+        console.error("Failed to fetch institution data:", err);
+      }
+    };
+    fetchInstitutionData();
   }, []);
 
 
@@ -251,12 +289,54 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
+                  {/* University logo avatars */}
                   <div className="flex -space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gray-600 border-2 border-white shadow-sm"></div>
-                    <div className="w-10 h-10 rounded-full bg-gray-700 border-2 border-white shadow-sm"></div>
-                    <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm"></div>
+                    {featuredInstitutions.length > 0 ? (
+                      featuredInstitutions.map((inst, idx) => (
+                        <div
+                          key={inst.id || idx}
+                          title={inst.name}
+                          className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-[10px] font-black text-white select-none overflow-hidden bg-gray-100"
+                        >
+                          {inst.logo ? (
+                            <Image
+                              src={inst.logo}
+                              alt={inst.name}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full flex items-center justify-center"
+                              style={{
+                                background: idx === 0 ? 'linear-gradient(135deg, #006400 60%, #004d00 100%)' :
+                                  idx === 1 ? 'linear-gradient(135deg, #003087 60%, #001a5c 100%)' :
+                                    'linear-gradient(135deg, #8B0000 60%, #5c0000 100%)'
+                              }}
+                            >
+                              {inst.name?.split(' ').map((n: string) => n[0]).join('').substring(0, 3).toUpperCase() || 'SB'}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        {/* Static Fallbacks during load */}
+                        <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white animate-pulse" />
+                        <div className="w-10 h-10 rounded-full bg-gray-300 border-2 border-white animate-pulse" />
+                        <div className="w-10 h-10 rounded-full bg-gray-400 border-2 border-white animate-pulse" />
+                      </>
+                    )}
                   </div>
-                  <span className="text-gray-600 font-bold text-lg">0+ Schools</span>
+                  <div className="flex flex-col">
+                    <span className="text-gray-900 font-black text-lg leading-tight">
+                      {institutionCount !== null
+                        ? `${institutionCount.toLocaleString()}+`
+                        : '—'}
+                    </span>
+                    <span className="text-gray-400 text-xs font-medium">Institutions</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -271,57 +351,55 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="relative flex overflow-x-hidden">
-            <div className="animate-marquee flex items-center gap-12 sm:gap-24">
-              {/* Each logo item */}
-              {[
-                { name: "Facesta", type: 'image', src: '/images/facesta.png' },
-                { name: "University of Lagos", type: 'text' },
-                { name: "University of Ibadan", type: 'text' },
-                { name: "Covenant University", type: 'text' },
-                { name: "Obafemi Awolowo", type: 'text' },
-                { name: "Ahmadu Bello", type: 'text' },
-                { name: "University of Nigeria", type: 'text' },
-                { name: "WAEC Nigeria", type: 'text' },
-              ].map((brand, i) => (
-                <div key={i} className="flex items-center justify-center transition-all cursor-pointer opacity-70 hover:opacity-100">
-                  {brand.type === 'image' ? (
-                    <Image src={brand.src as string} alt={brand.name} width={120} height={48} className="h-10 sm:h-12 object-contain" />
-                  ) : (
-                    <span className="text-xl sm:text-2xl font-black text-gray-500 whitespace-nowrap tracking-tighter">
-                      {brand.name.toUpperCase()}
-                    </span>
-                  )}
+          {(() => {
+            const universities = [
+              "University of Abuja",
+              "University of Ibadan",
+              "University of Lagos",
+              "Obafemi Awolowo University",
+              "Ahmadu Bello University",
+              "University of Nigeria",
+              "University of Benin",
+              "University of Ilorin",
+              "Lagos State University",
+              "Federal University of Technology Akure",
+              "Federal University of Technology Minna",
+              "Bayero University Kano",
+              "University of Port Harcourt",
+              "Nnamdi Azikiwe University",
+              "University of Calabar",
+              "Covenant University",
+              "Babcock University",
+              "Afe Babalola University",
+              "Bowen University",
+              "American University of Nigeria",
+              "Redeemer's University",
+            ];
+            const UniItem = ({ name, prefix }: { name: string; prefix: string }) => (
+              <div
+                key={`${prefix}-${name}`}
+                className="flex items-center justify-center transition-all cursor-default opacity-60 hover:opacity-100 flex-shrink-0"
+              >
+                <span className="text-base sm:text-lg font-black text-gray-600 whitespace-nowrap tracking-tight">
+                  {name.toUpperCase()}
+                </span>
+              </div>
+            );
+            return (
+              <div className="relative flex overflow-x-hidden">
+                {/* Row 1 — scrolls right */}
+                <div className="animate-marquee flex items-center gap-10 sm:gap-16 mb-0">
+                  {universities.map((u) => <UniItem key={u} name={u} prefix="a" />)}
+                  {/* Duplicate set for seamless loop */}
+                  {universities.map((u) => <UniItem key={`dup-${u}`} name={u} prefix="b" />)}
                 </div>
-              ))}
 
-              {/* Duplicate for infinite loop */}
-              {[
-                { name: "Facesta", type: 'image', src: '/images/facesta.png' },
-                { name: "University of Lagos", type: 'text' },
-                { name: "University of Ibadan", type: 'text' },
-                { name: "Covenant University", type: 'text' },
-                { name: "Obafemi Awolowo", type: 'text' },
-                { name: "Ahmadu Bello", type: 'text' },
-                { name: "University of Nigeria", type: 'text' },
-                { name: "WAEC Nigeria", type: 'text' },
-              ].map((brand, i) => (
-                <div key={`dup-${i}`} className="flex items-center justify-center transition-all cursor-pointer opacity-70 hover:opacity-100">
-                  {brand.type === 'image' ? (
-                    <Image src={brand.src as string} alt={brand.name} width={120} height={48} className="h-10 sm:h-12 object-contain" />
-                  ) : (
-                    <span className="text-xl sm:text-2xl font-black text-gray-500 whitespace-nowrap tracking-tighter">
-                      {brand.name.toUpperCase()}
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Added Gradient Masks for smooth edges */}
-            <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent z-10"></div>
-            <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent z-10"></div>
-          </div>
+                {/* Gradient edge masks */}
+                <div className="absolute inset-y-0 left-0 w-24 sm:w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+                <div className="absolute inset-y-0 right-0 w-24 sm:w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+              </div>
+            );
+          })()}
         </section>
 
         {/* Unified Product Showcase — whatwedo narration */}
