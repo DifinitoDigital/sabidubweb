@@ -357,93 +357,266 @@ export default function Pricing() {
               )}
             </div>
 
-            {/* Comparison Table */}
-            {allPlans.length > 0 && (
+            {/* Comparison Tool */}
+            {allPlans.length > 1 && (
               <div className="mt-16 md:mt-24">
-                <div className="text-center mb-12">
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">Compare all features</h2>
-                  <p className="text-gray-500">Detailed breakdown of what&apos;s included in each plan</p>
+                <div className="text-center mb-10">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Comparison</h2>
+                  <p className="text-gray-500 text-sm">Select two plans to see a detailed side-by-side breakdown</p>
                 </div>
 
-                <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_20px_40px_rgba(0,0,0,0.04)] overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[700px]">
-                      <thead>
-                        <tr className="bg-gray-900 text-white">
-                          <th className="p-6 text-xs font-bold uppercase tracking-wider w-[30%]">Features</th>
-                          {allPlans.slice(0, 3).map(plan => (
-                            <th key={plan.id} className="p-6 text-center w-[23%]">
-                              <span className="text-lg font-bold block mb-1">{plan.name}</span>
-                              <span className="text-white/60 text-xs font-normal">
-                                {formatPrice(plan.price)}
-                                {schoolType !== "admission" && <span>/{isYearly ? 'yr' : 'mo'}</span>}
-                              </span>
-                            </th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-gray-100">
-                        {(() => {
-                          const uniqueFeatures = Array.from(new Set(
-                            allPlans.slice(0, 3).flatMap(p =>
-                              (p.features || []).map(f => typeof f === 'string' ? f : f.name)
-                            )
-                          )).sort();
+                {/* Dropdowns */}
+                <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 justify-center">
+                  <div className="relative w-full sm:w-64">
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Plan 1</label>
+                    <select
+                      value={selectedPlan1}
+                      onChange={e => setSelectedPlan1(e.target.value)}
+                      className="w-full appearance-none bg-white border-2 border-gray-200 hover:border-[#014751] focus:border-[#014751] rounded-xl px-4 py-3 pr-10 text-sm font-semibold text-gray-800 cursor-pointer transition-all outline-none shadow-sm"
+                    >
+                      <option value="">Choose a plan…</option>
+                      {allPlans.map(plan => (
+                        <option key={plan.id} value={plan.id} disabled={plan.id === selectedPlan2}>{plan.name} — {formatPrice(plan.price)}</option>
+                      ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-3 bottom-3.5 text-gray-400">▾</span>
+                  </div>
 
-                          const featureRows = uniqueFeatures.map((featureName, idx) => (
-                            <tr key={idx} className="group hover:bg-gray-50 transition-colors">
-                              <td className="p-5 text-sm font-medium text-gray-700 bg-white group-hover:bg-gray-50 sticky left-0 md:static border-r border-gray-100 md:border-none shadow-[2px_0_5px_rgba(0,0,0,0.05)] md:shadow-none">{featureName}</td>
-                              {allPlans.slice(0, 3).map(plan => {
-                                const hasFeature = (plan.features || []).some(f =>
-                                  (typeof f === 'string' ? f : f.name) === featureName
-                                );
-                                return (
-                                  <td key={plan.id} className="p-5 text-center">
-                                    {hasFeature ? (
-                                      <div className="flex justify-center">
-                                        <div className="w-6 h-6 rounded-full bg-[#014751] flex items-center justify-center text-white">
-                                          <LuCheck className="w-3.5 h-3.5" strokeWidth={3} />
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <span className="text-gray-300">-</span>
-                                    )}
-                                  </td>
-                                )
-                              })}
-                            </tr>
-                          ));
+                  <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full text-gray-400 font-bold text-sm mt-5 sm:mt-0 shrink-0">vs</div>
 
-                          return (
-                            <>
-                              {featureRows}
-                              {/* Buttons Row */}
-                              <tr className="bg-white">
-                                <td className="p-5 border-t border-gray-100"></td>
-                                {allPlans.slice(0, 3).map(plan => (
-                                  <td key={plan.id} className="p-5 text-center border-t border-gray-100">
-                                    <button
-                                      onClick={() => {
-                                        if (schoolType === "admission") {
-                                          router.push("/admission-checker");
-                                        } else {
-                                          window.location.href = "https://portal.sabidub.com/auth/school/signin";
-                                        }
-                                      }}
-                                      className="w-full py-3 bg-white text-gray-900 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 rounded-xl text-xs font-bold uppercase transition-all whitespace-nowrap"
-                                    >
-                                      Get started
-                                    </button>
-                                  </td>
-                                ))}
-                              </tr>
-                            </>
-                          );
-                        })()}
-                      </tbody>
-                    </table>
+                  <div className="relative w-full sm:w-64">
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Plan 2</label>
+                    <select
+                      value={selectedPlan2}
+                      onChange={e => setSelectedPlan2(e.target.value)}
+                      className="w-full appearance-none bg-white border-2 border-gray-200 hover:border-[#014751] focus:border-[#014751] rounded-xl px-4 py-3 pr-10 text-sm font-semibold text-gray-800 cursor-pointer transition-all outline-none shadow-sm"
+                    >
+                      <option value="">Choose a plan…</option>
+                      {allPlans.map(plan => (
+                        <option key={plan.id} value={plan.id} disabled={plan.id === selectedPlan1}>{plan.name} — {formatPrice(plan.price)}</option>
+                      ))}
+                    </select>
+                    <span className="pointer-events-none absolute right-3 bottom-3.5 text-gray-400">▾</span>
                   </div>
                 </div>
+
+                {/* Comparison Result */}
+                {comparisonResult && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                    className="bg-white rounded-3xl border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.07)] overflow-hidden"
+                  >
+                    {/* Header bar */}
+                    <div className="grid grid-cols-3 bg-gray-900 text-white">
+                      <div className="p-6 flex flex-col items-center justify-center text-center border-r border-white/10">
+                        <span className="text-lg font-bold">{comparisonResult.plan1Name}</span>
+                        <span className="text-white/60 text-sm mt-1">{formatPrice(comparisonResult.plan1Price)}</span>
+                        <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan1TotalFeatures} features</span>
+                      </div>
+                      <div className="p-6 flex flex-col items-center justify-center text-center">
+                        {comparisonResult.priceDifference === 0 ? (
+                          <span className="text-xs bg-white/10 text-white px-3 py-1.5 rounded-full font-bold">Same Price</span>
+                        ) : (
+                          <>
+                            <span className="text-[10px] text-white/50 uppercase tracking-widest mb-1">Price diff</span>
+                            <span className="text-xl font-black text-[#AFF8C8]">
+                              {formatPrice(comparisonResult.priceDifference)}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                      <div className="p-6 flex flex-col items-center justify-center text-center border-l border-white/10">
+                        <span className="text-lg font-bold">{comparisonResult.plan2Name}</span>
+                        <span className="text-white/60 text-sm mt-1">{formatPrice(comparisonResult.plan2Price)}</span>
+                        <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan2TotalFeatures} features</span>
+                      </div>
+                    </div>
+
+                    {/* Verdict & Recommendation */}
+                    {(() => {
+                      const p1 = allPlans.find(p => p.id === selectedPlan1);
+                      const p2 = allPlans.find(p => p.id === selectedPlan2);
+                      if (!p1 || !p2) return null;
+
+                      // Weighted scoring — value metrics dominate, price is a light tiebreaker only
+                      let p1Score = 0;
+                      let p2Score = 0;
+                      const p1Reasons: string[] = [];
+                      const p2Reasons: string[] = [];
+
+                      // 1. Backend "recommended" flag — highest priority (30 pts)
+                      if (p1.isRecommended && !p2.isRecommended) { p1Score += 30; p1Reasons.push("Marked as recommended by SabiDub"); }
+                      else if (p2.isRecommended && !p1.isRecommended) { p2Score += 30; p2Reasons.push("Marked as recommended by SabiDub"); }
+
+                      // 2. Unlimited access (20 pts)
+                      if (p1.hasUnlimitedAccess && !p2.hasUnlimitedAccess) { p1Score += 20; p1Reasons.push("Offers unlimited access"); }
+                      else if (p2.hasUnlimitedAccess && !p1.hasUnlimitedAccess) { p2Score += 20; p2Reasons.push("Offers unlimited access"); }
+
+                      // 3. Higher usage limit (15 pts)
+                      const ul1 = p1.usageLimit ?? Infinity;
+                      const ul2 = p2.usageLimit ?? Infinity;
+                      if (ul1 > ul2 && ul1 !== Infinity) { p1Score += 15; p1Reasons.push(`Supports more users (${p1.usageLimit} vs ${p2.usageLimit})`); }
+                      else if (ul2 > ul1 && ul2 !== Infinity) { p2Score += 15; p2Reasons.push(`Supports more users (${p2.usageLimit} vs ${p1.usageLimit})`); }
+
+                      // 4. More total features (10 pts)
+                      if (comparisonResult.plan1TotalFeatures > comparisonResult.plan2TotalFeatures) {
+                        p1Score += 10;
+                        p1Reasons.push(`${comparisonResult.plan1TotalFeatures - comparisonResult.plan2TotalFeatures} more feature${comparisonResult.plan1TotalFeatures - comparisonResult.plan2TotalFeatures > 1 ? 's' : ''} included`);
+                      } else if (comparisonResult.plan2TotalFeatures > comparisonResult.plan1TotalFeatures) {
+                        p2Score += 10;
+                        p2Reasons.push(`${comparisonResult.plan2TotalFeatures - comparisonResult.plan1TotalFeatures} more feature${comparisonResult.plan2TotalFeatures - comparisonResult.plan1TotalFeatures > 1 ? 's' : ''} included`);
+                      }
+
+                      // 5. More exclusive-only features (5 pts) — minor, since higher plans bundle lower ones
+                      if (comparisonResult.uniqueToPlan1.length > comparisonResult.uniqueToPlan2.length) {
+                        p1Score += 5;
+                        p1Reasons.push(`${comparisonResult.uniqueToPlan1.length - comparisonResult.uniqueToPlan2.length} additional exclusive feature${comparisonResult.uniqueToPlan1.length - comparisonResult.uniqueToPlan2.length > 1 ? 's' : ''}`);
+                      } else if (comparisonResult.uniqueToPlan2.length > comparisonResult.uniqueToPlan1.length) {
+                        p2Score += 5;
+                        p2Reasons.push(`${comparisonResult.uniqueToPlan2.length - comparisonResult.uniqueToPlan1.length} additional exclusive feature${comparisonResult.uniqueToPlan2.length - comparisonResult.uniqueToPlan1.length > 1 ? 's' : ''}`);
+                      }
+
+                      // 6. Lower price — minor tiebreaker only (3 pts), does NOT override value
+                      if (comparisonResult.plan1Price < comparisonResult.plan2Price) {
+                        p1Score += 3;
+                        p1Reasons.push(`Costs ${formatPrice(comparisonResult.priceDifference)} less`);
+                      } else if (comparisonResult.plan2Price < comparisonResult.plan1Price) {
+                        p2Score += 3;
+                        p2Reasons.push(`Costs ${formatPrice(comparisonResult.priceDifference)} less`);
+                      }
+
+                      const winner = p1Score > p2Score ? p1 : p2Score > p1Score ? p2 : null;
+                      const winnerReasons = winner?.id === p1.id ? p1Reasons : p2Reasons;
+                      const tied = !winner;
+
+                      return (
+                        <div className={`border-b px-6 py-5 ${tied ? 'bg-amber-50 border-amber-100' : 'bg-gradient-to-r from-emerald-50 via-white to-emerald-50 border-emerald-100'}`}>
+                          {tied ? (
+                            <div className="text-center">
+                              <span className="inline-flex items-center gap-2 text-amber-700 font-bold text-sm">
+                                <span className="text-xl">⚖️</span> These plans are evenly matched
+                              </span>
+                              <p className="text-xs text-amber-600 mt-1">Both plans offer similar value — your choice depends on your specific needs.</p>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                              <div className="flex items-center gap-3 shrink-0">
+                                <span className="text-2xl">🏆</span>
+                                <div>
+                                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block">We recommend</span>
+                                  <span className="text-base font-black text-gray-900">{winner!.name}</span>
+                                </div>
+                                {winner!.isRecommended && (
+                                  <span className="text-[9px] px-2 py-1 bg-[#014751] text-white font-bold uppercase rounded-full tracking-wider">Staff Pick</span>
+                                )}
+                              </div>
+                              <div className="h-px md:h-8 w-full md:w-px bg-emerald-200 shrink-0" />
+                              <div className="flex-1">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Why {winner!.name} wins</p>
+                                <ul className="flex flex-wrap gap-2">
+                                  {winnerReasons.map((reason, i) => (
+                                    <li key={i} className="flex items-center gap-1.5 bg-white border border-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
+                                      <span className="text-emerald-500">✓</span> {reason}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                      {/* Unique to Plan 1 */}
+                      <div className="p-6">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Only in {comparisonResult.plan1Name}</p>
+                        {comparisonResult.uniqueToPlan1.length === 0 ? (
+                          <p className="text-sm text-gray-400 italic">No exclusive features</p>
+                        ) : (
+                          <ul className="space-y-2.5">
+                            {comparisonResult.uniqueToPlan1.map((f, i) => (
+                              <li key={i} className="flex items-start gap-2.5">
+                                <span className="mt-0.5 w-4 h-4 rounded-full bg-[#014751] flex items-center justify-center shrink-0">
+                                  <LuCheck className="w-2.5 h-2.5 text-white" />
+                                </span>
+                                <span className="text-sm text-gray-700 font-medium">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      {/* Shared */}
+                      <div className="p-6 bg-gray-50/60">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Shared features ({comparisonResult.commonFeatures.length})</p>
+                        {comparisonResult.commonFeatures.length === 0 ? (
+                          <p className="text-sm text-gray-400 italic">No shared features</p>
+                        ) : (
+                          <ul className="space-y-2.5">
+                            {comparisonResult.commonFeatures.map((f, i) => (
+                              <li key={i} className="flex items-start gap-2.5">
+                                <span className="mt-0.5 w-4 h-4 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
+                                  <LuCheck className="w-2.5 h-2.5 text-white" />
+                                </span>
+                                <span className="text-sm text-gray-500 font-medium">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+
+                      {/* Unique to Plan 2 */}
+                      <div className="p-6">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Only in {comparisonResult.plan2Name}</p>
+                        {comparisonResult.uniqueToPlan2.length === 0 ? (
+                          <p className="text-sm text-gray-400 italic">No exclusive features</p>
+                        ) : (
+                          <ul className="space-y-2.5">
+                            {comparisonResult.uniqueToPlan2.map((f, i) => (
+                              <li key={i} className="flex items-start gap-2.5">
+                                <span className="mt-0.5 w-4 h-4 rounded-full bg-[#014751] flex items-center justify-center shrink-0">
+                                  <LuCheck className="w-2.5 h-2.5 text-white" />
+                                </span>
+                                <span className="text-sm text-gray-700 font-medium">{f}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Get started buttons */}
+                    <div className="grid grid-cols-2 gap-4 p-6 border-t border-gray-100 bg-gray-50">
+                      {[selectedPlan1, selectedPlan2].map(planId => {
+                        const plan = allPlans.find(p => p.id === planId);
+                        if (!plan) return null;
+                        return (
+                          <button
+                            key={planId}
+                            onClick={() => {
+                              if (schoolType === "admission") router.push("/admission-checker");
+                              else window.location.href = "https://portal.sabidub.com/auth/school/signin";
+                            }}
+                            className="py-3 bg-[#014751] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#013b43] transition-all active:scale-95 shadow-md"
+                          >
+                            Get {plan.name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Placeholder when none selected */}
+                {!comparisonResult && (
+                  <div className="text-center py-16 text-gray-400 bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                    <div className="text-4xl mb-3">⚖️</div>
+                    <p className="text-sm font-medium">Select two plans above to see the comparison</p>
+                  </div>
+                )}
               </div>
             )}
           </div>

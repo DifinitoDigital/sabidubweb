@@ -63,6 +63,18 @@ export default function Navbar() {
                         >
                             About
                         </Link>
+                        <Link
+                            href="/pricing"
+                            className={`${subTextColor} hover:text-[#AFF8C8] transition-colors font-medium`}
+                        >
+                            Pricing
+                        </Link>
+                        <Link
+                            href="/admission-checker"
+                            className={`${subTextColor} hover:text-[#AFF8C8] transition-colors font-medium`}
+                        >
+                            Admission Check
+                        </Link>
 
                         <div className="flex items-center space-x-4 ml-4">
                             <Link
