@@ -366,7 +366,7 @@ export default function Pricing() {
                 </div>
 
                 {/* Dropdowns */}
-                <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 justify-center">
+                <div className="flex flex-col sm:flex-row items-center gap-3 mb-8 justify-center px-2">
                   <div className="relative w-full sm:w-64">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Plan 1</label>
                     <select
@@ -382,7 +382,7 @@ export default function Pricing() {
                     <span className="pointer-events-none absolute right-3 bottom-3.5 text-gray-400">▾</span>
                   </div>
 
-                  <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-full text-gray-400 font-bold text-sm mt-5 sm:mt-0 shrink-0">vs</div>
+                  <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full text-gray-400 font-bold text-xs shrink-0 sm:mt-6">vs</div>
 
                   <div className="relative w-full sm:w-64">
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Plan 2</label>
@@ -408,29 +408,33 @@ export default function Pricing() {
                     transition={{ duration: 0.35 }}
                     className="bg-white rounded-3xl border border-gray-100 shadow-[0_20px_50px_rgba(0,0,0,0.07)] overflow-hidden"
                   >
-                    {/* Header bar */}
-                    <div className="grid grid-cols-3 bg-gray-900 text-white">
-                      <div className="p-6 flex flex-col items-center justify-center text-center border-r border-white/10">
-                        <span className="text-lg font-bold">{comparisonResult.plan1Name}</span>
-                        <span className="text-white/60 text-sm mt-1">{formatPrice(comparisonResult.plan1Price)}</span>
-                        <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan1TotalFeatures} features</span>
-                      </div>
-                      <div className="p-6 flex flex-col items-center justify-center text-center">
-                        {comparisonResult.priceDifference === 0 ? (
-                          <span className="text-xs bg-white/10 text-white px-3 py-1.5 rounded-full font-bold">Same Price</span>
-                        ) : (
-                          <>
-                            <span className="text-[10px] text-white/50 uppercase tracking-widest mb-1">Price diff</span>
-                            <span className="text-xl font-black text-[#AFF8C8]">
-                              {formatPrice(comparisonResult.priceDifference)}
-                            </span>
-                          </>
-                        )}
-                      </div>
-                      <div className="p-6 flex flex-col items-center justify-center text-center border-l border-white/10">
-                        <span className="text-lg font-bold">{comparisonResult.plan2Name}</span>
-                        <span className="text-white/60 text-sm mt-1">{formatPrice(comparisonResult.plan2Price)}</span>
-                        <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan2TotalFeatures} features</span>
+                    {/* Header bar — stacks on mobile */}
+                    <div className="bg-gray-900 text-white">
+                      {/* Mobile: two plan cards stacked with vs badge */}
+                      <div className="flex items-stretch divide-x divide-white/10">
+                        <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+                          <span className="text-sm sm:text-lg font-bold leading-tight">{comparisonResult.plan1Name}</span>
+                          <span className="text-white/60 text-xs sm:text-sm mt-1">{formatPrice(comparisonResult.plan1Price)}</span>
+                          <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan1TotalFeatures} features</span>
+                        </div>
+                        {/* Price diff — compact on mobile */}
+                        <div className="w-20 sm:w-28 shrink-0 flex flex-col items-center justify-center text-center px-2 py-4">
+                          {comparisonResult.priceDifference === 0 ? (
+                            <span className="text-[10px] bg-white/10 text-white px-2 py-1 rounded-full font-bold">Same</span>
+                          ) : (
+                            <>
+                              <span className="text-[9px] text-white/50 uppercase tracking-wider mb-0.5">diff</span>
+                              <span className="text-sm sm:text-lg font-black text-[#AFF8C8] leading-tight">
+                                {formatPrice(comparisonResult.priceDifference)}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                        <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
+                          <span className="text-sm sm:text-lg font-bold leading-tight">{comparisonResult.plan2Name}</span>
+                          <span className="text-white/60 text-xs sm:text-sm mt-1">{formatPrice(comparisonResult.plan2Price)}</span>
+                          <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan2TotalFeatures} features</span>
+                        </div>
                       </div>
                     </div>
 
@@ -529,67 +533,68 @@ export default function Pricing() {
                       );
                     })()}
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
-                      {/* Unique to Plan 1 */}
-                      <div className="p-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Only in {comparisonResult.plan1Name}</p>
-                        {comparisonResult.uniqueToPlan1.length === 0 ? (
-                          <p className="text-sm text-gray-400 italic">No exclusive features</p>
-                        ) : (
-                          <ul className="space-y-2.5">
-                            {comparisonResult.uniqueToPlan1.map((f, i) => (
-                              <li key={i} className="flex items-start gap-2.5">
-                                <span className="mt-0.5 w-4 h-4 rounded-full bg-[#014751] flex items-center justify-center shrink-0">
-                                  <LuCheck className="w-2.5 h-2.5 text-white" />
-                                </span>
-                                <span className="text-sm text-gray-700 font-medium">{f}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
+                    <div className="divide-y divide-gray-100">
+                      {/* Mobile: 2-col grid for exclusives, full-width for shared */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+                        {/* Unique to Plan 1 */}
+                        <div className="p-5 sm:p-6">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-[#014751] bg-[#014751]/5 rounded-lg px-2 py-1.5 mb-4 inline-block">Only in {comparisonResult.plan1Name}</p>
+                          {comparisonResult.uniqueToPlan1.length === 0 ? (
+                            <p className="text-sm text-gray-400 italic">No exclusive features</p>
+                          ) : (
+                            <ul className="space-y-2.5">
+                              {comparisonResult.uniqueToPlan1.map((f, i) => (
+                                <li key={i} className="flex items-start gap-2.5">
+                                  <span className="mt-0.5 w-4 h-4 rounded-full bg-[#014751] flex items-center justify-center shrink-0">
+                                    <LuCheck className="w-2.5 h-2.5 text-white" />
+                                  </span>
+                                  <span className="text-sm text-gray-700 font-medium">{f}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
 
-                      {/* Shared */}
-                      <div className="p-6 bg-gray-50/60">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Shared features ({comparisonResult.commonFeatures.length})</p>
-                        {comparisonResult.commonFeatures.length === 0 ? (
-                          <p className="text-sm text-gray-400 italic">No shared features</p>
-                        ) : (
-                          <ul className="space-y-2.5">
-                            {comparisonResult.commonFeatures.map((f, i) => (
-                              <li key={i} className="flex items-start gap-2.5">
-                                <span className="mt-0.5 w-4 h-4 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
-                                  <LuCheck className="w-2.5 h-2.5 text-white" />
-                                </span>
-                                <span className="text-sm text-gray-500 font-medium">{f}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
+                        {/* Unique to Plan 2 */}
+                        <div className="p-5 sm:p-6">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-[#014751] bg-[#014751]/5 rounded-lg px-2 py-1.5 mb-4 inline-block">Only in {comparisonResult.plan2Name}</p>
+                          {comparisonResult.uniqueToPlan2.length === 0 ? (
+                            <p className="text-sm text-gray-400 italic">No exclusive features</p>
+                          ) : (
+                            <ul className="space-y-2.5">
+                              {comparisonResult.uniqueToPlan2.map((f, i) => (
+                                <li key={i} className="flex items-start gap-2.5">
+                                  <span className="mt-0.5 w-4 h-4 rounded-full bg-[#014751] flex items-center justify-center shrink-0">
+                                    <LuCheck className="w-2.5 h-2.5 text-white" />
+                                  </span>
+                                  <span className="text-sm text-gray-700 font-medium">{f}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
 
-                      {/* Unique to Plan 2 */}
-                      <div className="p-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">Only in {comparisonResult.plan2Name}</p>
-                        {comparisonResult.uniqueToPlan2.length === 0 ? (
-                          <p className="text-sm text-gray-400 italic">No exclusive features</p>
-                        ) : (
-                          <ul className="space-y-2.5">
-                            {comparisonResult.uniqueToPlan2.map((f, i) => (
-                              <li key={i} className="flex items-start gap-2.5">
-                                <span className="mt-0.5 w-4 h-4 rounded-full bg-[#014751] flex items-center justify-center shrink-0">
-                                  <LuCheck className="w-2.5 h-2.5 text-white" />
-                                </span>
-                                <span className="text-sm text-gray-700 font-medium">{f}</span>
-                              </li>
-                            ))}
-                          </ul>
+                        {/* Shared — full row on mobile, 3rd col on md */}
+                        {comparisonResult.commonFeatures.length > 0 && (
+                          <div className="p-5 sm:p-6 bg-gray-50/60 sm:col-span-2 md:col-span-1">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 bg-gray-200/60 rounded-lg px-2 py-1.5 mb-4 inline-block">Shared ({comparisonResult.commonFeatures.length})</p>
+                            <ul className="space-y-2.5">
+                              {comparisonResult.commonFeatures.map((f, i) => (
+                                <li key={i} className="flex items-start gap-2.5">
+                                  <span className="mt-0.5 w-4 h-4 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
+                                    <LuCheck className="w-2.5 h-2.5 text-white" />
+                                  </span>
+                                  <span className="text-sm text-gray-500 font-medium">{f}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         )}
                       </div>
                     </div>
 
-                    {/* Get started buttons */}
-                    <div className="grid grid-cols-2 gap-4 p-6 border-t border-gray-100 bg-gray-50">
+                    {/* Get started buttons — stack on mobile */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-6 border-t border-gray-100 bg-gray-50">
                       {[selectedPlan1, selectedPlan2].map(planId => {
                         const plan = allPlans.find(p => p.id === planId);
                         if (!plan) return null;
@@ -600,7 +605,7 @@ export default function Pricing() {
                               if (schoolType === "admission") router.push("/admission-checker");
                               else window.location.href = "https://portal.sabidub.com/auth/school/signin";
                             }}
-                            className="py-3 bg-[#014751] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#013b43] transition-all active:scale-95 shadow-md"
+                            className="w-full py-3.5 bg-[#014751] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#013b43] transition-all active:scale-95 shadow-md"
                           >
                             Get {plan.name}
                           </button>
