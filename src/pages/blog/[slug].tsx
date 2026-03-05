@@ -128,8 +128,23 @@ export default function BlogPostView() {
   return (
     <>
       <Head>
-        <title>{post.title} - SabiDub Blog</title>
-        <meta name="description" content={post.excerpt || post.title} />
+        <title key="title">{post.title} - SabiDub Blog</title>
+        <meta name="description" content={post.excerpt || post.title} key="description" />
+
+        {/* Open Graph / Facebook / WhatsApp */}
+        <meta property="og:type" content="article" key="og-type" />
+        <meta property="og:url" content={`https://www.sabidub.com/blog/${post.slug}`} />
+        <meta property="og:title" content={post.title} key="og-title" />
+        <meta property="og:description" content={post.excerpt || post.title} key="og-desc" />
+        <meta property="og:image" content={post.image || "https://www.sabidub.com/images/black.png"} key="og-image" />
+        <meta property="og:site_name" content="SabiDub" />
+
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={`https://www.sabidub.com/blog/${post.slug}`} />
+        <meta property="twitter:title" content={post.title} />
+        <meta property="twitter:description" content={post.excerpt || post.title} />
+        <meta property="twitter:image" content={post.image || "https://www.sabidub.com/images/black.png"} />
       </Head>
       <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden pt-20">
         {/* Full Background Image */}

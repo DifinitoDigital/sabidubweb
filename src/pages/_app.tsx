@@ -70,14 +70,14 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>SabiDub | Empowering Students through Educational Innovation</title>
-        <meta name="description" content="SabiDub is a student-first educational ecosystem providing advanced admission analysis, career guidance, and streamlined school management for educational excellence." />
+        <title key="title">SabiDub | Empowering Students through Educational Innovation</title>
+        <meta name="description" content="SabiDub is a student-first educational ecosystem providing advanced admission analysis, career guidance, and streamlined school management for educational excellence." key="description" />
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta property="og:title" content="SabiDub | Empowering Students through Educational Innovation" />
-        <meta property="og:description" content="SabiDub is a student-first educational ecosystem providing advanced admission analysis, career guidance, and streamlined school management for educational excellence." />
-        <meta property="og:image" content="/images/black.png" />
-        <meta property="og:type" content="website" />
+        <meta property="og:title" content="SabiDub | Empowering Students through Educational Innovation" key="og-title" />
+        <meta property="og:description" content="SabiDub is a student-first educational ecosystem providing advanced admission analysis, career guidance, and streamlined school management for educational excellence." key="og-desc" />
+        <meta property="og:image" content="/images/black.png" key="og-image" />
+        <meta property="og:type" content="website" key="og-type" />
       </Head>
       <main className={`${manrope.className} ${neonderthaw.variable} ${greyQo.variable}`}>
         <Component {...pageProps} />
