@@ -114,9 +114,9 @@ export default function BlogPostView({ post, related }: BlogPostViewProps) {
         <meta property="og:site_name" content="SabiDub" />
 
         {/* Schema.org for Google+ / Pinterest */}
-        <meta itemprop="name" content={post.title} />
-        <meta itemprop="description" content={post.excerpt || post.title} />
-        <meta itemprop="image" content={post.image || "https://www.sabidub.com/images/black.png"} />
+        <meta itemProp="name" content={post.title} />
+        <meta itemProp="description" content={post.excerpt || post.title} />
+        <meta itemProp="image" content={post.image || "https://www.sabidub.com/images/black.png"} />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
