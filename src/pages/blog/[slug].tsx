@@ -3,9 +3,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
 import Footer from "../../components/Footer";
 import Navbar from "../../components/Navbar";
+import { GetServerSideProps } from "next";
 
 // Types for the API response
 interface Author {
@@ -42,77 +42,49 @@ const fadeInUp = {
   transition: { duration: 0.5 },
 };
 
+interface BlogPostViewProps {
+  post: BlogPost;
+  related: BlogPost[];
+}
 
-export default function BlogPostView() {
-  const router = useRouter();
-  const { slug } = router.query;
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [related, setRelated] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+export const getServerSideProps: GetServerSideProps<BlogPostViewProps> = async (context) => {
+  const { slug } = context.params as { slug: string };
+  const baseUrl = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      if (!slug) return;
+  try {
+    const response = await fetch(`${baseUrl}/blog/posts/${slug}`);
 
-      try {
-        setLoading(true);
-        // First try to fetch by slug
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
-        const response = await fetch(`${baseUrl}/blog/posts/${slug}`);
+    if (!response.ok) {
+      return { notFound: true };
+    }
 
-        if (!response.ok) {
-          throw new Error('Post not found');
-        }
+    const post: BlogPost = await response.json();
 
-        const postData: BlogPost = await response.json();
-        setPost(postData);
+    // Fetch related posts
+    let related: BlogPost[] = [];
+    const relatedResponse = await fetch(`${baseUrl}/blog/posts?limit=3&category=${post.category}`);
+    if (relatedResponse.ok) {
+      const relatedData = await relatedResponse.json();
+      related = relatedData.posts.filter((p: BlogPost) => p.slug !== slug).slice(0, 2);
+    }
 
-        // Fetch related posts
-        const relatedResponse = await fetch(`${baseUrl}/blog/posts?limit=3&category=${postData.category}`);
-        if (relatedResponse.ok) {
-          const relatedData = await relatedResponse.json();
-          const filteredRelated = relatedData.posts.filter((p: BlogPost) => p.slug !== slug).slice(0, 2);
-          setRelated(filteredRelated);
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error fetching post:', err);
-      } finally {
-        setLoading(false);
-      }
+    return {
+      props: {
+        post,
+        related,
+      },
     };
-
-    fetchPost();
-  }, [slug]);
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="text-center text-gray-900">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-400 mb-4"></div>
-          <p>Loading post...</p>
-        </div>
-      </main>
-    );
+  } catch (err) {
+    console.error('Error in getServerSideProps:', err);
+    return { notFound: true };
   }
+};
 
-  if (error || !post) {
-    return (
-      <main className="min-h-screen bg-white flex items-center justify-center px-4">
-        <div className="text-center text-gray-900">
-          <p className="text-red-400 mb-4">{error || 'Post not found'}</p>
-          <Link href="/blog" className="text-yellow-600 hover:underline">
-            ← Back to Blog
-          </Link>
-        </div>
-      </main>
-    );
-  }
+export default function BlogPostView({ post, related }: BlogPostViewProps) {
+  const router = useRouter();
 
   // Safety check for required post properties
-  if (!post.image || !post.author || !post.author.name) {
+  if (!post || !post.image || !post.author || !post.author.name) {
     return (
       <main className="min-h-screen bg-white flex items-center justify-center px-4">
         <div className="text-center text-gray-900">
@@ -137,7 +109,14 @@ export default function BlogPostView() {
         <meta property="og:title" content={post.title} key="og-title" />
         <meta property="og:description" content={post.excerpt || post.title} key="og-desc" />
         <meta property="og:image" content={post.image || "https://www.sabidub.com/images/black.png"} key="og-image" />
+        <meta property="og:image:secure_url" content={post.image || "https://www.sabidub.com/images/black.png"} />
+        <meta property="og:image:alt" content={post.title} />
         <meta property="og:site_name" content="SabiDub" />
+
+        {/* Schema.org for Google+ / Pinterest */}
+        <meta itemprop="name" content={post.title} />
+        <meta itemprop="description" content={post.excerpt || post.title} />
+        <meta itemprop="image" content={post.image || "https://www.sabidub.com/images/black.png"} />
 
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
