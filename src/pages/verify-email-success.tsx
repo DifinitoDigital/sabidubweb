@@ -189,7 +189,9 @@ export default function VerifyEmailSuccess() {
             >
               {userType === 'student' || result?.redirectType === 'student'
                 ? "Your student account is successfully verified. You can now log in to the web portal using the button below. If you are using the SabiDub mobile app, please return to the app on your phone to log in."
-                : "Thank you for verifying your email address. Your account is now fully activated and you can access all features of SabiDub."}
+                : userType === 'tutor_support' || result?.redirectType === 'tutor_support'
+                  ? "Your partner account is successfully verified. You can now log in to your dashboard to start earning payouts and managing your support network."
+                  : "Thank you for verifying your email address. Your account is now fully activated and you can access all features of SabiDub."}
             </motion.p>
 
             <motion.div
@@ -206,7 +208,9 @@ export default function VerifyEmailSuccess() {
                       ? "https://portal.sabidub.com/auth/school/signin"
                       : result?.redirectType === 'student' || userType === 'student'
                         ? "https://student.portal.sabidub.com/"
-                        : "https://portal.sabidub.com/auth/staff/signin" // Default to staff portal as it's the main entry for internal users
+                        : result?.redirectType === 'tutor_support' || userType === 'tutor_support'
+                          ? "https://portal.sabidub.com/tutor-support/login"
+                          : "https://portal.sabidub.com/auth/staff/signin" // Default to staff portal
                 }
                 onClick={handleLoginClick}
                 className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
@@ -214,7 +218,9 @@ export default function VerifyEmailSuccess() {
                 <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
                   {userType === 'student' || result?.redirectType === 'student'
                     ? "Login to Student Portal"
-                    : "Login to Your Account"}
+                    : userType === 'tutor_support' || result?.redirectType === 'tutor_support'
+                      ? "Login to Tutor Dashboard"
+                      : "Login to Your Account"}
                 </span>
                 {isRedirecting && (
                   <div className="absolute inset-0 flex items-center justify-center">

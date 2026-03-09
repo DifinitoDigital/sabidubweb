@@ -232,10 +232,18 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
               </li>
               <li>
                 <Link
-                  href="https://portal.sabidub.com/ambassador/join"
+                  href="https://portal.sabidub.com/tutor-support/login"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  Join as Ambassador
+                  Tutor Support Portal
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://portal.sabidub.com/tutor-support/signup"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Join as Tutor Support
                 </Link>
               </li>
               <li>
