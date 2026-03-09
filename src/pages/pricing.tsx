@@ -8,7 +8,7 @@ import axios from "axios";
 import { FaBolt as LuZap, FaCheck as LuCheck, FaMagnifyingGlass as LuSearch } from "react-icons/fa6";
 import Navbar from "../components/Navbar";
 
-type SchoolType = "school" | "admission";
+type SchoolType = "school" | "admission" | "secondary" | "tertiary";
 
 // Map SchoolType to API planType
 const planTypeMap = {
@@ -138,7 +138,9 @@ export default function Pricing() {
 
   // Determine available categories
   const hasSchoolPlans = subscriptionPlans.some(plan => plan.planType === "SCHOOL" || plan.planType === "MANAGEMENT");
-  const hasAdmissionPlans = subscriptionPlans.some(plan => plan.planType === "ADMISSION_CHECKER" || plan.planType === "SECONDARY" || plan.planType === "TERTIARY");
+  const hasAdmissionPlans = subscriptionPlans.some(plan => plan.planType === "ADMISSION_CHECKER");
+  const hasSecondaryPlans = subscriptionPlans.some(plan => plan.planType === "SECONDARY");
+  const hasTertiaryPlans = subscriptionPlans.some(plan => plan.planType === "TERTIARY");
 
   // Auto-switch away from empty categories
   useEffect(() => {
@@ -159,7 +161,11 @@ export default function Pricing() {
     if (schoolType === "school") {
       typeMatch = plan.planType === "SCHOOL" || plan.planType === "MANAGEMENT";
     } else if (schoolType === "admission") {
-      typeMatch = plan.planType === "ADMISSION_CHECKER" || plan.planType === "SECONDARY" || plan.planType === "TERTIARY";
+      typeMatch = plan.planType === "ADMISSION_CHECKER";
+    } else if (schoolType === "secondary") {
+      typeMatch = plan.planType === "SECONDARY";
+    } else if (schoolType === "tertiary") {
+      typeMatch = plan.planType === "TERTIARY";
     }
 
     return billingMatch && typeMatch;
@@ -268,9 +274,13 @@ export default function Pricing() {
               )}
 
               {/* School Type Toggle */}
-              <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
-                {(["school", "admission"] as SchoolType[]).map((type) => {
-                  const available = type === "school" ? hasSchoolPlans : hasAdmissionPlans;
+              <div className="flex items-center justify-center flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
+                {(["school", "secondary", "tertiary", "admission"] as SchoolType[]).map((type) => {
+                  const available =
+                    type === "school" ? hasSchoolPlans :
+                      type === "admission" ? hasAdmissionPlans :
+                        type === "secondary" ? hasSecondaryPlans :
+                          hasTertiaryPlans;
                   if (!available) return null;
                   return (
                     <button
@@ -278,7 +288,7 @@ export default function Pricing() {
                       onClick={() => setSchoolType(type)}
                       className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${schoolType === type ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
                     >
-                      {type === "admission" ? "Admission Checker" : "School"}
+                      {type === "admission" ? "Admission Checker" : type === "school" ? "School" : type === "secondary" ? "Secondary" : "Tertiary"}
                     </button>
                   );
                 })}
@@ -329,6 +339,8 @@ export default function Pricing() {
                       onClick={() => {
                         if (schoolType === "admission") {
                           router.push("/admission-checker");
+                        } else if (schoolType === "secondary" || schoolType === "tertiary") {
+                          window.location.href = "https://student.portal.sabidub.com";
                         } else {
                           window.location.href = "https://portal.sabidub.com/auth/school/signin";
                         }
@@ -603,6 +615,7 @@ export default function Pricing() {
                             key={planId}
                             onClick={() => {
                               if (schoolType === "admission") router.push("/admission-checker");
+                              else if (schoolType === "secondary" || schoolType === "tertiary") window.location.href = "https://student.portal.sabidub.com";
                               else window.location.href = "https://portal.sabidub.com/auth/school/signin";
                             }}
                             className="w-full py-3.5 bg-[#014751] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#013b43] transition-all active:scale-95 shadow-md"

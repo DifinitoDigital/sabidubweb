@@ -33,11 +33,29 @@ export default function VerifyEmailSuccess() {
       // Clear URL parameters immediately
       router.replace('/verify-email-success', undefined, { shallow: true });
 
-      fetch(`${apiUrl}/auth/school/verify-email?email=${email}&token=${token}`, {
-        headers: {
-          'ngrok-skip-browser-warning': '69420'
-        },
-      })
+      const isStudent = userTypeParam === 'student';
+      const endpoint = isStudent ? '/auth/verify-email' : `/auth/school/verify-email?email=${email}&token=${token}`;
+      let fetchOptions: RequestInit;
+
+      if (isStudent) {
+        fetchOptions = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': '69420'
+          },
+          body: JSON.stringify({ token })
+        };
+      } else {
+        fetchOptions = {
+          method: 'GET',
+          headers: {
+            'ngrok-skip-browser-warning': '69420'
+          }
+        };
+      }
+
+      fetch(`${apiUrl}${endpoint}`, fetchOptions)
         .then(res => res.json())
         .then(data => {
           setResult(data);
@@ -48,10 +66,6 @@ export default function VerifyEmailSuccess() {
           setLoading(false);
         });
     } else if (!result) {
-      // If no params and no result (e.g. direct access), show error or handle appropriately
-      // For now, we'll just let it show loading or nothing, or maybe checking if we already have result
-      // But since strict mode might run effect twice, we valid checks.
-      // Assuming if params are missing, it might be a reload or direct access.
       if (!loading) setLoading(false);
     }
   }, [router.isReady, router, result, loading]);
@@ -174,7 +188,7 @@ export default function VerifyEmailSuccess() {
               className="text-gray-600 mb-8"
             >
               {userType === 'student' || result?.redirectType === 'student'
-                ? "Your student account is successfully verified. You can now return to the SabiDub app to log in and start learning."
+                ? "Your student account is successfully verified. You can now log in to the web portal using the button below. If you are using the SabiDub mobile app, please return to the app on your phone to log in."
                 : "Thank you for verifying your email address. Your account is now fully activated and you can access all features of SabiDub."}
             </motion.p>
 
@@ -191,7 +205,7 @@ export default function VerifyEmailSuccess() {
                     : result?.redirectType === 'school_staff' || userType === 'school'
                       ? "https://portal.sabidub.com/auth/school/signin"
                       : result?.redirectType === 'student' || userType === 'student'
-                        ? "/"
+                        ? "https://student.portal.sabidub.com/"
                         : "https://portal.sabidub.com/auth/staff/signin" // Default to staff portal as it's the main entry for internal users
                 }
                 onClick={handleLoginClick}
@@ -199,7 +213,7 @@ export default function VerifyEmailSuccess() {
               >
                 <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
                   {userType === 'student' || result?.redirectType === 'student'
-                    ? "Return to Home"
+                    ? "Login to Student Portal"
                     : "Login to Your Account"}
                 </span>
                 {isRedirecting && (
