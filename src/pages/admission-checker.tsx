@@ -1416,7 +1416,7 @@ export default function AdmissionChecker() {
                                     <InputLabel>Institution</InputLabel>
                                     <SearchableSelect
                                         value={targetUniName}
-                                        onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); setSavedPaymentId(''); setResults([]); setPreviewData(null); }}
+                                        onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); setResults([]); setPreviewData(null); }}
                                         options={institutions.map(i => i.name)}
                                         placeholder="All Universities"
                                         icon={LuSchool}
@@ -1426,7 +1426,7 @@ export default function AdmissionChecker() {
                                     <InputLabel>Preferred Course</InputLabel>
                                     <SearchableSelect
                                         value={targetCourseName}
-                                        onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } setSavedPaymentId(''); setResults([]); setPreviewData(null); }}
+                                        onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } setResults([]); setPreviewData(null); }}
                                         options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses}
                                         placeholder="Select Course"
                                         icon={LuBookOpen}
