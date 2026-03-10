@@ -1472,7 +1472,7 @@ export default function AdmissionChecker() {
                                     <div className="inline-flex items-center gap-2 bg-[#014751]/5 px-6 py-2 rounded-full text-[#014751] font-black uppercase tracking-widest text-xs mb-6">
                                         <LuCheck className="w-4 h-4" />
                                         {(previewData.totalEligible || 0) > 0
-                                            ? `${previewData.totalEligible} Strong Matches Found`
+                                            ? `${previewData.totalEligible} Strong Match${previewData.totalEligible !== 1 ? 'es' : ''} · ${previewData.totalResults || previewData.totalEligible} Courses Analyzed`
                                             : `${previewData.totalResults || 0} Courses Analyzed`}
                                     </div>
 
