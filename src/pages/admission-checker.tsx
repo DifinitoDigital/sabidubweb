@@ -1468,8 +1468,10 @@ export default function AdmissionChecker() {
                         {/* Preview / Pay */}
                         <AnimatePresence>
                             {previewData && (
-                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[3rem] border border-gray-100  p-10 text-center">
-                                    <div className="w-16 h-16 bg-[#014751]/5 rounded-2xl flex items-center justify-center text-[#014751] mx-auto mb-6"><LuZap className="w-8 h-8" /></div>
+                                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white rounded-[3rem] border border-gray-100 p-8 md:p-10">
+                                    <div className="w-16 h-16 bg-[#014751]/5 rounded-2xl flex items-center justify-center text-[#014751] mb-6">
+                                        <LuZap className="w-8 h-8" />
+                                    </div>
                                     <div className="inline-flex items-center gap-2 bg-[#014751]/5 px-6 py-2 rounded-full text-[#014751] font-black uppercase tracking-widest text-xs mb-6">
                                         <LuCheck className="w-4 h-4" />
                                         {(previewData.totalEligible || 0) > 0
@@ -1491,12 +1493,12 @@ export default function AdmissionChecker() {
                                         </div>
                                     )}
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                                         {previewData.plans?.map((p: any) => (
                                             <button
                                                 key={p.id}
                                                 onClick={() => setSelectedPlanId(String(p.id))}
-                                                className={`p-6 rounded-[2.5rem] border-2 transition-all relative overflow-hidden group ${selectedPlanId === String(p.id)
+                                                className={`p-6 rounded-[2.5rem] border-2 transition-all relative overflow-hidden group text-left ${selectedPlanId === String(p.id)
                                                     ? 'border-[#014751] bg-[#014751]/5 ring-4 ring-[#014751]/5'
                                                     : 'border-gray-50 bg-gray-50/30'
                                                     }`}
@@ -1980,10 +1982,13 @@ export default function AdmissionChecker() {
                                 <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Faculty</p>
                                 <p className="font-bold text-xs md:text-sm truncate">{selectedResult.faculty || 'N/A'}</p>
                             </div>
-                            <div className="p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl">
-                                <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Cutoff Mark</p>
-                                <p className="font-bold text-xs md:text-sm">{selectedResult.cutoffMark || 'N/A'}</p>
-                            </div>
+                            {/* Cutoff Mark: only shown for Premium plans */}
+                            {(usageInfo?.planName?.toLowerCase().includes('premium')) && (
+                                <div className="p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl">
+                                    <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Cutoff Mark</p>
+                                    <p className="font-bold text-xs md:text-sm">{selectedResult.cutoffMark || 'N/A'}</p>
+                                </div>
+                            )}
                             <div className="p-4 md:p-5 bg-gray-50 rounded-2xl md:rounded-3xl col-span-2 md:col-span-1">
                                 <p className="text-[8px] md:text-[10px] font-bold text-gray-400 uppercase mb-1">Duration</p>
                                 <p className="font-bold text-xs md:text-sm">{selectedResult.courseDuration ? `${selectedResult.courseDuration} Years` : 'N/A'}</p>
