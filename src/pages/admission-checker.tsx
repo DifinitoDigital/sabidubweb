@@ -88,6 +88,90 @@ const GradeSelect = ({ value, onChange }: { value: Grade, onChange: (val: Grade)
     </div>
 );
 
+const SearchableSelect = ({ value, onChange, options, placeholder, icon: Icon }: { value: string, onChange: (val: string) => void, options: string[], placeholder?: string, icon?: any }) => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [search, setSearch] = useState('');
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const filteredOptions = options.filter(opt =>
+        opt.toLowerCase().includes(search.toLowerCase())
+    );
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+                setSearch('');
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+        <div className="relative" ref={containerRef}>
+            <div
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 flex items-center justify-between cursor-pointer focus-within:border-[#014751] focus-within:ring-4 focus-within:ring-[#014751]/5 transition-all shadow-sm"
+            >
+                <div className="flex items-center gap-3 min-w-0">
+                    {Icon && <Icon className={`w-4 h-4 shrink-0 ${value ? 'text-[#014751]' : 'text-gray-400'}`} />}
+                    <span className={`text-sm font-semibold truncate ${value ? 'text-gray-900' : 'text-gray-300'}`}>
+                        {value || placeholder}
+                    </span>
+                </div>
+                <LuChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </div>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute z-50 left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden"
+                    >
+                        <div className="p-3 border-b border-gray-50 flex items-center gap-2">
+                            <LuSearch className="w-3.5 h-3.5 text-gray-400" />
+                            <input
+                                autoFocus
+                                type="text"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                placeholder="Search..."
+                                className="w-full bg-transparent border-none outline-none text-xs font-bold py-1"
+                            />
+                        </div>
+                        <div className="max-h-[250px] overflow-y-auto py-2">
+                            {placeholder && (
+                                <div
+                                    onClick={() => { onChange(''); setIsOpen(false); setSearch(''); }}
+                                    className="px-4 py-2.5 text-xs font-bold text-[#014751] hover:bg-[#014751]/5 cursor-pointer"
+                                >
+                                    {placeholder}
+                                </div>
+                            )}
+                            {filteredOptions.length > 0 ? (
+                                filteredOptions.map((opt, i) => (
+                                    <div
+                                        key={opt}
+                                        onClick={() => { onChange(opt); setIsOpen(false); setSearch(''); }}
+                                        className={`px-4 py-2.5 text-xs font-bold hover:bg-gray-50 cursor-pointer transition-colors ${value === opt ? 'bg-[#014751]/5 text-[#014751]' : 'text-gray-600'}`}
+                                    >
+                                        {opt}
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="px-4 py-4 text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest">No results found</div>
+                            )}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    );
+};
+
 // Animation variants
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -198,6 +282,7 @@ export default function AdmissionChecker() {
 
     // Enhanced Features State
     const [courseSuggestions, setCourseSuggestions] = useState<any[]>([]);
+    const [totalSuggestionsCount, setTotalSuggestionsCount] = useState(0);
     const [comparisons, setComparisons] = useState<any[]>([]);
     const [simulationResults, setSimulationResults] = useState<any | null>(null);
     const [isComparing, setIsComparing] = useState(false);
@@ -261,6 +346,7 @@ export default function AdmissionChecker() {
                     setCourseSuggestions(data.courseSuggestions);
                     setSuggestionsPage(1);
                     if (data.totalSuggestionsCount !== undefined) {
+                        setTotalSuggestionsCount(data.totalSuggestionsCount);
                         setSuggestionsTotalPages(Math.ceil(data.totalSuggestionsCount / 15));
                     }
                 }
@@ -407,6 +493,7 @@ export default function AdmissionChecker() {
                 setCourseSuggestions(data.courseSuggestions || []);
                 setSuggestionsPage(1);
                 if (data.totalSuggestionsCount !== undefined) {
+                    setTotalSuggestionsCount(data.totalSuggestionsCount);
                     setSuggestionsTotalPages(Math.ceil(data.totalSuggestionsCount / 15));
                 }
                 setIsPaid(true);
@@ -1294,11 +1381,23 @@ export default function AdmissionChecker() {
                             <div className="space-y-4">
                                 <div>
                                     <InputLabel>Institution</InputLabel>
-                                    <Select value={targetUniName} onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); }} options={institutions.map(i => i.name)} placeholder="All Universities" icon={LuSchool} />
+                                    <SearchableSelect
+                                        value={targetUniName}
+                                        onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); }}
+                                        options={institutions.map(i => i.name)}
+                                        placeholder="All Universities"
+                                        icon={LuSchool}
+                                    />
                                 </div>
                                 <div>
                                     <InputLabel>Preferred Course</InputLabel>
-                                    <Select value={targetCourseName} onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } }} options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses} placeholder="Select Course" icon={LuBookOpen} />
+                                    <SearchableSelect
+                                        value={targetCourseName}
+                                        onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } }}
+                                        options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses}
+                                        placeholder="Select Course"
+                                        icon={LuBookOpen}
+                                    />
                                 </div>
 
                                 {courseRequirements?.found && courseRequirements.requirements?.[0] && (
@@ -1340,7 +1439,18 @@ export default function AdmissionChecker() {
                                     </div>
 
                                     <h2 className="text-3xl font-black mb-2">Analysis Complete</h2>
-                                    <p className="text-gray-500 font-medium mb-10 text-sm">{previewData.message || "We've identified potential schools and courses where you meet the admission requirements."}</p>
+                                    <p className="text-gray-500 font-medium mb-6 text-sm">{previewData.message || "We've identified potential schools and courses where you meet the admission requirements."}</p>
+
+                                    {previewData.hasSuggestions && (
+                                        <div className="mb-8 p-4 bg-yellow-50 rounded-2xl border border-yellow-100 flex items-center gap-3 text-left">
+                                            <div className="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center text-yellow-700 shrink-0">
+                                                <LuZap className="w-5 h-5" />
+                                            </div>
+                                            <p className="text-[11px] font-bold text-yellow-800 leading-tight">
+                                                {previewData.suggestionMessage || "We found alternative courses that match your profile better!"}
+                                            </p>
+                                        </div>
+                                    )}
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
                                         {previewData.plans?.map((p: any) => (
@@ -1413,17 +1523,16 @@ export default function AdmissionChecker() {
                                     const planName = (usageInfo?.planName || '').toLowerCase();
                                     const isPremium = planName.includes('premium');
                                     const isStandard = planName.includes('standard');
-                                    const isBasic = !isPremium && !isStandard;
 
                                     // Define available tabs based on plan
-                                    let availableTabs: ('results' | 'suggestions' | 'comparison' | 'simulation')[] = ['results'];
+                                    // Suggestions tab is now always visible if results exist, but content is locked for basic
+                                    let availableTabs: ('results' | 'suggestions' | 'comparison' | 'simulation')[] = ['results', 'suggestions'];
 
                                     if (isPremium) {
                                         availableTabs = ['results', 'suggestions', 'comparison', 'simulation'];
                                     } else if (isStandard) {
                                         availableTabs = ['results', 'suggestions', 'comparison'];
                                     }
-                                    // Basic: only 'results'
 
                                     return (
                                         <>
@@ -1474,6 +1583,28 @@ export default function AdmissionChecker() {
                                                     })()}
                                                 </div>
                                             </div>
+
+                                            {(totalSuggestionsCount > 0) && (
+                                                <motion.div
+                                                    initial={{ opacity: 0, y: -10 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    onClick={() => setActiveTab('suggestions')}
+                                                    className="p-4 bg-yellow-50 rounded-2xl border border-yellow-100 flex items-center justify-between cursor-pointer hover:bg-yellow-100/50 transition-colors"
+                                                >
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-yellow-400/20 flex items-center justify-center text-yellow-700">
+                                                            <LuZap className="w-4 h-4" />
+                                                        </div>
+                                                        <p className="text-[11px] font-black text-yellow-800 uppercase tracking-tight">
+                                                            We found {totalSuggestionsCount} alternative course suggestions for you!
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-center gap-1 text-[10px] font-black text-yellow-700">
+                                                        VIEW DETAILS <LuChevronRight className="w-3 h-3" />
+                                                    </div>
+                                                </motion.div>
+                                            )}
+
                                             {(() => {
                                                 const hasMore = page < totalPages;
 
