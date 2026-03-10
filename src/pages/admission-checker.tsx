@@ -1294,11 +1294,11 @@ export default function AdmissionChecker() {
                             <div className="space-y-4">
                                 <div>
                                     <InputLabel>Institution</InputLabel>
-                                    <Select value={targetUniName} onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); }} options={institutions.map(i => i.name)} placeholder="All Universities" icon={LuSchool} />
+                                    <Select value={targetUniName} onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); }} options={institutions.map(i => i.name)} placeholder="All Universities" icon={LuSchool} />
                                 </div>
                                 <div>
                                     <InputLabel>Preferred Course</InputLabel>
-                                    <Select value={targetCourseName} onChange={v => setTargetCourseName(v)} options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses} placeholder="Select Course" icon={LuBookOpen} />
+                                    <Select value={targetCourseName} onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } }} options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses} placeholder="Select Course" icon={LuBookOpen} />
                                 </div>
 
                                 {courseRequirements?.found && courseRequirements.requirements?.[0] && (
