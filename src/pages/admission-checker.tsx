@@ -232,7 +232,10 @@ export default function AdmissionChecker() {
 
     const fetchAdmissionResults = useCallback(async (paymentId: string, pageNum: number, searchStr: string = '', append = false, isResume = false) => {
         if (!paymentId) return;
-        if (pageNum === 1 && !append) setIsUnlocking(true);
+        if (pageNum === 1 && !append) {
+            if (isResume) setIsChecking(true);
+            else setIsUnlocking(true);
+        }
         else setIsFetchingMore(true);
         setHasError(false);
 
@@ -1433,7 +1436,7 @@ export default function AdmissionChecker() {
                                     );
                                 })()}
 
-                                <div className="bg-white rounded-3xl md:rounded-[3rem] border border-gray-100 p-4 md:p-8 min-h-[400px] md:min-h-[500px]">
+                                <div className="mx-4 md:mx-8 bg-white rounded-3xl md:rounded-[3rem] border border-gray-100 p-4 md:p-8 min-h-[400px] md:min-h-[500px]">
                                     {activeTab === 'results' && (
                                         <div className="space-y-6">
                                             <div className="flex justify-between items-center mb-8">
@@ -1651,7 +1654,7 @@ export default function AdmissionChecker() {
                                                     )}
                                                 </div>
                                             ) : (
-                                                usageInfo?.planName?.toLowerCase().includes('premium') ? (
+                                                usageInfo?.planName?.toLowerCase().includes('premium') || usageInfo?.planName?.toLowerCase().includes('standard') ? (
                                                     <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed rounded-3xl gap-4">
                                                         <p className="text-sm text-gray-400 font-medium">See your admission chances for <span className="text-[#014751] font-bold">{targetCourseName || 'this course'}</span> across other top universities.</p>
                                                         <button onClick={() => handleCompareRequest()} disabled={isComparing} className="px-6 py-3 rounded-xl bg-[#014751] text-white font-black uppercase text-xs shadow-lg shadow-[#014751]/20 active:scale-95 disabled:opacity-50">
@@ -1704,7 +1707,9 @@ export default function AdmissionChecker() {
                                 <div className="absolute top-0 w-20 h-20 border-4 border-t-[#014751] rounded-full animate-spin" />
                             </div>
                             <div className="text-center">
-                                <h3 className="text-lg font-black text-gray-900 uppercase tracking-widest mb-1">Confirming Payment</h3>
+                                <h3 className="text-lg font-black text-gray-900 uppercase tracking-widest mb-1">
+                                    {savedPaymentId ? 'Analyzing Credentials' : 'Confirming Payment'}
+                                </h3>
                                 <p className="text-xs font-bold text-gray-400">Please do not close this window...</p>
                             </div>
                         </div>
