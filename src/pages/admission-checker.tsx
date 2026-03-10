@@ -419,6 +419,9 @@ export default function AdmissionChecker() {
 
     const checkAdmission = async () => {
         setIsChecking(true);
+        // Capture whether this run is a resume/re-use of a previous paymentId.
+        // After the API responds we use this to decide whether to restore form subjects.
+        const wasSavedPaymentId = !!savedPaymentId;
         try {
             const body = {
                 jambScore: Number(jambScore),
@@ -444,7 +447,11 @@ export default function AdmissionChecker() {
             }
 
             const data = await res.json();
-            if (data.subjects) {
+
+            // Only restore subjects from backend during a resume flow.
+            // On a fresh check the user's form values are already correct and
+            // must NOT be overwritten (that was causing the stale-result bug).
+            if (wasSavedPaymentId && data.subjects && data.subjects.length > 0) {
                 setSubjects(data.subjects.map((s: any) => ({
                     id: Math.random().toString(36).substr(2, 9),
                     name: s.name,
@@ -610,15 +617,47 @@ export default function AdmissionChecker() {
     }, [targetCourseName, selectedInstitutionId]);
 
     const addSubject = () => {
-        if (subjects.length < 9) setSubjects([...subjects, { id: Math.random().toString(), name: '', grade: 'C6' }]);
+        if (subjects.length < 9) {
+            setSubjects([...subjects, { id: Math.random().toString(), name: '', grade: 'C6' }]);
+            // User is modifying the form — clear any stale check state
+            setSavedPaymentId('');
+            setResults([]);
+            setPreviewData(null);
+        }
     };
 
     const removeSubject = (id: string) => {
-        if (subjects.length > 1) setSubjects(subjects.filter(s => s.id !== id));
+        if (subjects.length > 1) {
+            setSubjects(subjects.filter(s => s.id !== id));
+            // User is modifying the form — clear any stale check state
+            setSavedPaymentId('');
+            setResults([]);
+            setPreviewData(null);
+        }
     };
 
     const updateSubject = (id: string, field: 'name' | 'grade', value: string) => {
         setSubjects(subjects.map(s => s.id === id ? { ...s, [field]: value } : s));
+        // User is modifying the form — clear any stale check state
+        setSavedPaymentId('');
+        setResults([]);
+        setPreviewData(null);
+    };
+
+    // Clear stale state when user edits UTME subjects
+    const updateUtmeSubject = (index: number, value: string) => {
+        setUtmeSubjects(prev => prev.map((s, i) => i === index ? value : s));
+        setSavedPaymentId('');
+        setResults([]);
+        setPreviewData(null);
+    };
+
+    // Clear stale state when user changes JAMB score
+    const updateJambScore = (value: number | '') => {
+        setJambScore(value);
+        setSavedPaymentId('');
+        setResults([]);
+        setPreviewData(null);
     };
 
 
@@ -1296,7 +1335,7 @@ export default function AdmissionChecker() {
                                             id="jambScore"
                                             name="jambScore"
                                             value={jambScore}
-                                            onChange={e => setJambScore(e.target.value === '' ? '' : Number(e.target.value))}
+                                            onChange={e => updateJambScore(e.target.value === '' ? '' : Number(e.target.value))}
                                             className="w-full bg-gray-50 px-4 py-3 rounded-xl font-black text-[#014751] outline-none text-sm"
                                             placeholder="000"
                                         />
@@ -1326,7 +1365,7 @@ export default function AdmissionChecker() {
                                                 <Select
                                                     key={i}
                                                     value={s}
-                                                    onChange={v => { const n = [...utmeSubjects]; n[i] = v; setUtmeSubjects(n); }}
+                                                    onChange={v => updateUtmeSubject(i, v)}
                                                     options={availableSubjects}
                                                     placeholder={i === 0 ? 'English' : 'Subject'}
                                                 />
@@ -1383,7 +1422,7 @@ export default function AdmissionChecker() {
                                     <InputLabel>Institution</InputLabel>
                                     <SearchableSelect
                                         value={targetUniName}
-                                        onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); }}
+                                        onChange={v => { setTargetUniName(v); const i = institutions.find(inst => inst.name === v); setSelectedInstitutionId(i?.id || ''); setTargetCourseName(''); setTargetDepartmentId(''); setSavedPaymentId(''); setResults([]); setPreviewData(null); }}
                                         options={institutions.map(i => i.name)}
                                         placeholder="All Universities"
                                         icon={LuSchool}
@@ -1393,7 +1432,7 @@ export default function AdmissionChecker() {
                                     <InputLabel>Preferred Course</InputLabel>
                                     <SearchableSelect
                                         value={targetCourseName}
-                                        onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } }}
+                                        onChange={v => { setTargetCourseName(v); if (selectedInstitutionId) { const dept = filteredDepartments.find(d => d.name === v); setTargetDepartmentId(dept?.id || ''); } else { setTargetDepartmentId(''); } setSavedPaymentId(''); setResults([]); setPreviewData(null); }}
                                         options={selectedInstitutionId ? filteredDepartments.map(d => d.name) : globalCourses}
                                         placeholder="Select Course"
                                         icon={LuBookOpen}
