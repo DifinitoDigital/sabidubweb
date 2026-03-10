@@ -616,8 +616,7 @@ export default function AdmissionChecker() {
     const addSubject = () => {
         if (subjects.length < 9) {
             setSubjects([...subjects, { id: Math.random().toString(), name: '', grade: 'C6' }]);
-            // User is modifying the form — clear any stale check state
-            setSavedPaymentId('');
+            // Clear stale results/preview but keep savedPaymentId so existing paid plan can be reused
             setResults([]);
             setPreviewData(null);
         }
@@ -626,8 +625,7 @@ export default function AdmissionChecker() {
     const removeSubject = (id: string) => {
         if (subjects.length > 1) {
             setSubjects(subjects.filter(s => s.id !== id));
-            // User is modifying the form — clear any stale check state
-            setSavedPaymentId('');
+            // Clear stale results/preview but keep savedPaymentId so existing paid plan can be reused
             setResults([]);
             setPreviewData(null);
         }
@@ -635,8 +633,7 @@ export default function AdmissionChecker() {
 
     const updateSubject = (id: string, field: 'name' | 'grade', value: string) => {
         setSubjects(subjects.map(s => s.id === id ? { ...s, [field]: value } : s));
-        // User is modifying the form — clear any stale check state
-        setSavedPaymentId('');
+        // Clear stale results/preview but keep savedPaymentId so existing paid plan can be reused
         setResults([]);
         setPreviewData(null);
     };
@@ -644,7 +641,7 @@ export default function AdmissionChecker() {
     // Clear stale state when user edits UTME subjects
     const updateUtmeSubject = (index: number, value: string) => {
         setUtmeSubjects(prev => prev.map((s, i) => i === index ? value : s));
-        setSavedPaymentId('');
+        // Clear stale results/preview but keep savedPaymentId so existing paid plan can be reused
         setResults([]);
         setPreviewData(null);
     };
@@ -652,7 +649,7 @@ export default function AdmissionChecker() {
     // Clear stale state when user changes JAMB score
     const updateJambScore = (value: number | '') => {
         setJambScore(value);
-        setSavedPaymentId('');
+        // Clear stale results/preview but keep savedPaymentId so existing paid plan can be reused
         setResults([]);
         setPreviewData(null);
     };
