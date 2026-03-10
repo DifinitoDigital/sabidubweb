@@ -359,14 +359,11 @@ export default function AdmissionChecker() {
                 }
 
                 // Repopulate form fields for seamless resume
+                // NOTE: Do NOT overwrite institution/course/department from resume data.
+                // The user's current form selections are the source of truth.
+                // Overwriting them was causing "All Universities" to revert to the old
+                // specific institution from the previous run.
                 if (data.jambScore) setJambScore(data.jambScore);
-                if (data.utmeSubjects && data.utmeSubjects.length > 0) {
-                    setUtmeSubjects(data.utmeSubjects);
-                }
-                if (data.targetInstitution) setSelectedInstitutionId(data.targetInstitution);
-                if (data.targetCourse) setTargetCourseName(data.targetCourse);
-                if (data.targetDepartment) setTargetDepartmentId(data.targetDepartment);
-                if (data.email) setUserEmail(data.email);
 
                 setIsPaid(true);
                 setSavedPaymentId(paymentId.trim());
