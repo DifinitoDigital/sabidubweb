@@ -1,7 +1,7 @@
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://sabidubbackend.onrender.com';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
 // Staff IDs: SBID-, ADM-, SAD-   |   Ambassador IDs: AMB-
 const VALID_PREFIXES = ['SBID-', 'ADM-', 'SAD-', 'AMB-'];
@@ -128,7 +128,7 @@ export default function VerifyPage({ data, rawId }: Props) {
 
                 <Logo />
 
-                <div className="card" style={{ width: '100%', maxWidth: 420, background: '#fff', borderRadius: 28, boxShadow: '0 24px 64px rgba(0,0,0,0.1), 0 4px 16px rgba(0,0,0,0.05)', overflow: 'hidden', marginTop: 28 }}>
+                <div className="card" style={{ width: '100%', maxWidth: 420, background: '#fff', borderRadius: 28, overflow: 'hidden', marginTop: 28 }}>
 
                     {/* Accent top bar */}
                     <div style={{ height: 6, background: theme.bar }} />
@@ -196,10 +196,10 @@ export default function VerifyPage({ data, rawId }: Props) {
                                 value={data.employmentStatus.replace(/_/g, ' ')}
                                 highlight={data.verified ? 'green' : 'red'}
                             />
-                            {data.employmentDate && (
+                            {data.type === 'ambassador' && data.employmentDate && (
                                 <InfoRow
                                     icon="📅"
-                                    label={data.type === 'ambassador' ? 'Active Since' : 'Joined'}
+                                    label="Active Since"
                                     value={new Date(data.employmentDate).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })}
                                 />
                             )}
@@ -216,11 +216,12 @@ export default function VerifyPage({ data, rawId }: Props) {
 // ─── Shared sub-components ───────────────────────────────────────────────────
 function Logo() {
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <div style={{ width: 38, height: 38, background: '#014751', borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </div>
-            <span style={{ fontSize: 19, fontWeight: 900, color: '#014751', letterSpacing: '-0.5px', fontFamily: 'Manrope,sans-serif' }}>Sabidub</span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 4 }}>
+            <img
+                src="/images/black.png"
+                alt="Sabidub"
+                style={{ height: 36, width: 'auto', objectFit: 'contain' }}
+            />
         </div>
     );
 }
