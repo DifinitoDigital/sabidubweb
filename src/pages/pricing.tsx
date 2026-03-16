@@ -267,7 +267,7 @@ export default function Pricing() {
                       onClick={() => setIsYearly(true)}
                       className={`px-6 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-2 ${isYearly ? 'bg-gray-900 text-white shadow-md' : 'text-gray-500 hover:text-gray-900'}`}
                     >
-                      Annual <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${isYearly ? 'bg-white/20 text-white' : 'bg-gray-200 text-gray-600'}`}>-20%</span>
+                      Yearly <span className={`text-[9px] px-1.5 py-0.5 rounded-full ${isYearly ? 'bg-white/20 text-white' : 'bg-green-100 text-green-700'}`}>Save 20%</span>
                     </button>
                   </div>
                 </div>
@@ -315,9 +315,16 @@ export default function Pricing() {
                           {formatPrice(plan.price)}
                         </span>
                         {schoolType !== "admission" && (
-                          <span className="text-xs text-gray-400 ml-2 font-medium">
-                            per {isYearly ? 'year' : 'month'}
-                          </span>
+                          <div className="flex flex-col ml-3">
+                            <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+                              billed {isYearly ? 'yearly' : 'monthly'}
+                            </span>
+                            {isYearly && (
+                              <span className="text-[11px] text-green-600 font-bold">
+                                (Save {formatPrice(plan.price * 0.25)})
+                              </span>
+                            )}
+                          </div>
                         )}
                       </div>
 
@@ -426,8 +433,11 @@ export default function Pricing() {
                       <div className="flex items-stretch divide-x divide-white/10">
                         <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
                           <span className="text-sm sm:text-lg font-bold leading-tight">{comparisonResult.plan1Name}</span>
-                          <span className="text-white/60 text-xs sm:text-sm mt-1">{formatPrice(comparisonResult.plan1Price)}</span>
-                          <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan1TotalFeatures} features</span>
+                          <span className="text-white/60 text-[10px] sm:text-xs mt-1 uppercase font-bold tracking-wider">{formatPrice(comparisonResult.plan1Price)} / {isYearly ? 'yr' : 'mo'}</span>
+                          {isYearly && schoolType !== "admission" && (
+                            <span className="text-[9px] text-[#AFF8C8] font-bold">(Save {formatPrice(comparisonResult.plan1Price * 0.25)})</span>
+                          )}
+                          <span className="text-[9px] text-white/30 mt-1">{comparisonResult.plan1TotalFeatures} features</span>
                         </div>
                         {/* Price diff — compact on mobile */}
                         <div className="w-20 sm:w-28 shrink-0 flex flex-col items-center justify-center text-center px-2 py-4">
@@ -444,8 +454,11 @@ export default function Pricing() {
                         </div>
                         <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
                           <span className="text-sm sm:text-lg font-bold leading-tight">{comparisonResult.plan2Name}</span>
-                          <span className="text-white/60 text-xs sm:text-sm mt-1">{formatPrice(comparisonResult.plan2Price)}</span>
-                          <span className="text-[10px] text-white/40 mt-1">{comparisonResult.plan2TotalFeatures} features</span>
+                          <span className="text-white/60 text-[10px] sm:text-xs mt-1 uppercase font-bold tracking-wider">{formatPrice(comparisonResult.plan2Price)} / {isYearly ? 'yr' : 'mo'}</span>
+                          {isYearly && schoolType !== "admission" && (
+                            <span className="text-[9px] text-[#AFF8C8] font-bold">(Save {formatPrice(comparisonResult.plan2Price * 0.25)})</span>
+                          )}
+                          <span className="text-[9px] text-white/30 mt-1">{comparisonResult.plan2TotalFeatures} features</span>
                         </div>
                       </div>
                     </div>
