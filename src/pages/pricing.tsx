@@ -332,7 +332,9 @@ export default function Pricing() {
                       <div className="mt-4 space-y-2">
                         <div className="flex items-center gap-2 text-xs font-bold text-gray-600">
                           <span className="w-1.5 h-1.5 rounded-full bg-[#014751]"></span>
-                          {plan.usageLimit ? `${plan.usageLimit} Users Limit` : (plan.hasUnlimitedAccess ? "Unlimited Access" : "Standard Access")}
+                          {plan.usageLimit 
+                            ? `${plan.usageLimit} ${schoolType === "admission" ? "Credits Limit" : "Users Limit"}` 
+                            : (plan.hasUnlimitedAccess ? "Unlimited Access" : "Standard Access")}
                         </div>
                         {plan.isRecommended && (
                           <div className="inline-block px-2 py-1 bg-[#014751]/10 text-[#014751] text-[10px] font-bold uppercase rounded-md">
