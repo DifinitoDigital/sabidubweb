@@ -66,7 +66,7 @@ const staggerChildren = {
 export default function Pricing() {
 
   const [isYearly, setIsYearly] = useState(false);
-  const [schoolType, setSchoolType] = useState<SchoolType>("school");
+  const [schoolType, setSchoolType] = useState<SchoolType>("secondary");
   const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -145,13 +145,19 @@ export default function Pricing() {
   // Auto-switch away from empty categories
   useEffect(() => {
     if (!loading && subscriptionPlans.length > 0) {
-      if (schoolType === "school" && !hasSchoolPlans && hasAdmissionPlans) {
-        setSchoolType("admission");
-      } else if (schoolType === "admission" && !hasAdmissionPlans && hasSchoolPlans) {
-        setSchoolType("school");
+      const currentAvailable = (schoolType === "secondary" && hasSecondaryPlans) ||
+                               (schoolType === "tertiary" && hasTertiaryPlans) ||
+                               (schoolType === "school" && hasSchoolPlans) ||
+                               (schoolType === "admission" && hasAdmissionPlans);
+      
+      if (!currentAvailable) {
+        if (hasSecondaryPlans) setSchoolType("secondary");
+        else if (hasTertiaryPlans) setSchoolType("tertiary");
+        else if (hasSchoolPlans) setSchoolType("school");
+        else if (hasAdmissionPlans) setSchoolType("admission");
       }
     }
-  }, [subscriptionPlans, loading, hasSchoolPlans, hasAdmissionPlans, schoolType]);
+  }, [subscriptionPlans, loading, hasSchoolPlans, hasAdmissionPlans, hasSecondaryPlans, hasTertiaryPlans, schoolType]);
 
   // Filter plans client-side based on billing cycle, school type, and usage limit
   const filteredPlans = subscriptionPlans.filter(plan => {
@@ -275,7 +281,7 @@ export default function Pricing() {
 
               {/* School Type Toggle */}
               <div className="flex items-center justify-center flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
-                {(["school", "secondary", "tertiary", "admission"] as SchoolType[]).map((type) => {
+                {(["secondary", "tertiary", "school", "admission"] as SchoolType[]).map((type) => {
                   const available =
                     type === "school" ? hasSchoolPlans :
                       type === "admission" ? hasAdmissionPlans :
