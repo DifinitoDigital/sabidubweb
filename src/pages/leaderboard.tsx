@@ -7,7 +7,8 @@ import { useState, useEffect } from "react";
 
 const RANK_MEDAL: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
 
-type Tab = "top50" | "universities" | "secondary";
+type StudentTab = "top50" | "universities" | "secondary";
+type SchoolTab = "topUniversities" | "topSecondarySchools";
 
 interface LeaderboardEntry {
   id: string;
@@ -20,25 +21,46 @@ interface LeaderboardEntry {
   class?: string;
   points: number;
   competitions: number;
+  previousRank: number;
   profileImage?: string;
 }
 
+interface SchoolLeaderboardEntry {
+  id: string;
+  rank: number;
+  name: string;
+  shortName?: string;
+  state: string;
+  type: string;
+  category: 'University' | 'Secondary';
+  totalStudents: number;
+  totalPoints: number;
+  avgPoints: number;
+}
+
+interface LeaderboardData {
+  top50?: LeaderboardEntry[];
+  tertiary: LeaderboardEntry[];
+  secondary: LeaderboardEntry[];
+  topUniversities?: SchoolLeaderboardEntry[];
+  topSecondarySchools?: SchoolLeaderboardEntry[];
+}
+
 export default function Leaderboard() {
-    const [tab, setTab] = useState<Tab>("top50");
+    const [studentTab, setStudentTab] = useState<StudentTab>("top50");
+    const [schoolTab, setSchoolTab] = useState<SchoolTab>("topUniversities");
     const [isLoading, setIsLoading] = useState(true);
-    const [data, setData] = useState<{ top50?: LeaderboardEntry[]; tertiary: LeaderboardEntry[]; secondary: LeaderboardEntry[] }>({ tertiary: [], secondary: [] });
+    const [data, setData] = useState<LeaderboardData>({ tertiary: [], secondary: [] });
 
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leaderboards`);
                 const json = await res.json();
-                
-                // Set data if valid response
                 if (json && Array.isArray(json.tertiary) && Array.isArray(json.secondary)) {
                     setData(json);
                 } else {
-                    setData({ top50: [], tertiary: [], secondary: [] });
+                    setData({ top50: [], tertiary: [], secondary: [], topUniversities: [], topSecondarySchools: [] });
                 }
             } catch (err) {
                 console.error("Failed to fetch leaderboard", err);
@@ -46,27 +68,26 @@ export default function Leaderboard() {
                 setIsLoading(false);
             }
         };
-
         fetchLeaderboard();
     }, []);
 
     const uniData = data.tertiary || [];
     const secData = data.secondary || [];
     const top50Data = data.top50 || [];
-    
-    // Check if there are any students
-    const hasAnyStudent = [...top50Data, ...uniData, ...secData].length > 0;
+    const topUniversities = data.topUniversities || [];
+    const topSecondarySchools = data.topSecondarySchools || [];
 
-    const activeData = tab === "top50" ? top50Data : tab === "universities" ? uniData : secData;
+    const hasAnyStudent = [...top50Data, ...uniData, ...secData].length > 0;
+    const hasAnySchool = [...topUniversities, ...topSecondarySchools].length > 0;
+
+    const activeStudentData = studentTab === "top50" ? top50Data : studentTab === "universities" ? uniData : secData;
+    const activeSchoolData: SchoolLeaderboardEntry[] = schoolTab === "topUniversities" ? topUniversities : topSecondarySchools;
 
     return (
         <>
             <Head>
-                <title>School Leaderboard | SabiDub — Top Nigerian Schools by Performance</title>
-                <meta
-                    name="description"
-                    content="See the top-performing Nigerian universities and secondary schools ranked by WAEC pass rates, academic performance, and student results."
-                />
+                <title>Leaderboard | SabiDub — Top Nigerian Students & Schools</title>
+                <meta name="description" content="See the top-performing Nigerian students and schools ranked by academic performance, quiz points, and competition results." />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
 
@@ -81,44 +102,30 @@ export default function Leaderboard() {
                     <div className="absolute bottom-0 left-10 w-64 h-64 bg-[#014751]/10 rounded-full blur-[80px] pointer-events-none" />
 
                     <div className="max-w-6xl mx-auto relative z-10 text-center">
-                        <motion.span
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.05 }}
-                            className="inline-block px-4 py-1.5 bg-[#014751]/8 border border-[#014751]/10 text-[#014751] text-xs font-extrabold uppercase tracking-[0.25em] rounded-full mb-8"
-                        >
-                            🏆 Student Leaderboards
+                        <motion.span initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+                            className="inline-block px-4 py-1.5 bg-[#014751]/8 border border-[#014751]/10 text-[#014751] text-xs font-extrabold uppercase tracking-[0.25em] rounded-full mb-8">
+                            🏆 Live Rankings
                         </motion.span>
-                        <motion.h1
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-4xl sm:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.05] tracking-tight mb-6"
-                        >
+                        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                            className="text-4xl sm:text-6xl lg:text-7xl font-black text-gray-900 leading-[1.05] tracking-tight mb-6">
                             Nigeria&apos;s Top<br />
-                            <span className="text-[#014751]">Performing Students</span>
+                            <span className="text-[#014751]">Students & Schools</span>
                         </motion.h1>
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.25 }}
-                            className="text-gray-500 text-lg sm:text-xl max-w-2xl mx-auto font-medium mb-12"
-                        >
-                            Ranked by quiz engagement, academic scores, and competition victories across the nation. Updated dynamically.
+                        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }}
+                            className="text-gray-500 text-lg sm:text-xl max-w-2xl mx-auto font-medium mb-12">
+                            Real-time rankings powered by quiz performance, academic scores, and competition results.
                         </motion.p>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 16 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.35 }}
-                            className="flex flex-wrap justify-center gap-8 text-center"
-                        >
+                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+                            className="flex flex-wrap justify-center gap-8 text-center">
                             {[
                                 { value: uniData.length.toLocaleString(), label: "Tertiary Students" },
                                 { value: secData.length.toLocaleString(), label: "Secondary Students" },
+                                { value: topUniversities.length.toLocaleString(), label: "Universities Ranked" },
+                                { value: topSecondarySchools.length.toLocaleString(), label: "Schools Ranked" },
                             ].map(s => (
                                 <div key={s.label}>
-                                    <p className="text-3xl sm:text-4xl font-black text-[#014751]">{s.value}</p>
+                                    <p className="text-3xl sm:text-4xl font-black text-[#014751]">{isLoading ? "—" : s.value}</p>
                                     <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mt-1">{s.label}</p>
                                 </div>
                             ))}
@@ -126,140 +133,227 @@ export default function Leaderboard() {
                     </div>
                 </section>
 
-                {/* ── CONTROLS ── */}
-                <section className="sm:sticky sm:top-[64px] z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 py-4 shadow-sm">
-                    <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-4">
-                        {/* Tab toggle */}
-                        {hasAnyStudent && (
-                            <div className="flex bg-gray-100 rounded-2xl p-1 gap-1 w-full sm:w-auto overflow-x-auto hide-scrollbar">
-                                <button
-                                    onClick={() => setTab("top50")}
-                                    className={`whitespace-nowrap flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${tab === "top50" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
-                                        }`}
-                                >
-                                    🌟 Top 50 Students
-                                </button>
-                                <button
-                                    onClick={() => setTab("universities")}
-                                    className={`whitespace-nowrap flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${tab === "universities" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
-                                        }`}
-                                >
-                                    🎓 Universities
-                                </button>
-                                <button
-                                    onClick={() => setTab("secondary")}
-                                    className={`whitespace-nowrap flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${tab === "secondary" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
-                                        }`}
-                                >
-                                    🏫 Secondary
-                                </button>
-                            </div>
-                        )}
+                {/* ══════════════════════════════════════════════
+                    STUDENT LEADERBOARD SECTION
+                ══════════════════════════════════════════════ */}
+                <section className="px-6 pt-10 pb-4 bg-white">
+                    <div className="max-w-6xl mx-auto">
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-[#014751] mb-4">👤 Student Rankings</p>
                     </div>
                 </section>
 
-                {/* ── FULL TABLE ── */}
-                <section className="px-6 pt-16 pb-12 bg-white min-h-[400px]">
-                    <div className="max-w-6xl mx-auto">
-                        <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-gray-400 mb-8 text-center sm:text-left">
-                            {tab === "top50" ? "Top 50 Students (Global)" : tab === "universities" ? "Tertiary Students Rankings" : "Secondary Students Rankings"}
-                        </p>
+                {/* Controls – Student */}
+                <div className="sm:sticky sm:top-[64px] z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 sm:px-6 py-3 shadow-sm">
+                    <div className="max-w-6xl mx-auto flex items-center justify-center sm:justify-start">
+                        {hasAnyStudent && (
+                            <div className="flex bg-gray-100 rounded-2xl p-1 gap-1 overflow-x-auto hide-scrollbar">
+                                {([
+                                    { key: "top50", label: "🌟 Top 50" },
+                                    { key: "universities", label: "🎓 Tertiary" },
+                                    { key: "secondary", label: "🏫 Secondary" },
+                                ] as { key: StudentTab; label: string }[]).map(t => (
+                                    <button key={t.key} onClick={() => setStudentTab(t.key)}
+                                        className={`whitespace-nowrap px-4 sm:px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${studentTab === t.key ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                                        {t.label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
 
-                        <div className="space-y-3">
-                            <AnimatePresence mode="wait">
-                                {isLoading ? (
-                                    <motion.div
-                                        key="loading"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        className="py-20 text-center"
-                                    >
-                                        <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-[#014751] animate-spin mx-auto mb-4" />
-                                        <p className="text-sm font-bold text-gray-500">Loading live rankings...</p>
-                                    </motion.div>
-                                ) : !hasAnyStudent ? (
-                                    <motion.div
-                                        key="empty"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}
-                                        className="py-24 text-center bg-gray-50 rounded-3xl border border-gray-100"
-                                    >
-                                        <div className="text-4xl mb-4">🏆</div>
-                                        <p className="text-xl font-bold text-gray-900 mb-2">No rankings available yet!</p>
-                                        <p className="text-sm text-gray-500">Take a quiz or participate in a competition to get on the leaderboard.</p>
-                                    </motion.div>
-                                ) : (
-                                    activeData.map((student, i) => {
-                                        const rowStyle =
-                                            student.rank === 1
-                                                ? "bg-[#014751]/5 border-[#014751]/25 shadow-sm"
-                                                : student.rank === 2
-                                                    ? "bg-gray-50 border-gray-300/60"
-                                                    : student.rank === 3
-                                                        ? "bg-amber-50/60 border-amber-200/60"
-                                                        : "bg-white border-gray-100 hover:border-gray-200";
+                {/* Student List */}
+                <section className="px-6 pt-8 pb-12 bg-white min-h-[300px]">
+                    <div className="max-w-6xl mx-auto space-y-3">
+                        <AnimatePresence mode="wait">
+                            {isLoading ? (
+                                <motion.div key="sLoad" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-16 text-center">
+                                    <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-[#014751] animate-spin mx-auto mb-4" />
+                                    <p className="text-sm font-bold text-gray-500">Loading student rankings...</p>
+                                </motion.div>
+                            ) : !hasAnyStudent ? (
+                                <motion.div key="sEmpty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-16 text-center bg-gray-50 rounded-3xl border border-gray-100">
+                                    <div className="text-4xl mb-4">📊</div>
+                                    <p className="text-lg font-bold text-gray-900 mb-1">No student rankings yet</p>
+                                    <p className="text-sm text-gray-500">Take a quiz to appear on the leaderboard.</p>
+                                </motion.div>
+                            ) : (
+                                activeStudentData.map((student, i) => {
+                                    const rank = student.rank;
+                                    const rowStyle = rank === 1 ? "bg-[#014751]/5 border-[#014751]/25 shadow-sm"
+                                        : rank === 2 ? "bg-gray-50 border-gray-300/60"
+                                        : rank === 3 ? "bg-amber-50/60 border-amber-200/60"
+                                        : "bg-white border-gray-100 hover:border-gray-200";
+                                    const diff = (student.previousRank || rank) - rank;
 
-                                        return (
-                                            <motion.div
-                                                key={`${tab}-${student.id}`}
-                                                initial={{ opacity: 0, y: 12 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: Math.min(i * 0.04, 0.4) }}
-                                                className={`flex items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl border transition-all hover:shadow-md ${rowStyle}`}
-                                            >
-                                                {/* Rank medal / number */}
-                                                <div className="w-10 text-center flex-shrink-0">
-                                                    {RANK_MEDAL[student.rank] ? (
-                                                        <span className="text-2xl leading-none">{RANK_MEDAL[student.rank]}</span>
-                                                    ) : (
-                                                        <span className="text-sm font-black text-gray-400">#{student.rank}</span>
-                                                    )}
+                                    return (
+                                        <motion.div key={`s-${studentTab}-${student.id}`}
+                                            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                                            className={`flex items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl border transition-all hover:shadow-md ${rowStyle}`}>
+
+                                            {/* Rank */}
+                                            <div className="w-10 text-center flex-shrink-0">
+                                                {RANK_MEDAL[rank]
+                                                    ? <span className="text-2xl leading-none">{RANK_MEDAL[rank]}</span>
+                                                    : <span className="text-sm font-black text-gray-400">#{rank}</span>}
+                                            </div>
+
+                                            {/* Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                                                    <h3 className="font-black text-gray-900 text-sm sm:text-base truncate">{student.name}</h3>
+                                                    <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${student.category === "Tertiary" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>
+                                                        {student.category}
+                                                    </span>
                                                 </div>
+                                                <p className="text-xs text-gray-500 font-bold truncate">🏫 {student.institution || "Unknown"}</p>
+                                                {(student.department || student.class) && (
+                                                    <p className="text-[10px] text-gray-400 font-bold mt-0.5 uppercase tracking-wider">
+                                                        {student.department || student.class}{student.level ? ` · Level ${student.level}` : ""}
+                                                    </p>
+                                                )}
+                                            </div>
 
-                                                {/* Student Info */}
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                                                        <h3 className="font-black text-gray-900 text-sm sm:text-base truncate">{student.name}</h3>
-                                                        <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${student.category === "Tertiary" ? "bg-blue-100 text-blue-700" : "bg-green-100 text-green-700"}`}>
-                                                            {student.category}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-xs text-gray-500 font-bold truncate">🏫 {student.institution || 'Unknown Institution'}</p>
-                                                    {(student.department || student.class) && (
-                                                      <p className="text-[10px] text-gray-400 font-bold mt-1 uppercase tracking-wider">{student.department || student.class} {student.level ? `· Level ${student.level}` : ''}</p>
-                                                    )}
-                                                </div>
-
-                                                {/* Stats – desktop */}
-                                                <div className="hidden sm:flex items-center gap-8 flex-shrink-0">
-                                                    <div className="text-center min-w-[60px]">
-                                                        <p className="text-lg font-black text-[#014751]">{student.points.toLocaleString()}</p>
-                                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Points</p>
-                                                    </div>
-                                                    <div className="text-center min-w-[60px]">
-                                                        <p className="text-lg font-black text-gray-800">{student.competitions}</p>
-                                                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Wins</p>
-                                                    </div>
-                                                </div>
-
-                                                {/* Stats – mobile */}
-                                                <div className="sm:hidden flex-shrink-0 text-right">
+                                            {/* Stats – desktop */}
+                                            <div className="hidden sm:flex items-center gap-6 flex-shrink-0">
+                                                <div className="text-center min-w-[60px]">
                                                     <p className="text-lg font-black text-[#014751]">{student.points.toLocaleString()}</p>
-                                                    <p className="text-[10px] font-bold text-gray-400 uppercase">Points</p>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Points</p>
                                                 </div>
-                                            </motion.div>
-                                        );
-                                    })
-                                )}
-                            </AnimatePresence>
-                        </div>
+                                                <div className="text-center min-w-[50px]">
+                                                    <p className="text-lg font-black text-gray-800">{student.competitions}</p>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Wins</p>
+                                                </div>
+                                                <div className="text-center min-w-[50px]">
+                                                    {diff > 0
+                                                        ? <><p className="text-sm font-black text-green-500">▲ {diff}</p><p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Trend</p></>
+                                                        : diff < 0
+                                                        ? <><p className="text-sm font-black text-red-400">▼ {Math.abs(diff)}</p><p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Trend</p></>
+                                                        : <><p className="text-sm font-black text-gray-400">–</p><p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Trend</p></>}
+                                                </div>
+                                            </div>
+
+                                            {/* Stats – mobile */}
+                                            <div className="sm:hidden flex-shrink-0 text-right">
+                                                <p className="text-lg font-black text-[#014751]">{student.points.toLocaleString()}</p>
+                                                {diff > 0 ? <p className="text-xs font-black text-green-500">▲ {diff}</p>
+                                                    : diff < 0 ? <p className="text-xs font-black text-red-400">▼ {Math.abs(diff)}</p>
+                                                    : <p className="text-xs font-black text-gray-400">–</p>}
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </section>
+
+                {/* ══════════════════════════════════════════════
+                    SCHOOL LEADERBOARD SECTION
+                ══════════════════════════════════════════════ */}
+                <section className="px-6 pt-12 pb-4 bg-gray-50/60">
+                    <div className="max-w-6xl mx-auto">
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-[#014751] mb-1">🏛️ School Rankings</p>
+                        <p className="text-xs text-gray-500 font-medium mb-4">Top 50 institutions ranked by their students&apos; combined quiz performance.</p>
+                    </div>
+                </section>
+
+                {/* Controls – Schools */}
+                <div className="sm:sticky sm:top-[64px] z-20 bg-gray-50/95 backdrop-blur-md border-b border-gray-200 px-4 sm:px-6 py-3 shadow-sm">
+                    <div className="max-w-6xl mx-auto flex items-center justify-center sm:justify-start">
+                        {hasAnySchool && (
+                            <div className="flex bg-gray-200 rounded-2xl p-1 gap-1">
+                                {([
+                                    { key: "topUniversities", label: "🎓 Universities" },
+                                    { key: "topSecondarySchools", label: "🏫 Secondary Schools" },
+                                ] as { key: SchoolTab; label: string }[]).map(t => (
+                                    <button key={t.key} onClick={() => setSchoolTab(t.key)}
+                                        className={`whitespace-nowrap px-5 py-2 rounded-xl text-xs sm:text-sm font-extrabold transition-all ${schoolTab === t.key ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+                                        {t.label}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* School List */}
+                <section className="px-6 pt-8 pb-16 bg-gray-50/60 min-h-[300px]">
+                    <div className="max-w-6xl mx-auto space-y-3">
+                        <AnimatePresence mode="wait">
+                            {isLoading ? (
+                                <motion.div key="schLoad" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-16 text-center">
+                                    <div className="w-8 h-8 rounded-full border-4 border-gray-200 border-t-[#014751] animate-spin mx-auto mb-4" />
+                                    <p className="text-sm font-bold text-gray-500">Loading school rankings...</p>
+                                </motion.div>
+                            ) : !hasAnySchool ? (
+                                <motion.div key="schEmpty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="py-16 text-center bg-white rounded-3xl border border-gray-100">
+                                    <div className="text-4xl mb-4">🏛️</div>
+                                    <p className="text-lg font-bold text-gray-900 mb-1">No school rankings yet</p>
+                                    <p className="text-sm text-gray-500">Schools will appear here once their students start taking quizzes.</p>
+                                </motion.div>
+                            ) : (
+                                activeSchoolData.map((school, i) => {
+                                    const rank = school.rank;
+                                    const rowStyle = rank === 1 ? "bg-[#014751]/5 border-[#014751]/25 shadow-sm"
+                                        : rank === 2 ? "bg-gray-100 border-gray-300/60"
+                                        : rank === 3 ? "bg-amber-50/60 border-amber-200/60"
+                                        : "bg-white border-gray-100 hover:border-gray-200";
+
+                                    return (
+                                        <motion.div key={`sch-${schoolTab}-${school.id}`}
+                                            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                                            transition={{ delay: Math.min(i * 0.03, 0.3) }}
+                                            className={`flex items-center gap-4 sm:gap-6 p-4 sm:p-5 rounded-2xl border transition-all hover:shadow-md ${rowStyle}`}>
+
+                                            {/* Rank */}
+                                            <div className="w-10 text-center flex-shrink-0">
+                                                {RANK_MEDAL[rank]
+                                                    ? <span className="text-2xl leading-none">{RANK_MEDAL[rank]}</span>
+                                                    : <span className="text-sm font-black text-gray-400">#{rank}</span>}
+                                            </div>
+
+                                            {/* Info */}
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                                                    <h3 className="font-black text-gray-900 text-sm sm:text-base truncate">{school.name}</h3>
+                                                    {school.type && school.type !== 'Unknown' && (
+                                                        <span className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${school.type === "Federal" ? "bg-blue-100 text-blue-700" : school.type === "State" ? "bg-green-100 text-green-700" : "bg-purple-100 text-purple-700"}`}>
+                                                            {school.type}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <p className="text-xs text-gray-400 font-bold">📍 {school.state} · {school.totalStudents.toLocaleString()} students</p>
+                                            </div>
+
+                                            {/* Stats – desktop */}
+                                            <div className="hidden sm:flex items-center gap-8 flex-shrink-0">
+                                                <div className="text-center min-w-[70px]">
+                                                    <p className="text-lg font-black text-[#014751]">{school.totalPoints.toLocaleString()}</p>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Total Pts</p>
+                                                </div>
+                                                <div className="text-center min-w-[70px]">
+                                                    <p className="text-lg font-black text-gray-800">{school.avgPoints.toLocaleString()}</p>
+                                                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Avg Pts</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Stats – mobile */}
+                                            <div className="sm:hidden flex-shrink-0 text-right">
+                                                <p className="text-lg font-black text-[#014751]">{school.totalPoints.toLocaleString()}</p>
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase">Total Pts</p>
+                                            </div>
+                                        </motion.div>
+                                    );
+                                })
+                            )}
+                        </AnimatePresence>
                     </div>
                 </section>
 
                 {/* ── CTA ── */}
-                <section className="px-6 py-24">
+                <section className="px-6 py-24 bg-white">
                     <div className="max-w-4xl mx-auto bg-[#014751] rounded-[48px] p-10 sm:p-16 text-center relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#FFEDB1]/10 rounded-full blur-[60px] pointer-events-none" />
                         <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-white/40 mb-4">Climb The Ranks</p>
@@ -268,12 +362,10 @@ export default function Leaderboard() {
                             <span className="text-[#FFEDB1]">Join the Leaderboard</span>
                         </h2>
                         <p className="text-white/60 max-w-md mx-auto mb-10 font-medium">
-                            Compete with students nation-wide on SabiDub. Track your performance and rise to the top 50 today!
+                            Compete with students nationwide. Track your performance and put your school on the map!
                         </p>
-                        <Link
-                            href="https://portal.sabidub.com/auth/signup"
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-[#FFEDB1] text-[#014751] rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl"
-                        >
+                        <Link href="https://portal.sabidub.com/auth/signup"
+                            className="inline-flex items-center gap-3 px-8 py-4 bg-[#FFEDB1] text-[#014751] rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl">
                             Join the Challenge
                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4-4 4M21 12H3" />
