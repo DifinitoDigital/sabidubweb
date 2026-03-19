@@ -164,7 +164,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   href="/leaderboard"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  School Leaderboard
+                  Leaderboard
                 </Link>
               </li>
               <li>
