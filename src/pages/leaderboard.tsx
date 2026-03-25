@@ -345,7 +345,7 @@ export default function Leaderboard() {
                         <p className="text-white/60 max-w-md mx-auto mb-10 font-medium">
                             Compete with students nationwide. Track your performance and put your school on the map!
                         </p>
-                        <Link href="https://portal.sabidub.com/auth/signup"
+                        <Link href="https://student.portal.sabidub.com"
                             className="inline-flex items-center gap-3 px-8 py-4 bg-[#FFEDB1] text-[#014751] rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl">
                             Join the Challenge
                             <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
