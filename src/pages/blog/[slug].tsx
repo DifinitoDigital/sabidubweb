@@ -125,7 +125,7 @@ export default function BlogPostView({ post, related }: BlogPostViewProps) {
         <meta property="twitter:description" content={post.excerpt || post.title} />
         <meta property="twitter:image" content={post.image || "https://www.sabidub.com/images/black.png"} />
       </Head>
-      <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden pt-20">
+      <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden pt-24">
         {/* Full Background Image */}
         <div className="fixed inset-0 -z-10 w-full h-full">
           <div className="absolute inset-0">
@@ -135,7 +135,7 @@ export default function BlogPostView({ post, related }: BlogPostViewProps) {
         </div>
         <Navbar />
         {/* Hero Section */}
-        <section className="relative w-full h-96 sm:h-[500px] mb-12 flex items-end">
+        <section className="relative w-full min-h-[500px] sm:min-h-[600px] flex items-end pb-12 sm:pb-20">
           <div className="absolute inset-0">
             <Image
               src={post.image || "/images/2149156427.jpg"}
