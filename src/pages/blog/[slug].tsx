@@ -97,6 +97,13 @@ export default function BlogPostView({ post, related }: BlogPostViewProps) {
     );
   }
 
+  // Ensure image URL is absolute for social media previews
+  const siteUrl = "https://www.sabidub.com";
+  const safeImage = post.image?.replace(/ /g, '%20');
+  const imageUrl = safeImage 
+    ? (safeImage.startsWith('http') ? safeImage : `${siteUrl}${safeImage}`)
+    : `${siteUrl}/images/black.png`;
+
   return (
     <>
       <Head>
@@ -105,25 +112,26 @@ export default function BlogPostView({ post, related }: BlogPostViewProps) {
 
         {/* Open Graph / Facebook / WhatsApp */}
         <meta property="og:type" content="article" key="og-type" />
-        <meta property="og:url" content={`https://www.sabidub.com/blog/${post.slug}`} />
+        <meta property="og:url" content={`${siteUrl}/blog/${post.slug}`} key="og-url" />
         <meta property="og:title" content={post.title} key="og-title" />
         <meta property="og:description" content={post.excerpt || post.title} key="og-desc" />
-        <meta property="og:image" content={post.image || "https://www.sabidub.com/images/black.png"} key="og-image" />
-        <meta property="og:image:secure_url" content={post.image || "https://www.sabidub.com/images/black.png"} />
-        <meta property="og:image:alt" content={post.title} />
-        <meta property="og:site_name" content="SabiDub" />
+        <meta property="og:image" content={imageUrl} key="og-image" />
+        <meta property="og:image:secure_url" content={imageUrl} key="og-image-secure" />
+        <meta property="og:image:alt" content={post.title} key="og-image-alt" />
+        <meta property="og:site_name" content="SabiDub" key="og-site-name" />
 
         {/* Schema.org for Google+ / Pinterest */}
         <meta itemProp="name" content={post.title} />
         <meta itemProp="description" content={post.excerpt || post.title} />
-        <meta itemProp="image" content={post.image || "https://www.sabidub.com/images/black.png"} />
+        <meta itemProp="image" content={imageUrl} />
 
         {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={`https://www.sabidub.com/blog/${post.slug}`} />
-        <meta property="twitter:title" content={post.title} />
-        <meta property="twitter:description" content={post.excerpt || post.title} />
-        <meta property="twitter:image" content={post.image || "https://www.sabidub.com/images/black.png"} />
+        <meta name="twitter:card" content="summary_large_image" key="twitter-card" />
+        <meta name="twitter:site" content="@SabiDub" key="twitter-site" />
+        <meta name="twitter:url" content={`${siteUrl}/blog/${post.slug}`} key="twitter-url" />
+        <meta name="twitter:title" content={post.title} key="twitter-title" />
+        <meta name="twitter:description" content={post.excerpt || post.title} key="twitter-desc" />
+        <meta name="twitter:image" content={imageUrl} key="twitter-image" />
       </Head>
       <motion.main initial="initial" animate="animate" className="min-h-screen bg-white relative overflow-x-hidden pt-24">
         {/* Full Background Image */}

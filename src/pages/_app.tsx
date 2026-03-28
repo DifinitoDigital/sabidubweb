@@ -78,6 +78,13 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta property="og:description" content="SabiDub is a student-first educational ecosystem providing advanced admission analysis, career guidance, and streamlined school management for educational excellence." key="og-desc" />
         <meta property="og:image" content="https://www.sabidub.com/images/black.png" key="og-image" />
         <meta property="og:type" content="website" key="og-type" />
+        
+        {/* Global Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" key="twitter-card" />
+        <meta name="twitter:site" content="@SabiDub" key="twitter-site" />
+        <meta name="twitter:title" content="SabiDub | Empowering Students through Educational Innovation" key="twitter-title" />
+        <meta name="twitter:description" content="SabiDub is a student-first educational ecosystem providing advanced admission analysis, career guidance, and streamlined school management for educational excellence." key="twitter-desc" />
+        <meta name="twitter:image" content="https://www.sabidub.com/images/black.png" key="twitter-image" />
       </Head>
       <main className={`${manrope.className} ${neonderthaw.variable} ${greyQo.variable}`}>
         <Component {...pageProps} />
