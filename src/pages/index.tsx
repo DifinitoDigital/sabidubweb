@@ -402,6 +402,7 @@ export default function Home() {
           })()}
         </section>
 
+
         {/* Unified Product Showcase — whatwedo narration */}
         <section data-suni-section="whatwedo" className="px-4 sm:px-6 py-24 bg-white relative overflow-hidden border-t border-gray-100">
           <div className="max-w-7xl mx-auto relative z-10">
