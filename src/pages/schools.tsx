@@ -52,11 +52,11 @@ export default function SchoolsInfo() {
                         {/* Feature Cards Grid (5 Cards) */}
                         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                             {[
-                                { title: "Student Tracking", img: "/images/student tracking.png", color: "bg-orange-500", iconColor: "text-white" },
-                                { title: "Secure Records", img: "/images/secure record.png", color: "bg-[#014751]", iconColor: "text-white" },
-                                { title: "Institutional Sync", img: "/images/institutional sync.png", color: "bg-[#014751]", iconColor: "text-white" },
-                                { title: "Admin Portal", img: "/images/admin portal.png", color: "bg-[#014751]", iconColor: "text-white" },
-                                { title: "Admission Hub", img: "/images/adminssion hub.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Student Tracking", img: "/images/student-tracking.png", color: "bg-orange-500", iconColor: "text-white" },
+                                { title: "Secure Records", img: "/images/secure-record.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Institutional Sync", img: "/images/institutional-sync.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Admin Portal", img: "/images/admin-portal.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Admission Hub", img: "/images/admission-hub.png", color: "bg-[#014751]", iconColor: "text-white" },
                             ].map((card, i) => (
                                 <motion.div
                                     key={i}

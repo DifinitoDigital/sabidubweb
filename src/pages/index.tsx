@@ -621,7 +621,7 @@ export default function Home() {
 
                 <div className="absolute inset-x-0 bottom-0 top-[45%] px-4 pb-4">
                   <div className="relative w-full h-full rounded-[30px] overflow-hidden shadow-sm">
-                    <Image src="/images/digital evolution.png" alt="Pathways" fill className="object-cover" />
+                    <Image src="/images/digital-evolution.png" alt="Pathways" fill className="object-cover" />
 
                     {/* Tags Overlay - Matching the image design */}
                     <div className="absolute bottom-6 left-0 right-0 flex justify-center items-center px-4">
@@ -658,7 +658,7 @@ export default function Home() {
                   <div className="w-56 h-56 relative">
                     {/* Central Avatar */}
                     <div className="absolute inset-0 m-auto w-20 h-20 rounded-full border-[6px] border-white shadow-2xl z-20 overflow-hidden ring-4 ring-[#AFF8C8]/20">
-                      <Image src="/images/1vs1 center.png" alt="Avatar" fill className="object-cover" />
+                      <Image src="/images/1vs1-center.png" alt="Avatar" fill className="object-cover" />
                     </div>
 
                     {/* Connecting Lines */}

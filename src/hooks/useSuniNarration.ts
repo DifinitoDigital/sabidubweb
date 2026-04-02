@@ -342,15 +342,14 @@ export function useSuniNarration() {
                 audioRef.current.muted = next.muted;
             }
 
-            if (next.disabled) {
-                window.speechSynthesis?.cancel();
-                audioRef.current?.pause();
-                setIsPlaying(false);
+            // Immediately stop current speech if muting or disabling
+            if (next.disabled || next.muted) {
+                stopAll();
             }
 
             return next;
         });
-    }, []);
+    }, [stopAll]);
 
     return {
         prefs,

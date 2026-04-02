@@ -57,11 +57,11 @@ export default function AmbassadorInfo() {
                         {/* Feature Cards Grid (5 Cards like the image) */}
                         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                             {[
-                                { title: "Campus Outreach", img: "/images/campus outreach.png", color: "bg-[#D7FF40]", iconColor: "text-black" },
-                                { title: "Academic Support", img: "/images/academic support.png", color: "bg-[#014751]", iconColor: "text-white" },
-                                { title: "Digital Evolution", img: "/images/digital evolution.png", color: "bg-[#014751]", iconColor: "text-white" },
-                                { title: "Student Advocacy", img: "/images/student advocacy.png", color: "bg-[#014751]", iconColor: "text-white" },
-                                { title: "Community Build", img: "/images/community build.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Campus Outreach", img: "/images/campus-outreach.png", color: "bg-[#D7FF40]", iconColor: "text-black" },
+                                { title: "Academic Support", img: "/images/academic-support.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Digital Evolution", img: "/images/digital-evolution.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Student Advocacy", img: "/images/student-advocacy.png", color: "bg-[#014751]", iconColor: "text-white" },
+                                { title: "Community Build", img: "/images/community-build.png", color: "bg-[#014751]", iconColor: "text-white" },
                             ].map((card, i) => (
                                 <motion.div
                                     key={i}
