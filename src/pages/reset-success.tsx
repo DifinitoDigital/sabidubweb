@@ -27,7 +27,7 @@ export default function ResetSuccess() {
       case 'school_staff':
         return `${portalUrl}/auth/school/signin`;
       case 'student':
-        return '/'; // Students go to home page (mobile app)
+        return 'https://student.portal.sabidub.com';
       default:
         return '/login';
     }
@@ -113,22 +113,24 @@ export default function ResetSuccess() {
               transition={{ delay: 0.4 }}
               className="text-gray-600 mb-8"
             >
-              {getMessage()}
+              {redirectType === 'student'
+                ? "Your password has been changed successfully. You can now return to the SabiDub mobile app or continue using the web portal."
+                : "Your password has been changed. You can now log in with your new password."}
             </motion.p>
 
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="space-y-4"
+              className="space-y-3"
             >
               <a
                 href={getLoginUrl()}
                 onClick={handleLoginClick}
-                className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
+                className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group shadow-lg"
               >
                 <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
-                  {getLoginButtonText()}
+                  {redirectType === 'student' ? "Continue to Web Portal" : getLoginButtonText()}
                 </span>
                 {isRedirecting && (
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -137,12 +139,25 @@ export default function ResetSuccess() {
                 )}
                 <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </a>
+
+              {redirectType === 'student' && (
+                <button
+                  onClick={() => window.location.href = "sabidub://login"} // Attempt to open app via deep link
+                  className="block w-full bg-white border border-[#014751] text-[#014751] py-3 rounded-lg hover:bg-gray-50 transition-all font-bold group relative overflow-hidden"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 2H6.5C5.12 2 4 3.12 4 4.5v15C4 20.88 5.12 22 6.5 22h11c1.38 0 2.5-1.12 2.5-2.5v-15C20 3.12 18.88 2 17.5 2zM12 20c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm5-4H7V5h10v11z" /></svg>
+                    Return to SabiDub App
+                  </span>
+                  <div className="absolute inset-0 bg-gray-50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                </button>
+              )}
+
               <Link
                 href="/"
-                className="block w-full bg-white border border-gray-200 text-[#014751] py-3 rounded-lg hover:bg-gray-50 transition-all font-medium group relative overflow-hidden"
+                className="block w-full bg-transparent text-gray-400 py-2 rounded-lg hover:text-gray-600 transition-all font-medium text-xs uppercase tracking-widest"
               >
-                <span className="relative z-10">Back to Home</span>
-                <div className="absolute inset-0 bg-gray-50 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                Back to Home
               </Link>
             </motion.div>
 

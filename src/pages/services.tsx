@@ -38,7 +38,7 @@ const services = [
             "Access thousands of video lessons, interactive quizzes, past questions, and AI-powered study plans crafted specifically for WAEC, NECO, JAMB, and Post-UTME — anytime, anywhere.",
         color: "#F59E0B",
         light: "#FFFBEB",
-        link: "https://portal.sabidub.com",
+        link: "https://student.portal.sabidub.com",
         cta: "Start Learning",
         stats: [
             { value: "5,000+", label: "Admission Checker" },
@@ -106,7 +106,7 @@ const services = [
             "Experience a unified network connecting students across departments, institutions, and countries. From real-time world challenges to digital yearbooks, SabiDub is your gateway to a global academic community.",
         color: "#6366F1",
         light: "#EEF2FF",
-        link: "/services",
+        link: "https://student.portal.sabidub.com",
         cta: "Explore Ecosystem",
         stats: [
             { value: "Global", label: "1vs1 Challenges" },
@@ -129,7 +129,7 @@ const services = [
             "From secure digital elections and voting to real-time academic calendar notifications and collaborative study circles, SabiDub provides the infrastructure for a modern student experience.",
         color: "#F97316",
         light: "#FFF7ED",
-        link: "https://portal.sabidub.com",
+        link: "https://student.portal.sabidub.com/dashboard",
         cta: "Access Hub",
         stats: [
             { value: "Secure", label: "Election Voting" },
@@ -372,17 +372,10 @@ export default function Services() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                             {services.map((s, i) => (
-                                <motion.button
+                                <Link
                                     key={s.id}
-                                    onClick={() => {
-                                        setActiveService(i);
-                                        window.scrollTo({ top: 400, behavior: "smooth" });
-                                    }}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: i * 0.08 }}
-                                    className="text-left p-8 rounded-[28px] bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer"
+                                    href={s.link}
+                                    className="text-left p-8 rounded-[28px] bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group cursor-pointer block"
                                 >
                                     <div
                                         className="w-12 h-12 rounded-2xl mb-6 flex items-center justify-center transition-transform group-hover:scale-110"
@@ -405,7 +398,7 @@ export default function Services() {
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M17 8l4 4-4 4M21 12H3" />
                                         </svg>
                                     </div>
-                                </motion.button>
+                                </Link>
                             ))}
                         </div>
                     </div>

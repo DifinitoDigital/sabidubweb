@@ -658,7 +658,7 @@ export default function Home() {
                   <div className="w-56 h-56 relative">
                     {/* Central Avatar */}
                     <div className="absolute inset-0 m-auto w-20 h-20 rounded-full border-[6px] border-white shadow-2xl z-20 overflow-hidden ring-4 ring-[#AFF8C8]/20">
-                      <Image src="/images/1vs1-center.png" alt="Avatar" fill className="object-cover" />
+                      <Image src="/images/one-vs-one-center.png" alt="Avatar" fill className="object-cover" />
                     </div>
 
                     {/* Connecting Lines */}
@@ -671,19 +671,19 @@ export default function Home() {
 
                     {/* Surrounding Avatars with status icons */}
                     <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-                      <Image src="/images/1-1.png" alt="M1" fill className="object-cover" />
+                      <Image src="/images/one-one.png" alt="M1" fill className="object-cover" />
                     </div>
                     <div className="absolute top-10 right-2 w-10 h-10 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-                      <Image src="/images/1v1.png" alt="M2" fill className="object-cover" />
+                      <Image src="/images/one-v-one.png" alt="M2" fill className="object-cover" />
                     </div>
                     <div className="absolute bottom-5 left-0 w-14 h-14 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white transition-transform hover:scale-110">
-                      <Image src="/images/1_1.png" alt="M3" fill className="object-cover" />
+                      <Image src="/images/one-one-alt.png" alt="M3" fill className="object-cover" />
                       <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#AFF8C8] rounded-full border-2 border-white flex items-center justify-center">
                         <span className="text-[10px] saturate-150">✍️</span>
                       </div>
                     </div>
                     <div className="absolute bottom-4 right-6 w-11 h-11 rounded-full border-4 border-white shadow-lg overflow-hidden bg-white">
-                      <Image src="/images/1vs1.png" alt="M4" fill className="object-cover" />
+                      <Image src="/images/one-vs-one.png" alt="M4" fill className="object-cover" />
                     </div>
                   </div>
                 </div>
@@ -733,7 +733,7 @@ export default function Home() {
                 {/* Topographic Waves Visual - Complex Green Style */}
                 <div className="mt-auto relative h-[300px] sm:h-[400px] md:h-[610px] w-full">
                   <div className="absolute inset-0 z-0">
-                    <Image src="/images/Discover.png" alt="Waves" fill className="object-cover object-bottom" />
+                    <Image src="/images/discover-path.png" alt="Waves" fill className="object-cover object-bottom" />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#40916C]/10 to-transparent"></div>
                   </div>
                   {/* Brand Badges at bottom */}
@@ -836,7 +836,7 @@ export default function Home() {
                         <div className="h-1.5 w-20 bg-white/20 rounded-full"></div>
                       </div>
                       <div className="relative h-24 w-full rounded-xl overflow-hidden border border-white/5">
-                        <Image src="/images/packed.png" alt="Magazine" fill className="object-cover opacity-50 transition-opacity group-hover:opacity-80" />
+                        <Image src="/images/magazine-packed.png" alt="Magazine" fill className="object-cover opacity-50 transition-opacity group-hover:opacity-80" />
                       </div>
                     </div>
                   </div>
@@ -916,6 +916,24 @@ export default function Home() {
 
               <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.1 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
+                  <span className="font-black text-gray-900 text-2xl tracking-tighter transition-all">Dr. Oghogho <span className="text-[#014751]">Garrick</span></span>
+                </div>
+                <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
+                  Providing structural transformation by sponsoring 10,000 students in Edo State. Committed to restoring hope and empowering the next generation through SabiDub.
+                </p>
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
+                    <Image src="/images/taiye-garrick.jpeg" alt="Dr. Oghogho Taiye Garrick" fill className="object-cover" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-gray-900 text-sm">Strategic Partner</h4>
+                    <p className="text-[10px] uppercase tracking-wider font-extrabold text-[#014751]">Dr. Oghogho Taiye Garrick (PhD)</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+                <div className="h-12 relative mb-10 flex items-center">
                   <Image src="/images/thevoice2u.png" alt="Voice2u" width={140} height={40} className="object-contain transition-all" />
                 </div>
                 <p className="text-gray-600 mb-12 leading-relaxed text-sm font-medium">
@@ -923,7 +941,7 @@ export default function Home() {
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
-                    <Image src="/images/1_1.png" alt="CEO" fill className="object-cover" />
+                    <Image src="/images/one-one-alt.png" alt="CEO" fill className="object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm">CEO</h4>
@@ -932,7 +950,7 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.2 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.3 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
                   <Image src="/images/facesta.png" alt="Facesta" width={120} height={40} className="object-contain transition-all" />
                 </div>
@@ -950,7 +968,7 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.3 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.4 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
                   <Image src="/images/melab.png" alt="MELAB" width={120} height={40} className="object-contain transition-all" />
                 </div>
@@ -968,7 +986,7 @@ export default function Home() {
                 </div>
               </motion.div>
 
-              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.4 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
+              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" viewport={{ once: true }} transition={{ delay: 0.5 }} className="flex-shrink-0 w-[85vw] sm:w-[450px] snap-start bg-[#F8F9FA] p-10 rounded-[40px] border border-gray-100/50 hover:border-[#014751]/20 transition-all group">
                 <div className="h-12 relative mb-10 flex items-center">
                   <span className="font-black text-gray-900 text-3xl tracking-tighter transition-all">Venndoor</span>
                 </div>
@@ -977,7 +995,7 @@ export default function Home() {
                 </p>
                 <div className="flex items-center gap-4 mt-auto">
                   <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-white">
-                    <Image src="/images/146757.jpg" alt="CEO" fill className="object-cover" />
+                    <Image src="/images/IMG_5562.JPG" alt="CEO" fill className="object-cover" />
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-900 text-sm">Founder/CEO</h4>
@@ -1148,6 +1166,95 @@ export default function Home() {
                 {/* Visual element (Orb) */}
                 <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] group-hover:bg-blue-400/30 transition-colors duration-700"></div>
               </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* ─── MOBILE APP SECTION ─── */}
+        <section className="py-8 sm:py-16 bg-white overflow-hidden relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="bg-[#014751] rounded-[32px] sm:rounded-[48px] p-6 sm:p-12 relative overflow-hidden group">
+              {/* Background Elements */}
+              <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-700" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#AFF8C8] rounded-full blur-[140px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
+              
+              <div className="grid lg:grid-cols-2 gap-8 sm:gap-16 items-center relative z-10">
+                {/* Left Side: Content */}
+                <div className="text-left">
+                  <motion.div variants={fadeInUp} initial="initial" whileInView="animate" className="inline-block px-3 py-1 mb-6 sm:mb-8 rounded-full bg-white/10 border border-white/20">
+                    <span className="text-[#AFF8C8] text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
+                       <span className="w-1.5 h-1.5 rounded-full bg-[#AFF8C8] animate-pulse"></span>
+                       Mobile Experience
+                    </span>
+                  </motion.div>
+                  
+                  <h2 className="text-3xl sm:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[1.1]">
+                    Your Education,<br />
+                    <span className="text-[#AFF8C8] italic font-serif text-[1.1em]">In Your Pocket.</span>
+                  </h2>
+                  
+                  <p className="text-white/70 text-sm sm:text-lg mb-6 sm:mb-8 max-w-xl font-medium leading-relaxed">
+                    Take your learning journey anywhere. Access thousands of past questions and track your rank — all without using data in offline mode.
+                  </p>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#AFF8C8] shrink-0 border border-white/10">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-bold text-xs sm:text-sm mb-1 uppercase tracking-wider">Offline Study</h4>
+                        <p className="text-white/40 text-[10px] sm:text-[11px] leading-tight font-medium">Study past questions without internet connection.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#AFF8C8] shrink-0 border border-white/10">
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
+                      </div>
+                      <div>
+                        <h4 className="text-white font-bold text-xs sm:text-sm mb-1 uppercase tracking-wider">Smart Alerts</h4>
+                        <p className="text-white/40 text-[10px] sm:text-[11px] leading-tight font-medium">Instant exam and study session reminders.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Mockup */}
+                <div className="relative mt-12 lg:mt-0 px-4 sm:px-0">
+                   <motion.div 
+                     animate={{ 
+                       y: [-15, 15, -15],
+                       rotate: [-1, 1, -1]
+                     }}
+                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                     className="relative z-10 w-full max-w-[280px] sm:max-w-[300px] mx-auto filter drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
+                   >
+                     <Image 
+                       src="/images/app-mockup.png" 
+                       alt="SabiDub App Mockup" 
+                       width={500} 
+                       height={1000} 
+                       className="w-full h-auto brightness-110 rounded-[10px]"
+                       priority
+                     />
+                   </motion.div>
+                   
+                   {/* Tooltip Card */}
+                   <motion.div 
+                     initial={{ x: 20, opacity: 0 }}
+                     whileInView={{ x: 0, opacity: 1 }}
+                     className="absolute -bottom-4 right-0 sm:bottom-10 sm:-right-4 bg-white/95 backdrop-blur-xl p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/40 z-20 max-w-[150px] sm:max-w-[180px]"
+                   >
+                     <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600">
+                           <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                        </div>
+                        <span className="text-[8px] sm:text-[9px] font-black uppercase text-gray-400">Live Sync</span>
+                     </div>
+                     <p className="text-[10px] sm:text-[11px] font-bold text-gray-900 leading-snug">Synced across all your devices.</p>
+                   </motion.div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
