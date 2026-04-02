@@ -44,6 +44,15 @@ const fadeInUp = {
 
 const sections = [
   {
+    icon: <FaExclamationTriangle className="w-6 h-6" />,
+    title: "Non-Affiliation & Government Disclaimer",
+    content: [
+      "SabiDub is a student-first educational platform and is NOT affiliated with, authorized by, or representative of any government entity in Nigeria or elsewhere. We operate as an independent educational tool.",
+      "Any government-related information (such as exam dates or admission requirements) provided on this platform is for general educational guidance and is sourced from official public portals like jamb.gov.ng, waecnigeria.org, and neco.gov.ng.",
+      "SabiDub does NOT represent the Federal Ministry of Education or any of its subsidiaries. All official administrative decisions, including admissions and examination results, rest solely with the respective government bodies."
+    ]
+  },
+  {
     icon: <FaUserShield className="w-6 h-6" />,
     title: "1. Acceptance of Terms",
     content: [

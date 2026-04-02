@@ -45,6 +45,15 @@ const fadeInUp = {
 const sections = [
   {
     icon: <FaShieldAlt className="w-6 h-6" />,
+    title: "Government Data & Official Disclaimer",
+    content: [
+      "SabiDub provides educational guidance independently and is NOT representative of any government entity. We do not provide official government services or representative administrative functions.",
+      "We strictly source government-related academic data from official domain sources (.gov.ng) to ensure accuracy, but we do not claim ownership or official endorsement from these entities (e.g. JAMB, WAEC).",
+      "User progress data on SabiDub is used solely for educational optimization and is not shared with government examination bodies for official record purposes unless explicitly mandated by law."
+    ]
+  },
+  {
+    icon: <FaShieldAlt className="w-6 h-6" />,
     title: "1. Privacy Commitment",
     content: [
       "At SabiDub, we recognize that privacy is a fundamental human right. Our commitment is to manage your data with the highest degree of transparency, integrity, and security.",
