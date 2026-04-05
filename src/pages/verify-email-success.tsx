@@ -189,6 +189,8 @@ export default function VerifyEmailSuccess() {
             >
               {userType === 'student' || result?.redirectType === 'student'
                 ? "Your student account is successfully verified. You can now log in to the web portal using the button below. If you are using the SabiDub mobile app, please return to the app on your phone to log in."
+                : userType === 'ambassador' || result?.redirectType === 'ambassador'
+                  ? "Your ambassador account is successfully verified. You can now log in to your dashboard to start managing your referrals and tracking your performance."
                 : userType === 'tutor_support' || result?.redirectType === 'tutor_support'
                   ? "Your partner account is successfully verified. You can now log in to your dashboard to start earning payouts and managing your support network."
                   : "Thank you for verifying your email address. Your account is now fully activated and you can access all features of SabiDub."}
@@ -206,11 +208,13 @@ export default function VerifyEmailSuccess() {
                     ? "https://portal.sabidub.com/auth/staff/signin"
                     : result?.redirectType === 'school_staff' || userType === 'school'
                       ? "https://portal.sabidub.com/auth/school/signin"
-                      : result?.redirectType === 'student' || userType === 'student'
-                        ? "https://student.portal.sabidub.com/"
-                        : result?.redirectType === 'tutor_support' || userType === 'tutor_support'
-                          ? "https://portal.sabidub.com/tutor-support/login"
-                          : "https://portal.sabidub.com/auth/staff/signin" // Default to staff portal
+                      : result?.redirectType === 'ambassador' || userType === 'ambassador'
+                        ? "https://portal.sabidub.com/ambassador/login"
+                        : result?.redirectType === 'student' || userType === 'student'
+                          ? "https://student.portal.sabidub.com/signin"
+                          : result?.redirectType === 'tutor_support' || userType === 'tutor_support'
+                            ? "https://portal.sabidub.com/tutor-support/login"
+                            : "https://portal.sabidub.com/auth/staff/signin" // Default to staff portal
                 }
                 onClick={handleLoginClick}
                 className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group"
@@ -218,9 +222,11 @@ export default function VerifyEmailSuccess() {
                 <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
                   {userType === 'student' || result?.redirectType === 'student'
                     ? "Login to Student Portal"
-                    : userType === 'tutor_support' || result?.redirectType === 'tutor_support'
-                      ? "Login to Tutor Dashboard"
-                      : "Login to Your Account"}
+                    : userType === 'ambassador' || result?.redirectType === 'ambassador'
+                      ? "Login to Ambassador Portal"
+                      : userType === 'tutor_support' || result?.redirectType === 'tutor_support'
+                        ? "Login to Tutor Dashboard"
+                        : "Login to Your Account"}
                 </span>
                 {isRedirecting && (
                   <div className="absolute inset-0 flex items-center justify-center">

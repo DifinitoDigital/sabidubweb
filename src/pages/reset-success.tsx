@@ -26,27 +26,35 @@ export default function ResetSuccess() {
         return `${portalUrl}/auth/staff/signin`;
       case 'school_staff':
         return `${portalUrl}/auth/school/signin`;
+      case 'ambassador':
+        return `${portalUrl}/ambassador/login`;
       case 'student':
-        return 'https://student.portal.sabidub.com';
+        return 'https://student.portal.sabidub.com/signin';
       default:
-        return '/login';
+        return `${portalUrl}/auth/staff/signin`;
     }
   };
 
   const getLoginButtonText = () => {
     switch (redirectType) {
       case 'student':
-        return 'Return to Home';
+        return 'Login to Student Portal';
+      case 'ambassador':
+        return 'Login to Ambassador Portal';
       default:
         return 'Login to Your Account';
     }
   };
 
   const getMessage = () => {
-    if (redirectType === 'student') {
-      return 'Your password has been changed. Please return to the SabiDub mobile app to log in with your new password.';
+    switch (redirectType) {
+      case 'student':
+        return 'Your password has been changed successfully. You can now log in to the student portal or return to the SabiDub mobile app.';
+      case 'ambassador':
+        return 'Your password has been changed successfully. You can now log in to the ambassador dashboard.';
+      default:
+        return 'Your password has been changed. You can now log in with your new password.';
     }
-    return 'Your password has been changed. You can now log in with your new password.';
   };
 
   const handleLoginClick = () => {
@@ -113,9 +121,7 @@ export default function ResetSuccess() {
               transition={{ delay: 0.4 }}
               className="text-gray-600 mb-8"
             >
-              {redirectType === 'student'
-                ? "Your password has been changed successfully. You can now return to the SabiDub mobile app or continue using the web portal."
-                : "Your password has been changed. You can now log in with your new password."}
+              {getMessage()}
             </motion.p>
 
             <motion.div
@@ -130,7 +136,7 @@ export default function ResetSuccess() {
                 className="block w-full bg-[#014751] text-white py-3 rounded-lg hover:bg-[#013b43] transition-all font-medium relative overflow-hidden group shadow-lg"
               >
                 <span className={`${isRedirecting ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
-                  {redirectType === 'student' ? "Continue to Web Portal" : getLoginButtonText()}
+                  {getLoginButtonText()}
                 </span>
                 {isRedirecting && (
                   <div className="absolute inset-0 flex items-center justify-center">

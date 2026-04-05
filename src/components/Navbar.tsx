@@ -119,7 +119,7 @@ export default function Navbar() {
                                                 Ambassador Hub
                                             </Link>
                                             <Link
-                                                href="https://student.portal.sabidub.com"
+                                                href="https://student.portal.sabidub.com/signin"
                                                 className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-[#014751] font-bold transition-colors border-t border-gray-50"
                                                 onClick={() => setIsStudentDropdownOpen(false)}
                                             >
@@ -274,7 +274,7 @@ export default function Navbar() {
                                                         <span className="text-xs font-bold text-gray-700">Ambassador Hub</span>
                                                     </Link>
                                                     <Link
-                                                        href="https://student.portal.sabidub.com"
+                                                        href="https://student.portal.sabidub.com/signin"
                                                         className="flex items-center gap-3 p-4 hover:bg-gray-50"
                                                         onClick={toggleMenu}
                                                     >

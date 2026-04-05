@@ -67,7 +67,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                     </div>
 
                     <Link
-                      href="https://student.portal.sabidub.com"
+                      href="https://student.portal.sabidub.com/signin"
                       className="inline-flex items-center gap-2 text-[#014751] font-black text-sm uppercase tracking-widest hover:translate-x-1 transition-transform group"
                     >
                       <span>Signup or Login with the web</span>
