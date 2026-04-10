@@ -24,6 +24,8 @@ const greyQo = Grey_Qo({
   variable: '--font-grey-qo',
 });
 
+import CookieConsent from "@/components/CookieConsent";
+
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
@@ -88,6 +90,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <main className={`${manrope.className} ${neonderthaw.variable} ${greyQo.variable}`}>
         <Component {...pageProps} />
+        <CookieConsent />
       </main>
     </>
   );

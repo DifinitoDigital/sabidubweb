@@ -140,7 +140,7 @@ export default function Navbar() {
                             }}
                             className="bg-[#014751] text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#026372] transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2 group"
                         >
-                            <span>Download App</span>
+                            <span>Download / Login</span>
                             <svg className="w-3 h-3 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                             </svg>
@@ -297,7 +297,7 @@ export default function Navbar() {
                             }}
                             className="w-full bg-[#014751] text-white px-4 py-4 rounded-xl font-black uppercase tracking-widest text-center text-sm shadow-md active:scale-95 transition-all flex items-center justify-center gap-2"
                         >
-                            <span>Download App</span>
+                            <span>Download / Login</span>
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                             </svg>

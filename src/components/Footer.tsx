@@ -24,7 +24,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
               <div className="relative z-10 grid lg:grid-cols-2 gap-12 items-center">
                 <div className="max-w-2xl text-left">
                   <h2 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight mb-6">
-                    Download Our App Free and<br />
+                    Get the App or Login to<br />
                     Enjoy Exclusive Features!
                   </h2>
                   <p className="text-lg text-gray-600 leading-relaxed mb-10 max-w-xl">

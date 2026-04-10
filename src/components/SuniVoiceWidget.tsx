@@ -466,6 +466,7 @@ export default function SuniVoiceWidget({
         /* Mobile adjustments */
         @media (max-width: 1023px) {
           .suni-chip {
+            display: none;
             bottom: 144px;
             font-size: 13px;
           }

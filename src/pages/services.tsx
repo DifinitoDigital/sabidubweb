@@ -441,7 +441,7 @@ export default function Services() {
                                         className="w-full lg:w-auto px-8 py-5 bg-teal-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center flex items-center justify-center gap-2"
                                     >
                                         <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 2H6.5C5.12 2 4 3.12 4 4.5v15C4 20.88 5.12 22 6.5 22h11c1.38 0 2.5-1.12 2.5-2.5v-15C20 3.12 18.88 2 17.5 2zM12 20c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm5-4H7V5h10v11z" /></svg>
-                                        Download App
+                                        Download / Login
                                     </Link>
                                     <Link
                                         href="/contact"
