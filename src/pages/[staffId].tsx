@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
+import Image from 'next/image';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -40,10 +41,12 @@ function Avatar({ src, name, size = 96 }: { src: string | null; name: string; si
 
     if (src) {
         return (
-            <img
+            <Image
                 src={src}
                 alt={name}
-                style={{ width: size, height: size, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
+                width={size}
+                height={size}
+                style={{ borderRadius: '50%', objectFit: 'cover', display: 'block' }}
             />
         );
     }
@@ -72,7 +75,7 @@ export default function VerifyPage({ data, rawId }: Props) {
             <>
                 <Head>
                     <title>Not Found · Sabidub</title>
-                    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
                 </Head>
                 <style>{`*{font-family:'Manrope',sans-serif;box-sizing:border-box;margin:0;padding:0;}body{background:#f0f4f8;}`}</style>
                 <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg,#f0f4f8,#e8f0fe)', padding: '24px 16px' }}>
@@ -110,9 +113,7 @@ export default function VerifyPage({ data, rawId }: Props) {
                 <title>{data.name} · Sabidub {data.type === 'ambassador' ? 'Ambassador' : 'Staff'}</title>
                 <meta name="description" content={`Official Sabidub identity verification for ${data.name}.`} />
                 <meta name="robots" content="noindex,nofollow" />
-                <link rel="preconnect" href="https://fonts.googleapis.com" />
-                <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-                <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
             </Head>
 
             <style>{`
@@ -217,9 +218,11 @@ export default function VerifyPage({ data, rawId }: Props) {
 function Logo() {
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 4 }}>
-            <img
+            <Image
                 src="/images/black.png"
                 alt="Sabidub"
+                width={120}
+                height={36}
                 style={{ height: 36, width: 'auto', objectFit: 'contain' }}
             />
         </div>

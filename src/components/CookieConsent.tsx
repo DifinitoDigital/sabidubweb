@@ -51,7 +51,7 @@ export default function CookieConsent() {
                                     <h3 className="text-gray-900 font-black text-lg mb-1 tracking-tight">Cookies!</h3>
                                     <p className="text-gray-500 text-sm font-medium leading-relaxed">
                                         We use cookies to personalize your experience and analyze our traffic. 
-                                        By clicking "Accept All", you consent to our use of cookies.
+                                        By clicking &quot;Accept All&quot;, you consent to our use of cookies.
                                     </p>
                                 </div>
                                 <button 
