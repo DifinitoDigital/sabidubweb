@@ -229,7 +229,15 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   href="https://portal.sabidub.com/auth/school/signin"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  School Management
+                  Login as School
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://portal.sabidub.com/auth/school/signup"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Signup as School
                 </Link>
               </li>
               <li>
@@ -237,7 +245,15 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   href="https://portal.sabidub.com/ambassador/login"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  Ambassador Hub
+                  Login as Ambassador
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="https://portal.sabidub.com/ambassador/join"
+                  className="hover:text-yellow-600 transition-colors"
+                >
+                  Signup as Ambassador
                 </Link>
               </li>
               <li>
@@ -245,7 +261,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   href="https://portal.sabidub.com/tutor-support/login"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  Tutor Support Portal
+                  Login as Tutor Support
                 </Link>
               </li>
               <li>
@@ -253,7 +269,7 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   href="https://portal.sabidub.com/tutor-support/signup"
                   className="hover:text-yellow-600 transition-colors"
                 >
-                  Join as Tutor Support
+                  Signup as Tutor Support
                 </Link>
               </li>
               <li>
@@ -270,15 +286,6 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   className="hover:text-yellow-600 transition-colors"
                 >
                   Privacy Policy
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  href="https://portal.sabidub.com/auth/school/signup"
-                  className="hover:text-yellow-600 transition-colors"
-                >
-                  Register a School
                 </Link>
               </li>
             </ul>
