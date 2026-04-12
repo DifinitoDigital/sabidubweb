@@ -61,7 +61,7 @@ const Select = ({ value, onChange, options, placeholder, icon: Icon }: { value: 
         <select
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 appearance-none focus:outline-none focus:border-[#014751] focus:ring-4 focus:ring-[#014751]/5 transition-all font-semibold text-sm shadow-sm"
+            className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 appearance-none focus:outline-none focus:border-[#014751] focus:ring-4 focus:ring-[#014751]/5 transition-all font-semibold text-sm"
         >
             {placeholder && <option value="">{placeholder}</option>}
             {options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
@@ -78,7 +78,7 @@ const GradeSelect = ({ value, onChange }: { value: Grade, onChange: (val: Grade)
         <select
             value={value}
             onChange={(e) => onChange(e.target.value as Grade)}
-            className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-4 py-4 appearance-none focus:outline-none focus:border-[#014751] focus:ring-4 focus:ring-[#014751]/5 text-center font-extrabold text-sm shadow-sm transition-all"
+            className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-4 py-4 appearance-none focus:outline-none focus:border-[#014751] focus:ring-4 focus:ring-[#014751]/5 text-center font-extrabold text-sm transition-all"
         >
             {Object.keys(GRADE_VALUES).map(g => <option key={g} value={g}>{g}</option>)}
         </select>
@@ -112,7 +112,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder, icon: Icon }:
         <div className="relative" ref={containerRef}>
             <div
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 flex items-center justify-between cursor-pointer focus-within:border-[#014751] focus-within:ring-4 focus-within:ring-[#014751]/5 transition-all shadow-sm"
+                className="w-full bg-white border border-gray-200 text-gray-900 rounded-2xl px-5 py-4 flex items-center justify-between cursor-pointer focus-within:border-[#014751] focus-within:ring-4 focus-within:ring-[#014751]/5 transition-all"
             >
                 <div className="flex items-center gap-3 min-w-0">
                     {Icon && <Icon className={`w-4 h-4 shrink-0 ${value ? 'text-[#014751]' : 'text-gray-400'}`} />}
@@ -129,7 +129,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder, icon: Icon }:
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: 10 }}
-                        className="absolute z-50 left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl shadow-2xl overflow-hidden"
+                        className="absolute z-50 left-0 right-0 mt-2 bg-white border border-gray-100 rounded-2xl overflow-hidden"
                     >
                         <div className="p-3 border-b border-gray-50 flex items-center gap-2">
                             <LuSearch className="w-3.5 h-3.5 text-gray-400" />
@@ -1218,7 +1218,7 @@ export default function AdmissionChecker() {
                         </div>
 
                         {/* Resume Section */}
-                        <div className="bg-white border border-gray-100 rounded-[1.5rem] p-4 shadow-sm max-w-xs w-full relative overflow-hidden group">
+                        <div className="bg-white border border-gray-100 rounded-[1.5rem] p-4 max-w-xs w-full relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-[#014751]/5 rounded-full -mr-12 -mt-12 blur-xl group-hover:bg-[#014751]/10 transition-colors" />
                             <label className="block text-[9px] font-black uppercase tracking-[0.15em] text-[#014751]/50 mb-2 ml-1">
                                 RESUME PREVIOUS CHECK
@@ -1234,7 +1234,7 @@ export default function AdmissionChecker() {
                                 <button
                                     onClick={handleResumeCheck}
                                     disabled={isResuming || !resumePaymentId.trim()}
-                                    className="w-10 h-10 bg-[#014751] hover:bg-[#013b43] text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-50 active:scale-95 shadow-md shadow-[#014751]/10"
+                                    className="w-10 h-10 bg-[#014751] hover:bg-[#013b43] text-white rounded-xl flex items-center justify-center transition-all disabled:opacity-50 active:scale-95"
                                 >
                                     {isResuming ? (
                                         <div className="w-4 h-4 border-2 border-t-white border-white/20 rounded-full animate-spin" />
@@ -1252,7 +1252,7 @@ export default function AdmissionChecker() {
 
                 {/* Status Bar */}
                 {savedPaymentId && (
-                    <div className="mb-6 p-0.5 bg-gradient-to-r from-[#014751] to-[#015d69] rounded-2xl shadow-lg max-w-5xl mx-auto w-full">
+                    <div className="mb-6 p-0.5 bg-gradient-to-r from-[#014751] to-[#015d69] rounded-2xl max-w-5xl mx-auto w-full">
                         <div className="bg-white/95 rounded-xl md:rounded-[0.9rem] px-4 md:px-5 py-2 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
                             <div className="flex items-center gap-3 w-full md:w-auto overflow-hidden">
                                 <div className="w-8 h-8 rounded-lg bg-[#014751]/5 flex items-center justify-center text-[#014751] shrink-0">
@@ -1299,9 +1299,9 @@ export default function AdmissionChecker() {
                         className="lg:col-span-5 space-y-8"
                     >
                         {/* Identify */}
-                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6 shadow-sm">
+                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6">
                             <div className="flex items-center gap-4 mb-6">
-                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#014751] text-white flex items-center justify-center shadow-lg">
+                                <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-[#014751] text-white flex items-center justify-center">
                                     <LuGraduationCap className="w-5 h-5 md:w-6 md:h-6" />
                                 </div>
                                 <h2 className="text-lg md:text-xl font-extrabold tracking-tight">Academic Identity</h2>
@@ -1343,7 +1343,7 @@ export default function AdmissionChecker() {
                         </div>
 
                         {/* Subject Matrix */}
-                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6 shadow-sm">
+                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6">
                             <div className="mb-6">
                                 <h2 className="text-lg md:text-xl font-extrabold">Subject Matrix</h2>
                             </div>
@@ -1409,7 +1409,7 @@ export default function AdmissionChecker() {
                         </div>
 
                         {/* Strategic Target */}
-                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6 shadow-sm">
+                        <div className="bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 p-4 md:p-6">
                             <h2 className="text-lg md:text-xl font-extrabold mb-6">Strategic Target</h2>
                             <div className="space-y-4">
                                 <div>
@@ -1442,7 +1442,7 @@ export default function AdmissionChecker() {
                                     </div>
                                 )}
 
-                                <button onClick={checkAdmission} disabled={isChecking || !jambScore || !targetCourseName} className="w-full py-4 rounded-xl md:rounded-2xl bg-[#014751] text-white font-black uppercase text-xs md:text-sm tracking-widest shadow-xl shadow-[#014751]/20 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
+                                <button onClick={checkAdmission} disabled={isChecking || !jambScore || !targetCourseName} className="w-full py-4 rounded-xl md:rounded-2xl bg-[#014751] text-white font-black uppercase text-xs md:text-sm tracking-widest flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
                                     {isChecking ? <LuActivity className="animate-spin text-lg" /> : <>Run Analysis <LuArrowRight className="text-lg" /></>}
                                 </button>
                             </div>
@@ -1453,7 +1453,7 @@ export default function AdmissionChecker() {
                     <div className="lg:col-span-7">
                         {!results && !previewData && (
                             <div className="h-[300px] md:h-[500px] bg-gray-50/50 rounded-3xl md:rounded-[3rem] border-2 border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-6 md:p-12">
-                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white flex items-center justify-center text-gray-200 mb-6 shadow-sm"><LuChartBar className="w-6 h-6 md:w-8 md:h-8" /></div>
+                                <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white flex items-center justify-center text-gray-200 mb-6 border border-gray-100"><LuChartBar className="w-6 h-6 md:w-8 md:h-8" /></div>
                                 <h3 className="text-lg md:text-xl font-black text-gray-800 mb-2">Ready for analysis</h3>
                                 <p className="text-xs md:text-sm font-medium text-gray-400">Complete your profile to generate your report.</p>
                             </div>
@@ -1532,7 +1532,7 @@ export default function AdmissionChecker() {
                                         ))}
                                     </div>
 
-                                    <button onClick={handleUnlock} disabled={isUnlocking} className="w-full py-5 rounded-3xl bg-[#014751] text-white font-black uppercase tracking-widest shadow-xl flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
+                                    <button onClick={handleUnlock} disabled={isUnlocking} className="w-full py-5 rounded-3xl bg-[#014751] text-white font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50">
                                         {isUnlocking ? 'Please wait...' : previewData.insufficientCredits ? <>Get More Credit <LuZap /></> : <>Unlock Full Access <LuShoppingCart /></>}
                                     </button>
                                     {(() => {
@@ -1571,9 +1571,9 @@ export default function AdmissionChecker() {
 
                                     return (
                                         <>
-                                            <div className="bg-white p-1 rounded-2xl md:rounded-[2rem] border border-gray-100 shadow-xl flex gap-1 overflow-x-auto no-scrollbar scroll-smooth">
+                                            <div className="bg-white p-1 rounded-2xl md:rounded-[2rem] border border-gray-100 flex gap-1 overflow-x-auto no-scrollbar scroll-smooth">
                                                 {availableTabs.map(t => (
-                                                    <button key={t} onClick={() => setActiveTab(t as any)} className={`flex-1 min-w-[100px] md:min-w-0 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${activeTab === t ? 'bg-[#014751] text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50'}`}>{t}</button>
+                                                    <button key={t} onClick={() => setActiveTab(t as any)} className={`flex-1 min-w-[100px] md:min-w-0 py-2.5 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all shrink-0 ${activeTab === t ? 'bg-[#014751] text-white' : 'text-gray-400 hover:bg-gray-50'}`}>{t}</button>
                                                 ))}
                                             </div>
                                         </>
@@ -1692,7 +1692,7 @@ export default function AdmissionChecker() {
                                                         </div>
                                                         <div className="flex gap-4">
                                                             {hasError && (
-                                                                <button onClick={() => fetchAdmissionResults(savedPaymentId || '', 1, '', false)} className="px-6 py-3 bg-[#014751] text-white font-black rounded-2xl shadow-lg hover:opacity-90">
+                                                                <button onClick={() => fetchAdmissionResults(savedPaymentId || '', 1, '', false)} className="px-6 py-3 bg-[#014751] text-white font-black rounded-2xl hover:opacity-90">
                                                                     Retry Analysis
                                                                 </button>
                                                             )}
@@ -1728,7 +1728,7 @@ export default function AdmissionChecker() {
                                                             </div>
                                                             <div className="space-y-3">
                                                                 {s.alternatives?.map((alt: any, j: number) => (
-                                                                    <div key={j} className="bg-white p-3 md:p-4 rounded-xl md:rounded-2xl border border-gray-100 shadow-sm">
+                                                                    <div key={j} className="bg-white p-3 md:p-4 rounded-xl md:rounded-2xl border border-gray-100">
                                                                         <div className="flex justify-between items-start gap-4 mb-2">
                                                                             <div className="min-w-0">
                                                                                 <h4 className="font-bold text-sm md:text-base text-gray-900 truncate">{alt.course}</h4>
@@ -1823,7 +1823,7 @@ export default function AdmissionChecker() {
                                                 usageInfo?.planName?.toLowerCase().includes('premium') || usageInfo?.planName?.toLowerCase().includes('standard') ? (
                                                     <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed rounded-3xl gap-4">
                                                         <p className="text-sm text-gray-400 font-medium">See your admission chances for <span className="text-[#014751] font-bold">{targetCourseName || 'this course'}</span> across other top universities.</p>
-                                                        <button onClick={() => handleCompareRequest()} disabled={isComparing} className="px-6 py-3 rounded-xl bg-[#014751] text-white font-black uppercase text-xs shadow-lg shadow-[#014751]/20 active:scale-95 disabled:opacity-50">
+                                                        <button onClick={() => handleCompareRequest()} disabled={isComparing} className="px-6 py-3 rounded-xl bg-[#014751] text-white font-black uppercase text-xs active:scale-95 disabled:opacity-50">
                                                             Run Comparison
                                                         </button>
                                                         <p className="text-[10px] text-gray-400 font-bold">⚠️ Comparing institutions will use 15 credits from your plan usage limit.</p>
@@ -1891,7 +1891,7 @@ export default function AdmissionChecker() {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-md w-full text-center shadow-2xl"
+                            className="bg-white rounded-[2.5rem] p-8 md:p-10 max-w-md w-full text-center"
                         >
                             <div className="w-16 h-16 bg-[#014751]/5 rounded-2xl flex items-center justify-center text-[#014751] mx-auto mb-6">
                                 <LuFileCheck className="w-8 h-8" />
@@ -1908,7 +1908,7 @@ export default function AdmissionChecker() {
                                         navigator.clipboard.writeText(paymentIdToCopy);
                                         showToast("Payment ID copied to clipboard");
                                     }}
-                                    className="p-3 bg-white rounded-xl shadow-sm text-[#014751] hover:bg-[#014751] hover:text-white transition-all active:scale-95"
+                                    className="p-3 bg-white rounded-xl text-[#014751] hover:bg-[#014751] hover:text-white transition-all active:scale-95"
                                     title="Copy to clipboard"
                                 >
                                     <LuCopy className="w-4 h-4" />
@@ -1917,7 +1917,7 @@ export default function AdmissionChecker() {
 
                             <button
                                 onClick={() => setShowPaymentIdModal(false)}
-                                className="w-full py-4 rounded-2xl bg-[#014751] text-white font-black uppercase text-sm tracking-widest shadow-xl shadow-[#014751]/20 active:scale-95 transition-all"
+                                className="w-full py-4 rounded-2xl bg-[#014751] text-white font-black uppercase text-sm tracking-widest active:scale-95 transition-all"
                             >
                                 Continue to Report
                             </button>
@@ -2026,10 +2026,10 @@ export default function AdmissionChecker() {
                                     <h3 className="text-xs md:text-sm font-black uppercase text-gray-900 mb-3">Post-UTME Details</h3>
                                     <div className="p-5 md:p-6 bg-gray-50 rounded-2xl md:rounded-3xl border border-gray-100">
                                         <div className="flex flex-wrap gap-2 md:gap-4 mb-6">
-                                            <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 shadow-sm">Type: {selectedResult.postUtmeType || 'Standard'}</span>
-                                            <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 shadow-sm">Stage: {selectedResult.admissionStage || 'N/A'}</span>
+                                            <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100">Type: {selectedResult.postUtmeType || 'Standard'}</span>
+                                            <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100">Stage: {selectedResult.admissionStage || 'N/A'}</span>
                                             {selectedResult.postUtmeFee && (
-                                                <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 shadow-sm text-green-600">
+                                                <span className="px-2 md:px-3 py-1 md:py-1.5 bg-white rounded-lg text-[8px] md:text-[10px] font-black uppercase border border-gray-100 text-green-600">
                                                     Fee: {new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN' }).format(selectedResult.postUtmeFee)}
                                                 </span>
                                             )}
@@ -2066,7 +2066,7 @@ export default function AdmissionChecker() {
                         initial={{ y: 50, opacity: 0, x: '-50%' }}
                         animate={{ y: 0, opacity: 1, x: '-50%' }}
                         exit={{ y: 50, opacity: 0, x: '-50%' }}
-                        className={`fixed bottom-10 left-1/2 z-[200] px-6 py-4 rounded-2xl shadow-2xl border flex items-center gap-4 min-w-[320px] max-w-[90vw] ${toastConfig.type === 'error' ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100'
+                        className={`fixed bottom-10 left-1/2 z-[200] px-6 py-4 rounded-2xl border flex items-center gap-4 min-w-[320px] max-w-[90vw] ${toastConfig.type === 'error' ? 'bg-red-50 border-red-100' : 'bg-white border-gray-100'
                             }`}
                     >
                         {toastConfig.type === 'error' ? (
