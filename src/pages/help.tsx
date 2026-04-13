@@ -114,7 +114,7 @@ export default function Help() {
                 <input
                   type="text"
                   placeholder="Search for articles, guides, and more..."
-                  className="w-full bg-white text-gray-900 py-5 pl-16 pr-6 rounded-2xl shadow-2xl border-none focus:ring-4 focus:ring-[#AFF8C8]/30 transition-all text-lg"
+                  className="w-full bg-white text-gray-900 py-5 pl-16 pr-6 rounded-2xl border-none focus:ring-4 focus:ring-[#AFF8C8]/30 transition-all text-lg"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -133,7 +133,7 @@ export default function Help() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.1 }}
-                className="p-8 rounded-[32px] bg-[#F8F9FA] border border-gray-100 hover:border-[#014751]/20 hover:shadow-xl transition-all group"
+                className="p-8 rounded-[32px] bg-[#F8F9FA] border border-gray-100 hover:border-[#014751]/40 transition-all group"
               >
                 <div className="w-14 h-14 rounded-2xl bg-[#014751]/10 text-[#014751] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-[#014751] group-hover:text-white transition-all">
                   {category.icon}
