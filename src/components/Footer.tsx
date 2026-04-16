@@ -35,8 +35,10 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
 
                   <div className="flex flex-col gap-6">
                     <div className="flex flex-wrap gap-4">
-                      <button
-                        onClick={() => setIsComingSoonOpen(true)}
+                      <Link
+                        href="https://play.google.com/store/apps/details?id=com.difinito.digital.sabidub.i"
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="flex items-center gap-3 bg-black text-white px-6 py-3 rounded-2xl hover:bg-gray-900 transition-all duration-300 group shadow-lg"
                       >
                         <div className="w-8 h-8 relative">
@@ -45,10 +47,10 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                           </svg>
                         </div>
                         <div className="text-left">
-                          <p className="text-[10px] uppercase tracking-wider opacity-60 leading-none mb-1">Coming Soon to</p>
+                          <p className="text-[10px] uppercase tracking-wider opacity-60 leading-none mb-1">Get it on</p>
                           <p className="text-sm font-bold leading-none">Google Play</p>
                         </div>
-                      </button>
+                      </Link>
 
                       <button
                         onClick={() => setIsComingSoonOpen(true)}
