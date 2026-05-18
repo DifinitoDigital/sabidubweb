@@ -73,6 +73,9 @@ function DetailRow({ label, value, icon }: { label: string; value: string; icon?
   );
 }
 
+// In-memory cache to store full fetched profiles so that back-and-forth navigation is instantaneous!
+const profileCache: Record<string, NyscProfile> = {};
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function NyscProfileDetail() {
   const router = useRouter();
@@ -84,25 +87,34 @@ export default function NyscProfileDetail() {
 
   useEffect(() => {
     if (!id) return;
-    setLoading(true);
 
-    // 1. Check localStorage first (user's own saved passport)
+    // 1. Check in-memory cache first!
+    if (profileCache[id as string]) {
+      setProfile(profileCache[id as string]);
+      setLoading(false);
+      return;
+    }
+
+    // 2. Check localStorage (user's own saved passport)
     try {
       const stored = localStorage.getItem("sabidub_nysc_passport");
       if (stored) {
         const parsed: NyscProfile = JSON.parse(stored);
         if (parsed.id === id) {
           setProfile(parsed);
+          profileCache[id as string] = parsed; // Cache it
           setLoading(false);
           return;
         }
       }
     } catch { }
 
-    // 2. Fetch from backend API
+    setLoading(true);
+
+    // 3. Fetch from backend API
     const loadProfile = async () => {
       try {
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
         const response = await fetch(`${baseUrl}/profile/${id}`);
         if (response.ok) {
           const resData = await response.json();
@@ -132,6 +144,7 @@ export default function NyscProfileDetail() {
               createdAt: details.createdAt ? new Date(details.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
             };
             setProfile(mappedProfile);
+            profileCache[id as string] = mappedProfile; // Cache it
             setLoading(false);
             return;
           }
@@ -140,9 +153,14 @@ export default function NyscProfileDetail() {
         console.error("Error loading profile from backend", err);
       }
 
-      // 3. Fall back to mock data
+      // 4. Fall back to mock data
       const found = MOCK_YEARBOOK.find(m => m.id === id);
-      setProfile(found || null);
+      if (found) {
+        setProfile(found);
+        profileCache[id as string] = found; // Cache it
+      } else {
+        setProfile(null);
+      }
       setLoading(false);
     };
 
@@ -177,8 +195,9 @@ export default function NyscProfileDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FCFDFD]">
-        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFA]">
+        <div className="w-10 h-10 border-4 border-[#01353D]/10 border-t-[#01353D] rounded-full animate-spin" />
+        <p className="mt-4 text-[10px] font-black text-[#01353D] uppercase tracking-widest animate-pulse">Loading yearbook profile...</p>
       </div>
     );
   }

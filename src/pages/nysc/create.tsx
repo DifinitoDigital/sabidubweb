@@ -275,6 +275,16 @@ export default function CreateNyscProfile() {
 
   return (
     <>
+      {/* ── Circular Progress Loader Overlay when Submitting ── */}
+      {submitting && (
+        <div className="fixed inset-0 z-50 bg-[#F8FAFA]/80 backdrop-blur-md flex flex-col items-center justify-center">
+          <div className="relative flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full border-4 border-[#01353D]/10 border-t-[#01353D] animate-spin" />
+          </div>
+          <h3 className="mt-5 text-xs font-black text-[#01353D] uppercase tracking-widest animate-pulse">Publishing Your Yearbook Card...</h3>
+          <p className="text-[10px] text-gray-500 mt-1">Compressing assets and establishing secure identity.</p>
+        </div>
+      )}
       <Head>
         <title>Join Digital Yearbook | SabiDub</title>
         <meta name="description" content="Add your digital card to the SabiDub NYSC yearbook." />
@@ -521,10 +531,9 @@ export default function CreateNyscProfile() {
                         onChange={e => setYearOfService(e.target.value)}
                         className="w-full px-3 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
                       >
-                        <option value="2026">2026</option>
-                        <option value="2025">2025</option>
-                        <option value="2024">2024</option>
-                        <option value="2023">2023</option>
+                        {Array.from({ length: 2026 - 1973 + 1 }, (_, i) => 2026 - i).map(year => (
+                          <option key={year} value={year.toString()}>{year}</option>
+                        ))}
                       </select>
                     </div>
                     <div className="text-left">

@@ -240,10 +240,9 @@ export default function NyscHub() {
                 className="px-3 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs font-bold text-gray-700 focus:outline-none"
               >
                 <option value="All">All Years</option>
-                <option value="2026">2026</option>
-                <option value="2025">2025</option>
-                <option value="2024">2024</option>
-                <option value="2023">2023</option>
+                {Array.from({ length: 2026 - 1973 + 1 }, (_, i) => 2026 - i).map(year => (
+                  <option key={year} value={year.toString()}>{year}</option>
+                ))}
               </select>
               <select
                 value={filterBatch}
