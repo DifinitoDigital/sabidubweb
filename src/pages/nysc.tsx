@@ -38,6 +38,7 @@ const BADGE_STYLES = {
 export default function NyscHub() {
   const router = useRouter();
   const [yearbookList, setYearbookList] = useState<any[]>([]);
+  const [loadingProfiles, setLoadingProfiles] = useState(true);
   const [savedPassport, setSavedPassport] = useState<any>(null);
 
   // Filtering States for Yearbook Directory
@@ -51,6 +52,7 @@ export default function NyscHub() {
   const [visibleCount, setVisibleCount] = useState(20);
 
   const fetchYearbook = async () => {
+    setLoadingProfiles(true);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
       const response = await fetch(`${baseUrl}/profile/registered-as/NYSC`);
@@ -79,12 +81,13 @@ export default function NyscHub() {
               createdAt: details.createdAt ? new Date(details.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
             };
           });
-          
           setYearbookList(mapped);
         }
       }
     } catch (e) {
       console.error("Error loading yearbook from backend", e);
+    } finally {
+      setLoadingProfiles(false);
     }
   };
 
@@ -298,6 +301,48 @@ export default function NyscHub() {
           </div>
 
           {/* Directory Grid — 2 cols on mobile, 3 on tablet, 4 on desktop */}
+          {loadingProfiles ? (
+            /* ── Skeleton Loading Cards ── */
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden bg-gradient-to-b from-[#0a3f2d]/40 to-[#01140e]/60 border border-white/5 animate-pulse"
+                  style={{ animationDelay: `${i * 80}ms` }}
+                >
+                  {/* Top header skeleton */}
+                  <div className="absolute top-6 left-5 right-5 flex justify-between">
+                    <div className="h-1.5 w-16 bg-white/10 rounded-full" />
+                    <div className="h-1.5 w-12 bg-white/10 rounded-full" />
+                  </div>
+                  {/* Avatar shimmer block */}
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-transparent" />
+                  {/* Bottom text skeleton */}
+                  <div className="absolute bottom-4 left-5 right-5 space-y-2">
+                    <div className="h-1.5 w-10 bg-emerald-400/30 rounded-full" />
+                    <div className="h-3 w-3/4 bg-white/20 rounded-full" />
+                    <div className="h-2 w-full bg-white/10 rounded-full" />
+                    <div className="h-2 w-2/3 bg-white/10 rounded-full" />
+                    <div className="mt-3 border-t border-white/10 pt-2 flex justify-between">
+                      <div className="h-1.5 w-14 bg-white/10 rounded-full" />
+                      <div className="h-1.5 w-10 bg-white/10 rounded-full" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredDirectory.length === 0 ? (
+            /* ── Empty State ── */
+            <div className="col-span-full flex flex-col items-center justify-center py-24 gap-4">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+                <FaUsers className="text-gray-300 text-2xl" />
+              </div>
+              <p className="text-gray-400 text-sm font-bold">No corp members found matching your search.</p>
+              <button onClick={() => { setSearchQuery(""); setFilterYear("All"); setFilterBatch("All"); setFilterStream("All"); setFilterStatus("All"); }} className="text-[#01353D] text-xs font-black uppercase tracking-widest hover:underline">
+                Clear all filters
+              </button>
+            </div>
+          ) : (
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
             <AnimatePresence>
               {paginatedDirectory.map((item) => {
@@ -374,7 +419,7 @@ export default function NyscHub() {
               })}
             </AnimatePresence>
           </div>
-
+          )}
           {/* Infinite Scroll loading indicator */}
           {visibleCount < filteredDirectory.length && (
             <div className="flex justify-center items-center py-10">
@@ -383,19 +428,6 @@ export default function NyscHub() {
             </div>
           )}
 
-          {/* Empty list illustration */}
-          {filteredDirectory.length === 0 && (
-            <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center max-w-sm mx-auto shadow-sm">
-              <h3 className="text-sm font-bold text-gray-900 mb-1">No matching profiles</h3>
-              <p className="text-xs text-gray-500 mb-4">Be the first to publish a profile under this stream selection!</p>
-              <button
-                onClick={() => router.push('/nysc/create')}
-                className="bg-[#01353D] text-white px-5 py-2.5 rounded-lg text-xs font-bold hover:bg-[#024a54] transition-colors"
-              >
-                Join Digital Yearbook
-              </button>
-            </div>
-          )}
         </div>
 
       </div>
