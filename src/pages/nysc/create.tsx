@@ -953,6 +953,28 @@ export default function CreateNyscProfile() {
         </div>
       )}
 
+      {downloadingPreview && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex flex-col items-center justify-center select-none animate-fadeIn">
+          <div className="bg-white/10 border border-white/20 p-8 rounded-2xl shadow-2xl max-w-sm w-[90%] text-center flex flex-col items-center gap-5">
+            {/* Spinning gradient ring */}
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-emerald-400/20" />
+              <div className="absolute inset-0 rounded-full border-4 border-t-emerald-400 animate-spin" />
+            </div>
+            
+            <div className="space-y-1.5">
+              <h4 className="text-white text-sm font-black uppercase tracking-widest">Generating Preview Card</h4>
+              <p className="text-gray-300 text-[10px] leading-relaxed">Preparing high-definition graphics, rendering custom fonts, and packaging your NYSC preview passport card...</p>
+            </div>
+
+            {/* Simulated progress step anim */}
+            <div className="w-full bg-white/10 h-[3px] rounded-full overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full w-4/5 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );

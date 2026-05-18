@@ -84,6 +84,7 @@ export default function NyscProfileDetail() {
 
   const [profile, setProfile] = useState<NyscProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -342,7 +343,7 @@ export default function NyscProfileDetail() {
 
                 {/* Extra Details line */}
                 <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] py-[1px]">
-                  {profile.tribe} Tribe • {profile.stateOfOrigin || "STATE OF ORIGIN"}
+                  {profile.tribe} Tribe • {profile.stateOfOrigin || "STATE OF ORIGIN"} • {profile.platoonNo}
                 </p>
 
                 {/* Faint footer border line */}
@@ -359,7 +360,7 @@ export default function NyscProfileDetail() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm"
+            className="bg-white border border-gray-200 rounded-2xl shadow-sm"
           >
             {/* Top accent strip */}
             <div className={`h-1 w-full bg-gradient-to-r ${theme.cardGradient}`} />
@@ -481,24 +482,38 @@ export default function NyscProfileDetail() {
               {/* ── Memoir Gallery Section (3-Column Polaroid Memory Board) ── */}
               {profile.galleryUrls && profile.galleryUrls.filter(Boolean).length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-100">
-                  <h3 className="text-xs font-black uppercase tracking-widest text-[#01353D] mb-3">NYSC Memory Gallery</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-[#01353D] mb-4">NYSC Memory Gallery</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {profile.galleryUrls.filter(Boolean).map((url, idx) => {
                       const labels = ["CAMP MEMORY", "PPA MILESTONE", "POP GRADUATION"];
                       return (
-                        <div key={idx} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
-                          <div className="aspect-square relative overflow-hidden bg-gray-100">
+                        <div
+                          key={idx}
+                          onClick={() => setPreviewImage(url)}
+                          className="cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm active:scale-95 transition-transform duration-150"
+                        >
+                          {/* Image Box — explicit height for mobile */}
+                          <div className="w-full h-48 sm:h-44 relative bg-gray-100">
                             <img
                               src={url}
                               alt={labels[idx] || "Memory photo"}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
+                              className="absolute inset-0 w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
-                              <span className="text-[8px] font-black text-white uppercase tracking-widest">{labels[idx] || "Service Photo"}</span>
+                            {/* Always-visible gradient footer label (works on mobile touch) */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
+                              <span className="text-[8px] font-black text-white uppercase tracking-widest">
+                                {labels[idx] || "Service Photo"}
+                              </span>
                             </div>
                           </div>
-                          <div className="p-2.5 text-center bg-gray-55/50 border-t border-gray-100">
-                            <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{labels[idx] || "Service Photo"}</p>
+                          {/* Caption strip */}
+                          <div className="px-3 py-2 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
+                            <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{labels[idx]}</p>
+                            <span className="text-[8px] text-emerald-500 font-black">↗ View</span>
                           </div>
                         </div>
                       );
@@ -531,6 +546,99 @@ export default function NyscProfileDetail() {
 
         </div>
       </div>
+
+      {downloading && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex flex-col items-center justify-center select-none animate-fadeIn">
+          <div className="bg-white/10 border border-white/20 p-8 rounded-2xl shadow-2xl max-w-sm w-[90%] text-center flex flex-col items-center gap-5">
+            {/* Spinning gradient ring */}
+            <div className="relative w-16 h-16">
+              <div className="absolute inset-0 rounded-full border-4 border-emerald-400/20" />
+              <div className="absolute inset-0 rounded-full border-4 border-t-emerald-400 animate-spin" />
+            </div>
+            
+            <div className="space-y-1.5">
+              <h4 className="text-white text-sm font-black uppercase tracking-widest">Generating Digital Card</h4>
+              <p className="text-gray-300 text-[10px] leading-relaxed">Preparing high-definition graphics, rendering custom fonts, and packaging your NYSC digital passport...</p>
+            </div>
+
+            {/* Simulated progress step anim */}
+            <div className="w-full bg-white/10 h-[3px] rounded-full overflow-hidden">
+              <div className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full w-4/5 animate-pulse" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {previewImage && (
+        <div 
+          className="fixed inset-0 bg-black/95 backdrop-blur-lg z-50 flex flex-col justify-between select-none py-10 animate-fadeIn"
+        >
+          {/* Top Bar */}
+          <div className="w-full max-w-6xl mx-auto px-6 flex justify-between items-center z-50">
+            <div className="text-left">
+              <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest block">nysc memory board</span>
+              <span className="text-white text-xs font-bold">{profile.fullName}&apos;s Service Journey</span>
+            </div>
+            <button 
+              className="bg-white/10 hover:bg-white/20 text-white rounded-full px-4 py-2 transition-colors border border-white/10 text-xs font-black uppercase tracking-wider flex items-center gap-1.5"
+              onClick={() => setPreviewImage(null)}
+            >
+              ✕ Close
+            </button>
+          </div>
+
+          {/* Horizontal Scrollable Slide Container */}
+          <div className="flex-1 w-full flex items-center justify-center overflow-x-auto py-4 px-6 md:px-12 scrollbar-none snap-x snap-mandatory">
+            <div className="flex gap-8 items-center h-full">
+              {profile.galleryUrls?.filter(Boolean).map((url, idx) => {
+                const labels = ["CAMP MEMORY", "PPA MILESTONE", "POP GRADUATION"];
+                const isActive = url === previewImage;
+                return (
+                  <div 
+                    key={idx} 
+                    className={`shrink-0 snap-center w-[85vw] max-w-[450px] aspect-[3/4.2] rounded-2xl overflow-hidden border transition-all duration-500 shadow-2xl ${
+                      isActive ? "border-emerald-400 scale-100 opacity-100" : "border-white/10 scale-95 opacity-50"
+                    } bg-black/40 flex flex-col cursor-pointer`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPreviewImage(url);
+                    }}
+                  >
+                    <div className="flex-1 relative overflow-hidden bg-gray-900">
+                      <img 
+                        src={url} 
+                        alt={labels[idx]} 
+                        className="w-full h-full object-cover pointer-events-none select-none"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
+                      
+                      {/* Card Details */}
+                      <div className="absolute bottom-6 left-6 right-6 text-left space-y-1.5">
+                        <span className="bg-emerald-400 text-black px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">
+                          {labels[idx]}
+                        </span>
+                        <h3 className="text-white text-lg font-black tracking-tight">{profile.fullName}</h3>
+                        <p className="text-gray-300 text-[10px] font-mono leading-relaxed">{profile.ppa.split(",")[0]} • {profile.deploymentState}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Bottom hint text */}
+          <div className="text-center z-50">
+            <p className="text-gray-400 text-[9px] uppercase font-black tracking-widest animate-pulse">
+              ← Scroll / Swipe Horizontally to View All Memories →
+            </p>
+            <p className="text-gray-500 text-[8px] mt-1 select-none">Click outer space to close</p>
+          </div>
+          
+          {/* Background click handler to close */}
+          <div className="absolute inset-0 z-0" onClick={() => setPreviewImage(null)} />
+        </div>
+      )}
 
       <Footer />
     </>

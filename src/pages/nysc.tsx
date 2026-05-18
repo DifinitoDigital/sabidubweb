@@ -297,8 +297,8 @@ export default function NyscHub() {
             </div>
           </div>
 
-          {/* Directory Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 md:gap-8 pt-4">
+          {/* Directory Grid — 2 cols on mobile, 3 on tablet, 4 on desktop */}
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
             <AnimatePresence>
               {paginatedDirectory.map((item) => {
                 const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
@@ -310,7 +310,7 @@ export default function NyscHub() {
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 15 }}
-                    className={`relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 hover:-translate-y-1 transition-all duration-500 group bg-gradient-to-b ${cardTheme.cardGradient}`}
+                    className={`relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group bg-gradient-to-b ${cardTheme.cardGradient}`}
                   >
                     {/* Background Pattern Mesh Overlay */}
                     <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
@@ -323,7 +323,7 @@ export default function NyscHub() {
                     {/* TOP HEADER WATERMARK */}
                     <div className="absolute top-8 left-0 right-0 px-6 flex justify-between items-center z-20 text-[7.5px] font-black uppercase tracking-widest text-white/70 select-none">
                       <span>nysc passport</span>
-                      <span>Powered by SabiDub</span>
+                      <span>SabiDub</span>
                     </div>
 
                     {/* FULL BLEED PORTRAIT PHOTO */}
@@ -331,9 +331,11 @@ export default function NyscHub() {
                       <img
                         src={item.avatarUrl}
                         alt={item.fullName}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                        loading="lazy"
+                        className="w-full h-full object-cover object-top"
+                        onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10 pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
                       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
                     </div>
 
@@ -358,7 +360,7 @@ export default function NyscHub() {
 
                       {/* Extra Details line */}
                       <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
-                        {item.tribe} Tribe • {item.stateOfOrigin}
+                        {item.tribe} Tribe • {item.stateOfOrigin} • {item.platoonNo}
                       </p>
 
                       {/* Faint footer border line */}
