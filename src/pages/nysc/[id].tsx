@@ -31,139 +31,15 @@ interface NyscProfile {
   gender: string;
   badgeTheme: string;
   avatarUrl: string;
+  galleryUrls?: string[];
+  story?: string;
   serviceStatus: string;
   createdAt?: string;
 }
 
 // ─── Mock Data (mirrors nysc.tsx) ─────────────────────────────────────────────
-const MOCK_YEARBOOK: NyscProfile[] = [
-  {
-    id: "NYSC-25-001",
-    fullName: "Tunde Bakare",
-    email: "tunde.b@mail.com",
-    phone: "+234 810 000 001",
-    stateOfOrigin: "Ogun",
-    callUpNo: "NYSC/LAG/2025/284091",
-    deploymentState: "Lagos (Iyana Ipaja)",
-    yearOfService: "2025",
-    batch: "Batch A",
-    stream: "Stream 1",
-    platoonNo: "Platoon 4",
-    platoonPosition: "Platoon Leader",
-    ppa: "Chevron Nigeria Limited, Lekki",
-    tribe: "Yoruba",
-    gender: "Male",
-    badgeTheme: "emerald",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800",
-    serviceStatus: "Serving",
-    createdAt: "12/04/2025"
-  },
-  {
-    id: "NYSC-25-002",
-    fullName: "Chinedu Okafor",
-    email: "chinedu.o@mail.com",
-    phone: "+234 812 000 002",
-    stateOfOrigin: "Anambra",
-    callUpNo: "NYSC/RIV/2025/119053",
-    deploymentState: "Rivers (Nonwa Gbam)",
-    yearOfService: "2025",
-    batch: "Batch B",
-    stream: "Stream 2",
-    platoonNo: "Platoon 9",
-    platoonPosition: "Member",
-    ppa: "Shell Petroleum, PH",
-    tribe: "Igbo",
-    gender: "Male",
-    badgeTheme: "classic",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800",
-    serviceStatus: "Serving",
-    createdAt: "18/09/2025"
-  },
-  {
-    id: "NYSC-24-003",
-    fullName: "Fatima Bello",
-    email: "fatima.b@mail.com",
-    phone: "+234 809 000 003",
-    stateOfOrigin: "Kano",
-    callUpNo: "NYSC/KAN/2024/928401",
-    deploymentState: "Kano (Karaye)",
-    yearOfService: "2024",
-    batch: "Batch C",
-    stream: "Stream 1",
-    platoonNo: "Platoon 2",
-    platoonPosition: "OBS Executive",
-    ppa: "General Hospital, Kano",
-    tribe: "Hausa",
-    gender: "Female",
-    badgeTheme: "emerald",
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
-    serviceStatus: "Served",
-    createdAt: "04/11/2024"
-  },
-  {
-    id: "NYSC-25-004",
-    fullName: "Efe Johnson",
-    email: "efe.j@mail.com",
-    phone: "+234 813 000 004",
-    stateOfOrigin: "Delta",
-    callUpNo: "NYSC/DEL/2025/834012",
-    deploymentState: "Delta (Issele-Uku)",
-    yearOfService: "2025",
-    batch: "Batch A",
-    stream: "Stream 2",
-    platoonNo: "Platoon 1",
-    platoonPosition: "Welfare Officer",
-    ppa: "Ministry of Justice, Asaba",
-    tribe: "Urhobo",
-    gender: "Female",
-    badgeTheme: "sage",
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800",
-    serviceStatus: "Serving",
-    createdAt: "22/05/2025"
-  },
-  {
-    id: "NYSC-24-005",
-    fullName: "Aminu Yusuf",
-    email: "aminu.y@mail.com",
-    phone: "+234 815 000 005",
-    stateOfOrigin: "Katsina",
-    callUpNo: "NYSC/FCT/2024/552941",
-    deploymentState: "FCT Abuja (Kubwa)",
-    yearOfService: "2024",
-    batch: "Batch B",
-    stream: "Stream 1",
-    platoonNo: "Platoon 7",
-    platoonPosition: "Warrant Officer",
-    ppa: "Federal Secretariat, Garki",
-    tribe: "Hausa",
-    gender: "Male",
-    badgeTheme: "classic",
-    avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=800",
-    serviceStatus: "Served",
-    createdAt: "10/08/2024"
-  },
-  {
-    id: "NYSC-23-006",
-    fullName: "Adebayo Ogunmola",
-    email: "adebayo.o@mail.com",
-    phone: "+234 816 000 006",
-    stateOfOrigin: "Oyo",
-    callUpNo: "NYSC/OYO/2023/482019",
-    deploymentState: "Oyo (Iseyin)",
-    yearOfService: "2023",
-    batch: "Batch C",
-    stream: "Stream 2",
-    platoonNo: "Platoon 10",
-    platoonPosition: "Member",
-    ppa: "District Grammar School",
-    tribe: "Yoruba",
-    gender: "Male",
-    badgeTheme: "sage",
-    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=800",
-    serviceStatus: "Served",
-    createdAt: "15/12/2023"
-  }
-];
+const MOCK_YEARBOOK: NyscProfile[] = [];
+const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250";
 
 // ─── Theme Colours ─────────────────────────────────────────────────────────────
 const BADGE_STYLES: Record<string, { cardGradient: string; accentColor: string; accentBg: string }> = {
@@ -221,12 +97,56 @@ export default function NyscProfileDetail() {
           return;
         }
       }
-    } catch {}
+    } catch { }
 
-    // 2. Fall back to mock data
-    const found = MOCK_YEARBOOK.find(m => m.id === id);
-    setProfile(found || null);
-    setLoading(false);
+    // 2. Fetch from backend API
+    const loadProfile = async () => {
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+        const response = await fetch(`${baseUrl}/profile/${id}`);
+        if (response.ok) {
+          const resData = await response.json();
+          if (resData) {
+            const details = resData.nyscDetails || {};
+            const mappedProfile: NyscProfile = {
+              id: resData.id,
+              fullName: details.fullName || resData.name || 'Anonymous',
+              email: details.email || undefined,
+              phone: details.phone || resData.number || undefined,
+              stateOfOrigin: details.stateOfOrigin || undefined,
+              callUpNo: details.callUpNo || 'N/A',
+              deploymentState: details.deploymentState || 'N/A',
+              yearOfService: details.yearOfService || '2026',
+              batch: details.batch || 'Batch A',
+              stream: details.stream || 'Stream 1',
+              platoonNo: details.platoonNo || 'Platoon 1',
+              platoonPosition: details.platoonPosition || 'Member',
+              ppa: details.ppa || 'N/A',
+              tribe: details.tribe || 'N/A',
+              gender: details.gender || resData.gender || 'Male',
+              badgeTheme: details.badgeTheme || 'emerald',
+              avatarUrl: details.avatarUrl || resData.profilePicture || DEFAULT_AVATAR,
+              galleryUrls: details.galleryUrls || [],
+              story: details.story || undefined,
+              serviceStatus: details.serviceStatus || 'Serving',
+              createdAt: details.createdAt ? new Date(details.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
+            };
+            setProfile(mappedProfile);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("Error loading profile from backend", err);
+      }
+
+      // 3. Fall back to mock data
+      const found = MOCK_YEARBOOK.find(m => m.id === id);
+      setProfile(found || null);
+      setLoading(false);
+    };
+
+    loadProfile();
   }, [id]);
 
   const theme = BADGE_STYLES[profile?.badgeTheme || "emerald"];
@@ -288,7 +208,7 @@ export default function NyscProfileDetail() {
 
       <Navbar />
 
-      <div className="bg-[#F8FAFA] min-h-screen pt-24 pb-20 overflow-x-hidden">
+      <div className="bg-[#F8FAFA] min-h-screen pt-16 sm:pt-24 pb-20 overflow-x-hidden">
 
         {/* ── Hero Banner (full-bleed portrait + gradient overlay) ── */}
         <div className="relative w-full h-[420px] overflow-hidden">
@@ -301,7 +221,7 @@ export default function NyscProfileDetail() {
 
           {/* Multi-stop gradient: only bottom 20% is opaque */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#F8FAFA] via-[#F8FAFA]/20 to-transparent pointer-events-none" />
-          
+
           {/* Top dark layer for header text */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent pointer-events-none" />
 
@@ -349,11 +269,10 @@ export default function NyscProfileDetail() {
                 {/* Name and Meta */}
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                    <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${
-                      isServing
+                    <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${isServing
                         ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                         : "bg-gray-100 text-gray-500 border-gray-200"
-                    }`}>
+                      }`}>
                       {isServing ? "Active Serving" : "Served Alumni"}
                     </span>
                     <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest border border-gray-200 px-2 py-0.5 rounded-full">
@@ -436,6 +355,48 @@ export default function NyscProfileDetail() {
                 </div>
 
               </div>
+
+              {/* ── Story / Memoir Section (Vibrant, Sleek Glassmorphism Card Style) ── */}
+              {profile.story && (
+                <div className="mt-8 pt-8 border-t border-gray-100">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-[#01353D] mb-3">My Service Story & Experience</h3>
+                  <div className="bg-[#F8FAFA] border border-gray-150 rounded-xl p-4 sm:p-5 relative">
+                    <span className="absolute -top-3 left-6 bg-[#01353D] text-white px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">Memoir</span>
+                    <p className="text-xs text-gray-700 leading-relaxed font-serif italic">
+                      &ldquo;{profile.story}&rdquo;
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Memoir Gallery Section (3-Column Polaroid Memory Board) ── */}
+              {profile.galleryUrls && profile.galleryUrls.filter(Boolean).length > 0 && (
+                <div className="mt-8 pt-8 border-t border-gray-100">
+                  <h3 className="text-xs font-black uppercase tracking-widest text-[#01353D] mb-3">NYSC Memory Gallery</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {profile.galleryUrls.filter(Boolean).map((url, idx) => {
+                      const labels = ["CAMP MEMORY", "PPA MILESTONE", "POP GRADUATION"];
+                      return (
+                        <div key={idx} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all group">
+                          <div className="aspect-square relative overflow-hidden bg-gray-100">
+                            <img
+                              src={url}
+                              alt={labels[idx] || "Memory photo"}
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+                              <span className="text-[8px] font-black text-white uppercase tracking-widest">{labels[idx] || "Service Photo"}</span>
+                            </div>
+                          </div>
+                          <div className="p-2.5 text-center bg-gray-55/50 border-t border-gray-100">
+                            <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{labels[idx] || "Service Photo"}</p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               {/* ── Footer watermark ── */}
               <div className="border-t border-gray-100 mt-8 pt-5 flex justify-between items-center">

@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { 
+import {
   FaDownload, FaSearch,
   FaIdCard, FaUsers, FaChevronLeft, FaChevronRight,
   FaQrcode, FaArrowRight, FaStar, FaBuilding, FaGlobe,
@@ -17,174 +17,65 @@ const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy
 
 // NYSC State Camps list for convenience
 const CAMP_STATES = [
-  "Abia (Mgbhan)", "Adamawa (Girei)", "Akwa Ibom (Nsit Atai)", "Anambra (Umuawulu-Mbaukwu)", 
-  "Bauchi (Wailo)", "Bayelsa (Kaiama)", "Benue (Wannune)", "Borno (Katsina Camp)", 
-  "Cross River (Obubra)", "Delta (Issele-Uku)", "Ebonyi (Macgregor)", "Edo (Okada)", 
-  "Ekiti (Ise-Orun/Emure)", "Enugu (Awgu)", "FCT Abuja (Kubwa)", "Gombe (Amada)", 
-  "Imo (Eziama Obaire)", "Jigawa (Fanisau)", "Kaduna (Chikun)", "Kano (Karaye)", 
-  "Katsina (Mani Road)", "Kebbi (Dakingari)", "Kogi (Asaya)", "Kwara (Yikpata)", 
-  "Lagos (Iyana Ipaja)", "Nasarawa (Keffi)", "Niger (Paiko)", "Ogun (Sagamu)", 
-  "Ondo (Ikare-Akoko)", "Osun (Ede)", "Oyo (Iseyin)", "Plateau (Mangu)", 
-  "Rivers (Nonwa Gbam)", "Sokoto (Wamakko)", "Taraba (Jalingo)", "Yobe (Potiskum)", 
+  "Abia (Mgbhan)", "Adamawa (Girei)", "Akwa Ibom (Nsit Atai)", "Anambra (Umuawulu-Mbaukwu)",
+  "Bauchi (Wailo)", "Bayelsa (Kaiama)", "Benue (Wannune)", "Borno (Katsina Camp)",
+  "Cross River (Obubra)", "Delta (Issele-Uku)", "Ebonyi (Macgregor)", "Edo (Okada)",
+  "Ekiti (Ise-Orun/Emure)", "Enugu (Awgu)", "FCT Abuja (Kubwa)", "Gombe (Amada)",
+  "Imo (Eziama Obaire)", "Jigawa (Fanisau)", "Kaduna (Chikun)", "Kano (Karaye)",
+  "Katsina (Mani Road)", "Kebbi (Dakingari)", "Kogi (Asaya)", "Kwara (Yikpata)",
+  "Lagos (Iyana Ipaja)", "Nasarawa (Keffi)", "Niger (Paiko)", "Ogun (Sagamu)",
+  "Ondo (Ikare-Akoko)", "Osun (Ede)", "Oyo (Iseyin)", "Plateau (Mangu)",
+  "Rivers (Nonwa Gbam)", "Sokoto (Wamakko)", "Taraba (Jalingo)", "Yobe (Potiskum)",
   "Zamfara (Tsafe)"
 ];
 
 const NIGERIAN_STATES = [
-  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", 
-  "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "Gombe", "Imo", 
-  "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", 
-  "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", 
+  "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
+  "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "Gombe", "Imo",
+  "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos",
+  "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers",
   "Sokoto", "Taraba", "Yobe", "Zamfara", "FCT Abuja"
 ];
 
 const NIGERIAN_TRIBES = [
-  "Abayon", "Abua", "Achipa", "Adara", "Adim", "Adun", "Affade", "Afizere", "Afo", "Agbo", 
-  "Agila", "Agwagwune", "Ahan", "Ahwia", "Akaju-Ndem", "Akajuk", "Akoko", "Akpa", "Akpes", "Alago", 
-  "Amo", "Anaguta", "Anan", "Anang", "Angas", "Ankwei", "Anyama", "Atyap", "Auyoka", "Awori", 
-  "Ayu", "Babur", "Bachama", "Bada", "Bade", "Bahumono", "Bakulu", "Bali", "Bambuka", "Banda", 
-  "Bandawa", "Bariba", "Barke", "Bashiri", "Basa", "Bassa-Komo", "Bassa-Nge", "Batonu", "Batsama", "Baushi", 
-  "Baya", "Bekwarra", "Bette", "Bile", "Biliri", "Binawa", "Bini (Edo)", "Boki", "Bokkos", "Boma", 
-  "Bombaro", "Boritsu", "Bolewa", "Buduma", "Bumaji", "Bura", "Burak", "Bussa", "Buta", "Bwall", 
-  "Bwali", "Bwzza", "Challa", "Chamba", "Cham-Mwana", "Chara", "Chawai", "Chip", "Chokobo", "Chukkol", 
-  "Daba", "Dadiya", "Daka", "Dakarkari", "Danda", "Dandawa", "Daza", "Degema", "Dendi", "Dera", 
-  "Dghwede", "Dibo", "Doemak", "Doko-Uyanga", "Dong", "Duka", "Duri", "Duwa", "Ebira", "Ebu", 
-  "Efik", "Efut", "Eggon", "Egun", "Egbema", "Egedde", "Ekoi", "Esan", "Etsako", "Etche", 
-  "Fali", "Fulani", "Fyam", "Fyer", "Ga'anda", "Gade", "Galambi", "Gambiri", "Ganawuri", "Gbagyi", 
-  "Gbedde", "Gbo", "Gbotogo", "Gera", "Geruma", "Ghana", "Ghotuo", "Ginde", "Gira", "Gizigz", 
-  "Gobir", "Goemai", "Gokana", "Gombi", "Gornun", "Gura", "Gurmana", "Gwandara", "Gwari", "Gwom", 
-  "Gwoza", "Gyem", "Hausa", "Higi", "Holma", "Ibeno", "Ibibio", "Ichen", "Icheve", "Idoma", 
-  "Igala", "Igbo", "Igede", "Ijaw", "Ika", "Ikulu", "Irigwe", "Isoko", "Itsekiri", "Iyala", 
-  "Izere", "Jaku", "Jara", "Jassawa", "Jawa", "Jeere", "Jera", "Jidda-Abu", "Jibu", "Jiti", 
-  "Jorto", "Jukun", "Kaje", "Kajuru", "Kaka", "Kalabari", "Kamaku", "Kambari", "Kamwe", "Kanakuru", 
-  "Kanembu", "Kanuri", "Karimjo", "Kariya", "Katab", "Kenern", "Keshny", "Kiballo", "Kilba", "Kohumono", 
-  "Koma", "Kona", "Koro", "Kubi", "Kudachano", "Kufry", "Kugama", "Kugbo", "Kukuruku", "Kulere", 
-  "Kunini", "Kurama", "Kushi", "Kuteb", "Kuturmi", "Kwalla", "Kwami", "Kwange", "Kwanka", "Kwaro", 
-  "Kwato", "Kyenga", "Laaru", "Laka", "Lala", "Lame", "Lamja", "Lau", "Lela", "Lelna", 
-  "Lemoro", "Limbola", "Lindiri", "Longuda", "Lopa", "Lotsu", "Lukshi", "Lungu", "Luri", "Mabo", 
-  "Mada", "Maha", "Mambilla", "Mangas", "Margi", "Matakarn", "Mbembe", "Mboi", "Mbote", "Mbula", 
-  "Mbum", "Mbutye", "Medye", "Megili", "Memyang", "Miango", "Milgili", "Mini", "Miri", "Miya", 
-  "Mobber", "Montol", "Morwa", "Muchia", "Mumuye", "Mundang", "Mupun", "Mushere", "Mwaghavul", "Ndoro", 
-  "Ngamo", "Nggwahyi", "Ngizim", "Ngoshe", "Nguwimi", "Ninzam", "Njimbin", "Nkari", "Nkum", "Nokere", 
-  "Nuki", "Nungu", "Nupe", "Nyandang", "Odut", "Ogbia", "Ogoni", "Okobo", "Okpamheri", "Olulumo", 
-  "Oron", "Owan", "Owe", "Pa'a", "Pai", "Panyam", "Passam", "Pero", "Pyapun", "Quoll", 
-  "Reshe", "Rindre", "Rishuwa", "Ron", "Rubu", "Rukuba", "Rumada", "Rumaya", "Sakbe", "Sanga", 
-  "Sarkawa", "Saya", "Shanga", "Shangawa", "Shira", "Shomo", "Shuwa Arab", "Sikdi", "Siri", "Sukur", 
-  "Sura", "Tangale", "Tarok", "Tiv", "Tula", "Umon", "Uncinda", "Urhobo", "Uvwie", "Uyanga", 
-  "Verre", "Waja", "Waka", "Warji", "Wula", "Wurkum", "Yagba", "Yako", "Yala", "Yandang", 
+  "Abayon", "Abua", "Achipa", "Adara", "Adim", "Adun", "Affade", "Afizere", "Afo", "Agbo",
+  "Agila", "Agwagwune", "Ahan", "Ahwia", "Akaju-Ndem", "Akajuk", "Akoko", "Akpa", "Akpes", "Alago",
+  "Amo", "Anaguta", "Anan", "Anang", "Angas", "Ankwei", "Anyama", "Atyap", "Auyoka", "Awori",
+  "Ayu", "Babur", "Bachama", "Bada", "Bade", "Bahumono", "Bakulu", "Bali", "Bambuka", "Banda",
+  "Bandawa", "Bariba", "Barke", "Bashiri", "Basa", "Bassa-Komo", "Bassa-Nge", "Batonu", "Batsama", "Baushi",
+  "Baya", "Bekwarra", "Bette", "Bile", "Biliri", "Binawa", "Bini (Edo)", "Boki", "Bokkos", "Boma",
+  "Bombaro", "Boritsu", "Bolewa", "Buduma", "Bumaji", "Bura", "Burak", "Bussa", "Buta", "Bwall",
+  "Bwali", "Bwzza", "Challa", "Chamba", "Cham-Mwana", "Chara", "Chawai", "Chip", "Chokobo", "Chukkol",
+  "Daba", "Dadiya", "Daka", "Dakarkari", "Danda", "Dandawa", "Daza", "Degema", "Dendi", "Dera",
+  "Dghwede", "Dibo", "Doemak", "Doko-Uyanga", "Dong", "Duka", "Duri", "Duwa", "Ebira", "Ebu",
+  "Efik", "Efut", "Eggon", "Egun", "Egbema", "Egedde", "Ekoi", "Esan", "Etsako", "Etche",
+  "Fali", "Fulani", "Fyam", "Fyer", "Ga'anda", "Gade", "Galambi", "Gambiri", "Ganawuri", "Gbagyi",
+  "Gbedde", "Gbo", "Gbotogo", "Gera", "Geruma", "Ghana", "Ghotuo", "Ginde", "Gira", "Gizigz",
+  "Gobir", "Goemai", "Gokana", "Gombi", "Gornun", "Gura", "Gurmana", "Gwandara", "Gwari", "Gwom",
+  "Gwoza", "Gyem", "Hausa", "Higi", "Holma", "Ibeno", "Ibibio", "Ichen", "Icheve", "Idoma",
+  "Igala", "Igbo", "Igede", "Ijaw", "Ika", "Ikulu", "Irigwe", "Isoko", "Itsekiri", "Iyala",
+  "Izere", "Jaku", "Jara", "Jassawa", "Jawa", "Jeere", "Jera", "Jidda-Abu", "Jibu", "Jiti",
+  "Jorto", "Jukun", "Kaje", "Kajuru", "Kaka", "Kalabari", "Kamaku", "Kambari", "Kamwe", "Kanakuru",
+  "Kanembu", "Kanuri", "Karimjo", "Kariya", "Katab", "Kenern", "Keshny", "Kiballo", "Kilba", "Kohumono",
+  "Koma", "Kona", "Koro", "Kubi", "Kudachano", "Kufry", "Kugama", "Kugbo", "Kukuruku", "Kulere",
+  "Kunini", "Kurama", "Kushi", "Kuteb", "Kuturmi", "Kwalla", "Kwami", "Kwange", "Kwanka", "Kwaro",
+  "Kwato", "Kyenga", "Laaru", "Laka", "Lala", "Lame", "Lamja", "Lau", "Lela", "Lelna",
+  "Lemoro", "Limbola", "Lindiri", "Longuda", "Lopa", "Lotsu", "Lukshi", "Lungu", "Luri", "Mabo",
+  "Mada", "Maha", "Mambilla", "Mangas", "Margi", "Matakarn", "Mbembe", "Mboi", "Mbote", "Mbula",
+  "Mbum", "Mbutye", "Medye", "Megili", "Memyang", "Miango", "Milgili", "Mini", "Miri", "Miya",
+  "Mobber", "Montol", "Morwa", "Muchia", "Mumuye", "Mundang", "Mupun", "Mushere", "Mwaghavul", "Ndoro",
+  "Ngamo", "Nggwahyi", "Ngizim", "Ngoshe", "Nguwimi", "Ninzam", "Njimbin", "Nkari", "Nkum", "Nokere",
+  "Nuki", "Nungu", "Nupe", "Nyandang", "Odut", "Ogbia", "Ogoni", "Okobo", "Okpamheri", "Olulumo",
+  "Oron", "Owan", "Owe", "Pa'a", "Pai", "Panyam", "Passam", "Pero", "Pyapun", "Quoll",
+  "Reshe", "Rindre", "Rishuwa", "Ron", "Rubu", "Rukuba", "Rumada", "Rumaya", "Sakbe", "Sanga",
+  "Sarkawa", "Saya", "Shanga", "Shangawa", "Shira", "Shomo", "Shuwa Arab", "Sikdi", "Siri", "Sukur",
+  "Sura", "Tangale", "Tarok", "Tiv", "Tula", "Umon", "Uncinda", "Urhobo", "Uvwie", "Uyanga",
+  "Verre", "Waja", "Waka", "Warji", "Wula", "Wurkum", "Yagba", "Yako", "Yala", "Yandang",
   "Yergan", "Yoruba", "Yoti", "Yungur", "Zarma", "Zangwal", "Other"
 ];
 
 // Pre-populated yearbook directory for served/serving corp members
-const MOCK_YEARBOOK = [
-  {
-    id: "NYSC-25-001",
-    fullName: "Tunde Bakare",
-    callUpNo: "NYSC/LAG/2025/284091",
-    deploymentState: "Lagos (Iyana Ipaja)",
-    yearOfService: "2025",
-    batch: "Batch A",
-    stream: "Stream 1",
-    platoonNo: "Platoon 4",
-    platoonPosition: "Platoon Leader",
-    ppa: "Chevron Nigeria Limited, Lekki",
-    tribe: "Yoruba",
-    gender: "Male",
-    badgeTheme: "emerald",
-    avatarUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=250",
-    serviceStatus: "Serving",
-    createdAt: "12/04/2025"
-  },
-  {
-    id: "NYSC-25-002",
-    fullName: "Chinedu Okafor",
-    callUpNo: "NYSC/RIV/2025/119053",
-    deploymentState: "Rivers (Nonwa Gbam)",
-    yearOfService: "2025",
-    batch: "Batch B",
-    stream: "Stream 2",
-    platoonNo: "Platoon 9",
-    platoonPosition: "Member",
-    ppa: "Shell Petroleum, PH",
-    tribe: "Igbo",
-    gender: "Male",
-    badgeTheme: "classic",
-    avatarUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=250",
-    serviceStatus: "Serving",
-    createdAt: "18/09/2025"
-  },
-  {
-    id: "NYSC-24-003",
-    fullName: "Fatima Bello",
-    callUpNo: "NYSC/KAN/2024/928401",
-    deploymentState: "Kano (Karaye)",
-    yearOfService: "2024",
-    batch: "Batch C",
-    stream: "Stream 1",
-    platoonNo: "Platoon 2",
-    platoonPosition: "OBS Executive",
-    ppa: "General Hospital, Kano",
-    tribe: "Hausa",
-    gender: "Female",
-    badgeTheme: "emerald",
-    avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250",
-    serviceStatus: "Served",
-    createdAt: "04/11/2024"
-  },
-  {
-    id: "NYSC-25-004",
-    fullName: "Efe Johnson",
-    callUpNo: "NYSC/DEL/2025/834012",
-    deploymentState: "Delta (Issele-Uku)",
-    yearOfService: "2025",
-    batch: "Batch A",
-    stream: "Stream 2",
-    platoonNo: "Platoon 1",
-    platoonPosition: "Welfare Officer",
-    ppa: "Ministry of Justice, Asaba",
-    tribe: "Urhobo",
-    gender: "Female",
-    badgeTheme: "sage",
-    avatarUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250",
-    serviceStatus: "Serving",
-    createdAt: "22/05/2025"
-  },
-  {
-    id: "NYSC-24-005",
-    fullName: "Aminu Yusuf",
-    callUpNo: "NYSC/FCT/2024/552941",
-    deploymentState: "FCT Abuja (Kubwa)",
-    yearOfService: "2024",
-    batch: "Batch B",
-    stream: "Stream 1",
-    platoonNo: "Platoon 7",
-    platoonPosition: "Warrant Officer",
-    ppa: "Federal Secretariat, Garki",
-    tribe: "Hausa",
-    gender: "Male",
-    badgeTheme: "classic",
-    avatarUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=250",
-    serviceStatus: "Served",
-    createdAt: "10/08/2024"
-  },
-  {
-    id: "NYSC-23-006",
-    fullName: "Adebayo Ogunmola",
-    callUpNo: "NYSC/OYO/2023/482019",
-    deploymentState: "Oyo (Iseyin)",
-    yearOfService: "2023",
-    batch: "Batch C",
-    stream: "Stream 2",
-    platoonNo: "Platoon 10",
-    platoonPosition: "Member",
-    ppa: "District Grammar School",
-    tribe: "Yoruba",
-    gender: "Male",
-    badgeTheme: "sage",
-    avatarUrl: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=250",
-    serviceStatus: "Served",
-    createdAt: "15/12/2023"
-  }
-];
+const MOCK_YEARBOOK: any[] = [];
 
 // High fidelity deep forest green gradients for the vertical portrait cards
 const BADGE_STYLES = {
@@ -216,7 +107,7 @@ export default function NyscHub() {
   const [yearbookList, setYearbookList] = useState<any[]>(MOCK_YEARBOOK);
   const [formStep, setFormStep] = useState(1);
   const [savedPassport, setSavedPassport] = useState<any>(null);
-  
+
   // Filtering States for Yearbook Directory
   const [filterYear, setFilterYear] = useState("All");
   const [filterBatch, setFilterBatch] = useState("All");
@@ -242,6 +133,8 @@ export default function NyscHub() {
   const [gender, setGender] = useState("Male");
   const [avatarUrl, setAvatarUrl] = useState(DEFAULT_AVATAR);
   const [serviceStatus, setServiceStatus] = useState("Serving");
+  const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
+  const [story, setStory] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -250,8 +143,51 @@ export default function NyscHub() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
+  const fetchYearbook = async () => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+      const response = await fetch(`${baseUrl}/profile/registered-as/NYSC`);
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data)) {
+          const mapped = data.map((student: any) => {
+            const details = student.nyscDetails || {};
+            return {
+              id: student.id,
+              fullName: details.fullName || student.name || 'Anonymous',
+              email: details.email || undefined,
+              phone: details.phone || student.number || undefined,
+              stateOfOrigin: details.stateOfOrigin || undefined,
+              callUpNo: details.callUpNo || 'N/A',
+              deploymentState: details.deploymentState || 'N/A',
+              yearOfService: details.yearOfService || '2026',
+              batch: details.batch || 'Batch A',
+              stream: details.stream || 'Stream 1',
+              platoonNo: details.platoonNo || 'Platoon 1',
+              platoonPosition: details.platoonPosition || 'Member',
+              ppa: details.ppa || 'N/A',
+              tribe: details.tribe || 'N/A',
+              gender: details.gender || student.gender || 'Male',
+              badgeTheme: details.badgeTheme || 'emerald',
+              avatarUrl: details.avatarUrl || student.profilePicture || DEFAULT_AVATAR,
+              serviceStatus: details.serviceStatus || 'Serving',
+              createdAt: details.createdAt ? new Date(details.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
+            };
+          });
+          
+          setYearbookList(mapped);
+        }
+      }
+    } catch (e) {
+      console.error("Error loading yearbook from backend", e);
+    }
+  };
+
   useEffect(() => {
-    // Load from LocalStorage if exists
+    // 1. Fetch live directory from backend
+    fetchYearbook();
+
+    // 2. Load from LocalStorage if exists
     const stored = localStorage.getItem("sabidub_nysc_passport");
     if (stored) {
       try {
@@ -279,7 +215,7 @@ export default function NyscHub() {
 
         // Prepend stored passport to yearbook directory if not already there
         setYearbookList(prev => {
-          if (prev.some(item => item.id === parsed.id)) return prev;
+          if (prev.some(item => item.id === parsed.id || item.callUpNo === parsed.callUpNo)) return prev;
           return [parsed, ...prev];
         });
       } catch (e) {
@@ -310,7 +246,7 @@ export default function NyscHub() {
     }
   };
 
-  const handleGenerate = (e: React.FormEvent) => {
+  const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName || !email || !callUpNo || !deploymentState || !ppa || !tribe) {
       triggerToast("Please fill in all required fields, including PPA and Tribe!");
@@ -321,42 +257,83 @@ export default function NyscHub() {
       return;
     }
 
-    const data = {
-      id: `NYSC-${Math.floor(100000 + Math.random() * 900000)}`,
-      fullName,
-      email,
-      phone,
-      stateOfOrigin,
-      callUpNo,
-      deploymentState,
-      yearOfService,
-      batch,
-      stream,
-      platoonNo,
-      platoonPosition,
-      ppa,
-      tribe,
-      badgeTheme,
-      gender,
-      avatarUrl,
-      serviceStatus,
-      createdAt: new Date().toLocaleDateString(),
-    };
+    setDownloading(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+      const response = await fetch(`${baseUrl}/profile/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "NYSC",
+          fullName,
+          email,
+          phone,
+          stateOfOrigin,
+          callUpNo,
+          deploymentState,
+          yearOfService,
+          batch,
+          stream,
+          platoonNo,
+          platoonPosition,
+          ppa,
+          tribe,
+          badgeTheme,
+          gender,
+          avatarUrl,
+          serviceStatus,
+          galleryUrls,
+          story,
+        }),
+      });
 
-    localStorage.setItem("sabidub_nysc_passport", JSON.stringify(data));
-    setSavedPassport(data);
-    setIsGenerated(true);
+      const resData = await response.json();
+      if (response.ok && resData) {
+        const details = resData.nyscDetails || {};
+        const savedData = {
+          id: resData.id,
+          fullName: details.fullName || resData.name,
+          email: details.email,
+          phone: details.phone,
+          stateOfOrigin: details.stateOfOrigin,
+          callUpNo: details.callUpNo,
+          deploymentState: details.deploymentState,
+          yearOfService: details.yearOfService,
+          batch: details.batch,
+          stream: details.stream,
+          platoonNo: details.platoonNo,
+          platoonPosition: details.platoonPosition,
+          ppa: details.ppa,
+          tribe: details.tribe,
+          badgeTheme: details.badgeTheme,
+          gender: details.gender,
+          avatarUrl: details.avatarUrl || resData.profilePicture,
+          serviceStatus: details.serviceStatus,
+          createdAt: new Date().toLocaleDateString(),
+        };
 
-    // Update state directory in real time
-    setYearbookList(prev => {
-      const filtered = prev.filter(item => item.callUpNo !== callUpNo);
-      return [data, ...filtered];
-    });
+        localStorage.setItem("sabidub_nysc_passport", JSON.stringify(savedData));
+        setSavedPassport(savedData);
+        setIsGenerated(true);
 
-    triggerToast("🎉 Profile & Portrait added to Directory!");
-    setTimeout(() => {
-      document.getElementById("directory-section")?.scrollIntoView({ behavior: "smooth" });
-    }, 300);
+        // Fetch live directory to display new card
+        await fetchYearbook();
+
+        triggerToast("🎉 Profile & Portrait saved to Directory!");
+        setTimeout(() => {
+          document.getElementById("directory-section")?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      } else {
+        triggerToast(`❌ Error: ${resData.message || "Failed to register profile"}`);
+      }
+    } catch (err) {
+      console.error("API error", err);
+      triggerToast("❌ Connection error. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   const handleClear = () => {
@@ -365,7 +342,7 @@ export default function NyscHub() {
     setSavedPassport(null);
     setIsGenerated(false);
     setFormStep(1);
-    
+
     if (backupId) {
       setYearbookList(prev => prev.filter(item => item.id !== backupId));
     }
@@ -415,12 +392,12 @@ export default function NyscHub() {
     const matchesBatch = filterBatch === "All" || item.batch === filterBatch;
     const matchesStream = filterStream === "All" || item.stream === filterStream;
     const matchesStatus = filterStatus === "All" || item.serviceStatus === filterStatus;
-    
+
     const query = searchQuery.toLowerCase().trim();
-    const matchesSearch = !query || 
-      item.fullName.toLowerCase().includes(query) || 
-      item.ppa.toLowerCase().includes(query) || 
-      item.tribe.toLowerCase().includes(query) || 
+    const matchesSearch = !query ||
+      item.fullName.toLowerCase().includes(query) ||
+      item.ppa.toLowerCase().includes(query) ||
+      item.tribe.toLowerCase().includes(query) ||
       item.deploymentState.toLowerCase().includes(query) ||
       item.callUpNo.toLowerCase().includes(query);
 
@@ -433,20 +410,20 @@ export default function NyscHub() {
     <>
       <Head>
         <title>Served & Serving Corp Members Yearbook</title>
-        <meta 
-          name="description" 
-          content="Browse the directory of served and currently serving corp members. Filter by stream, status, or year, and generate your digital yearbook passport." 
+        <meta
+          name="description"
+          content="Browse the directory of served and currently serving corp members. Filter by stream, status, or year, and generate your digital yearbook passport."
         />
       </Head>
 
       <Navbar />
 
       <div className="bg-[#FCFDFD] text-gray-900 min-h-screen pt-24 pb-12 overflow-x-hidden">
-        
+
         {/* Simple Alert Banner */}
         <AnimatePresence>
           {showToast && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -458,15 +435,15 @@ export default function NyscHub() {
         </AnimatePresence>
 
         {/* Flat Minimalist Hero Section */}
-        <section className="pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center border-b border-gray-150">
+        <section className="pt-16 sm:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center border-b border-gray-150">
           <span className="bg-[#01353D]/5 text-[#01353D] px-3.5 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1.5 mb-4">
             <FaStar className="text-yellow-500" /> COMMUNITY PORTAL
           </span>
-          
+
           <h1 className="text-3xl sm:text-5xl font-black text-gray-950 tracking-tight leading-tight max-w-4xl mx-auto mb-4">
             Served & Serving Corp Members Yearbook
           </h1>
-          
+
           <p className="text-sm text-gray-600 max-w-2xl mx-auto mb-8 leading-relaxed">
             Welcome to the open NYSC directory! Connect with fellow corp members, document your primary assignment (PPA), and publish your yearbook profile card.
           </p>
@@ -489,7 +466,7 @@ export default function NyscHub() {
 
         {/* 1. DIRECTORY LIST SECTION */}
         <div id="directory-section" className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 mt-12 space-y-6">
-          
+
           {/* Filter Panel */}
           <div className="bg-white border border-gray-200 rounded-2xl p-6">
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-100 pb-4 mb-4">
@@ -574,7 +551,7 @@ export default function NyscHub() {
             <AnimatePresence>
               {filteredDirectory.map((item) => {
                 const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
-                
+
                 return (
                   <motion.div
                     key={item.id}
@@ -600,12 +577,12 @@ export default function NyscHub() {
 
                     {/* FULL BLEED PORTRAIT PHOTO */}
                     <div className="absolute inset-0 w-full h-full z-0">
-                      <img 
-                        src={item.avatarUrl} 
-                        alt={item.fullName} 
+                      <img
+                        src={item.avatarUrl}
+                        alt={item.fullName}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                       />
-                      
+
                       {/* Light bottom gradient — 20% opacity so portrait photo shows through beautifully */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10 pointer-events-none" />
                       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent z-10 pointer-events-none" />
@@ -613,7 +590,7 @@ export default function NyscHub() {
 
                     {/* BOTTOM TEXT ZONE (Fully padded inwards by px-6 pb-6 to guarantee compatibility) */}
                     <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-5 z-20 flex flex-col text-left space-y-1.5 select-none">
-                      
+
                       {/* Service Status micro label */}
                       <span className="text-[8px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-none">
                         {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
@@ -637,8 +614,8 @@ export default function NyscHub() {
 
                       {/* Faint footer border line */}
                       <div className="flex justify-between items-center pt-2.5 border-t border-white/10 mt-2 text-[7px] text-gray-500 font-mono">
-                        <span>ID: {item.id}</span>
-                        <span>{item.yearOfService} ({item.batch.split(" ")[1]})</span>
+                        <span>NYSC {item.yearOfService}</span>
+                        <span>{item.batch}</span>
                       </div>
 
                     </div>
@@ -678,45 +655,42 @@ export default function NyscHub() {
           </div>
 
           <div className="grid lg:grid-cols-12 gap-8 items-start">
-            
+
             {/* COLUMN A: WIZARD FORM (7 cols) */}
             <div className="lg:col-span-7 bg-white border border-gray-200 rounded-2xl p-6">
-              
+
               {/* Form Step Headers */}
-              <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4">
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
-                    formStep >= 1 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"
-                  }`}>
+              <div className="flex items-center justify-between mb-6 border-b border-gray-100 pb-4 w-full">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shrink-0 ${formStep >= 1 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"
+                    }`}>
                     1
                   </div>
-                  <span className="text-[11px] font-bold text-gray-500">Bio Details</span>
+                  <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 1 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>Bio<span className="hidden sm:inline"> Details</span></span>
                 </div>
-                <div className="h-[1px] w-8 bg-gray-200" />
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
-                    formStep >= 2 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"
-                  }`}>
+                <div className="flex-1 h-[1px] bg-gray-200 mx-1.5 sm:mx-4" />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shrink-0 ${formStep >= 2 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"
+                    }`}>
                     2
                   </div>
-                  <span className="text-[11px] font-bold text-gray-500">Deployment</span>
+                  <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 2 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>Deployment</span>
                 </div>
-                <div className="h-[1px] w-8 bg-gray-200" />
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all ${
-                    formStep >= 3 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"
-                  }`}>
+                <div className="flex-1 h-[1px] bg-gray-200 mx-1.5 sm:mx-4" />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all shrink-0 ${formStep >= 3 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"
+                    }`}>
                     3
                   </div>
-                  <span className="text-[11px] font-bold text-gray-500">PPA & Theme</span>
+                  <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 3 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>PPA & Theme</span>
                 </div>
               </div>
 
               <form onSubmit={handleGenerate} className="space-y-4">
-                
+
                 {/* STEP 1: BIO DETAILS */}
                 {formStep === 1 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="space-y-4"
@@ -733,11 +707,10 @@ export default function NyscHub() {
                             type="button"
                             key={status.key}
                             onClick={() => setServiceStatus(status.key)}
-                            className={`flex-1 py-2.5 border rounded-lg text-xs font-bold transition-all ${
-                              serviceStatus === status.key 
-                                ? "bg-[#01353D] border-[#01353D] text-white" 
-                                : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                            }`}
+                            className={`flex-1 py-2.5 border rounded-lg text-xs font-bold transition-all ${serviceStatus === status.key
+                              ? "bg-[#01353D] border-[#01353D] text-white"
+                              : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                              }`}
                           >
                             {status.label}
                           </button>
@@ -763,12 +736,12 @@ export default function NyscHub() {
                           >
                             <FaUpload /> Upload Profile Photo
                           </button>
-                          <input 
-                            type="file" 
-                            ref={fileInputRef} 
-                            onChange={handleImageUpload} 
-                            accept="image/*" 
-                            className="hidden" 
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleImageUpload}
+                            accept="image/*"
+                            className="hidden"
                           />
                           <p className="text-[10px] text-gray-500">Supports JPG, PNG (Max 2MB). Fits portrait/square aspects cleanly.</p>
                         </div>
@@ -778,8 +751,8 @@ export default function NyscHub() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Full Name *</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           required
                           value={fullName}
                           onChange={e => setFullName(e.target.value)}
@@ -789,7 +762,7 @@ export default function NyscHub() {
                       </div>
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">State of Origin *</label>
-                        <select 
+                        <select
                           required
                           value={stateOfOrigin}
                           onChange={e => setStateOfOrigin(e.target.value)}
@@ -806,8 +779,8 @@ export default function NyscHub() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Email Address *</label>
-                        <input 
-                          type="email" 
+                        <input
+                          type="email"
                           required
                           value={email}
                           onChange={e => setEmail(e.target.value)}
@@ -817,8 +790,8 @@ export default function NyscHub() {
                       </div>
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Phone Number</label>
-                        <input 
-                          type="tel" 
+                        <input
+                          type="tel"
                           value={phone}
                           onChange={e => setPhone(e.target.value)}
                           placeholder="e.g. +234 812 345 6789"
@@ -830,7 +803,7 @@ export default function NyscHub() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Tribe / Cultural Group *</label>
-                        <select 
+                        <select
                           required
                           value={tribe}
                           onChange={e => setTribe(e.target.value)}
@@ -850,11 +823,10 @@ export default function NyscHub() {
                               type="button"
                               key={g}
                               onClick={() => setGender(g)}
-                              className={`flex-1 py-2 border rounded-lg text-[11px] font-bold transition-all ${
-                                gender === g 
-                                  ? "bg-[#01353D] border-[#01353D] text-white" 
-                                  : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                              }`}
+                              className={`flex-1 py-2 border rounded-lg text-[11px] font-bold transition-all ${gender === g
+                                ? "bg-[#01353D] border-[#01353D] text-white"
+                                : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                                }`}
                             >
                               {g}
                             </button>
@@ -866,7 +838,34 @@ export default function NyscHub() {
                     <div className="flex justify-end pt-2">
                       <button
                         type="button"
-                        onClick={() => setFormStep(2)}
+                        onClick={() => {
+                          if (!fullName.trim()) {
+                            triggerToast("Full Name is required!");
+                            return;
+                          }
+                          if (!stateOfOrigin) {
+                            triggerToast("State of Origin is required!");
+                            return;
+                          }
+                          if (!email.trim()) {
+                            triggerToast("Email Address is required!");
+                            return;
+                          }
+                          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                          if (!emailRegex.test(email.trim())) {
+                            triggerToast("Please enter a valid email address!");
+                            return;
+                          }
+                          if (!tribe) {
+                            triggerToast("Tribe / Cultural Group is required!");
+                            return;
+                          }
+                          if (avatarUrl === DEFAULT_AVATAR) {
+                            triggerToast("Please upload your profile photo first!");
+                            return;
+                          }
+                          setFormStep(2);
+                        }}
                         className="bg-[#01353D] text-white px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors"
                       >
                         Next <FaArrowRight />
@@ -877,7 +876,7 @@ export default function NyscHub() {
 
                 {/* STEP 2: DEPLOYMENT DETAILS */}
                 {formStep === 2 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="space-y-4"
@@ -885,8 +884,8 @@ export default function NyscHub() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Call-up Number *</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           required
                           value={callUpNo}
                           onChange={e => setCallUpNo(e.target.value)}
@@ -896,7 +895,7 @@ export default function NyscHub() {
                       </div>
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">State of Deployment *</label>
-                        <select 
+                        <select
                           required
                           value={deploymentState}
                           onChange={e => setDeploymentState(e.target.value)}
@@ -913,7 +912,7 @@ export default function NyscHub() {
                     <div className="grid sm:grid-cols-3 gap-3">
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Year *</label>
-                        <select 
+                        <select
                           value={yearOfService}
                           onChange={e => setYearOfService(e.target.value)}
                           className="w-full px-3 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
@@ -926,7 +925,7 @@ export default function NyscHub() {
                       </div>
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Batch *</label>
-                        <select 
+                        <select
                           value={batch}
                           onChange={e => setBatch(e.target.value)}
                           className="w-full px-3 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
@@ -938,7 +937,7 @@ export default function NyscHub() {
                       </div>
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Stream *</label>
-                        <select 
+                        <select
                           value={stream}
                           onChange={e => setStream(e.target.value)}
                           className="w-full px-3 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
@@ -952,19 +951,19 @@ export default function NyscHub() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Platoon Assignment</label>
-                        <select 
+                        <select
                           value={platoonNo}
                           onChange={e => setPlatoonNo(e.target.value)}
                           className="w-full px-3.5 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
                         >
                           {[...Array(12)].map((_, i) => (
-                            <option key={i+1} value={`Platoon ${i+1}`}>{`Platoon ${i+1}`}</option>
+                            <option key={i + 1} value={`Platoon ${i + 1}`}>{`Platoon ${i + 1}`}</option>
                           ))}
                         </select>
                       </div>
                       <div className="text-left">
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Platoon Position</label>
-                        <select 
+                        <select
                           value={platoonPosition}
                           onChange={e => setPlatoonPosition(e.target.value)}
                           className="w-full px-3.5 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
@@ -988,7 +987,17 @@ export default function NyscHub() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setFormStep(3)}
+                        onClick={() => {
+                          if (!callUpNo.trim()) {
+                            triggerToast("Call-up Number is required!");
+                            return;
+                          }
+                          if (!deploymentState) {
+                            triggerToast("Deployment State is required!");
+                            return;
+                          }
+                          setFormStep(3);
+                        }}
                         className="bg-[#01353D] text-white px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors"
                       >
                         Next <FaArrowRight />
@@ -999,21 +1008,92 @@ export default function NyscHub() {
 
                 {/* STEP 3: PPA DETAILS & THEME */}
                 {formStep === 3 && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="space-y-4"
                   >
                     <div className="text-left">
                       <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Primary Place of Assignment (PPA) *</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         required
                         value={ppa}
                         onChange={e => setPpa(e.target.value)}
                         placeholder="e.g. Government Secondary School, Wannune or Chevron Nigeria Ltd"
                         className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
                       />
+                    </div>
+
+                    <div className="text-left">
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">My NYSC Story & Experience</label>
+                      <textarea
+                        value={story}
+                        onChange={e => setStory(e.target.value)}
+                        placeholder="Share your memorable service experience, challenges, achievements or camp memories with the community..."
+                        rows={4}
+                        className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all resize-none"
+                      />
+                    </div>
+
+                    <div className="text-left">
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">NYSC Memory Gallery (Max 3 pictures: Camp, PPA & POP)</label>
+                      <p className="text-[9px] text-gray-400 mb-2">Showcase your service journey milestones with the community.</p>
+                      
+                      <div className="grid grid-cols-3 gap-2">
+                        {[0, 1, 2].map((index) => {
+                          const labels = ["CAMP Photo", "PPA Photo", "POP Photo"];
+                          const isUploaded = galleryUrls[index] !== undefined;
+
+                          return (
+                            <div key={index} className="relative aspect-square border border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-55 hover:bg-gray-100/50 transition-all flex flex-col items-center justify-center cursor-pointer p-1">
+                              {isUploaded ? (
+                                <>
+                                  <img
+                                    src={galleryUrls[index]}
+                                    alt={labels[index]}
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setGalleryUrls(prev => prev.filter((_, idx) => idx !== index));
+                                    }}
+                                    className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-[8px] hover:bg-red-700 transition-colors shadow"
+                                  >
+                                    ✕
+                                  </button>
+                                </>
+                              ) : (
+                                <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer text-center">
+                                  <span className="text-lg text-gray-400 font-bold">+</span>
+                                  <span className="text-[8px] font-black text-gray-500 uppercase tracking-wider">{labels[index]}</span>
+                                  <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => {
+                                          setGalleryUrls(prev => {
+                                            const updated = [...prev];
+                                            updated[index] = reader.result as string;
+                                            return updated;
+                                          });
+                                        };
+                                        reader.readAsDataURL(file);
+                                      }
+                                    }}
+                                  />
+                                </label>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
 
                     <div className="text-left">
@@ -1024,11 +1104,10 @@ export default function NyscHub() {
                             type="button"
                             key={key}
                             onClick={() => setBadgeTheme(key as any)}
-                            className={`p-3 rounded-xl border text-left flex flex-col gap-1 transition-all ${
-                              badgeTheme === key 
-                                ? "border-[#01353D] bg-[#01353D]/5" 
-                                : "border-gray-200 bg-white hover:bg-gray-50"
-                            }`}
+                            className={`p-3 rounded-xl border text-left flex flex-col gap-1 transition-all ${badgeTheme === key
+                              ? "border-[#01353D] bg-[#01353D]/5"
+                              : "border-gray-200 bg-white hover:bg-gray-50"
+                              }`}
                           >
                             <div className="flex items-center gap-1.5">
                               <span className="text-[10px] font-bold text-gray-800">{value.name.split(" ")[0]}</span>
@@ -1062,7 +1141,7 @@ export default function NyscHub() {
 
             {/* COLUMN B: PASSPORT PREVIEW (5 cols) - HIGH FIDELITY VERTICAL PORTRAIT DIGITAL CARD */}
             <div className="lg:col-span-5 flex flex-col items-center justify-center">
-              
+
               <div className="w-full flex justify-center py-2">
                 <div
                   ref={cardRef}
@@ -1084,12 +1163,12 @@ export default function NyscHub() {
 
                   {/* Picture container filling background */}
                   <div className="absolute inset-0 w-full h-full z-0">
-                    <img 
-                      src={avatarUrl} 
-                      alt="Avatar Preview" 
+                    <img
+                      src={avatarUrl}
+                      alt="Avatar Preview"
                       className="w-full h-full object-cover object-center"
                     />
-                    
+
                     {/* Light bottom gradient — 20% opacity so portrait photo shows through beautifully */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent z-10 pointer-events-none" />
                     <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-transparent z-10 pointer-events-none" />
@@ -1097,7 +1176,7 @@ export default function NyscHub() {
 
                   {/* Bottom Text Zone (Safe px-6 pb-6 to prevent corner cutoffs!) */}
                   <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-5 z-20 flex flex-col text-left space-y-1.5 select-none">
-                    
+
                     <span className="text-[8px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-none">
                       {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                     </span>
@@ -1127,7 +1206,7 @@ export default function NyscHub() {
 
               {/* Download Controls */}
               {isGenerated && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   className="flex gap-2 mt-4 w-full max-w-[300px]"
