@@ -79,6 +79,12 @@ export default function Navbar() {
                         >
                             Admission Check
                         </Link>
+                        <Link
+                            href="/nysc"
+                            className={`${subTextColor} hover:text-[#AFF8C8] transition-colors font-medium`}
+                        >
+                            NYSC Yearbook
+                        </Link>
 
                         <div className="flex items-center space-x-4 ml-4">
                             <Link
@@ -228,6 +234,13 @@ export default function Navbar() {
                                 onClick={toggleMenu}
                             >
                                 Admission Checker
+                            </Link>
+                            <Link
+                                href="/nysc"
+                                className="text-gray-600 hover:text-[#014751] transition-colors py-2 border-b border-gray-200"
+                                onClick={toggleMenu}
+                            >
+                                NYSC Yearbook
                             </Link>
                             <div className="pt-4 pb-2">
                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4">Explore</p>
