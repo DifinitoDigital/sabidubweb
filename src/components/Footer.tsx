@@ -203,6 +203,14 @@ const Footer = ({ showAppDownload = true }: FooterProps) => {
                   Contact
                 </Link>
               </li>
+              <li>
+                <Link
+                  href="/nysc"
+                  className="hover:text-yellow-600 transition-colors font-semibold"
+                >
+                  🎖️ NYSC Yearbook
+                </Link>
+              </li>
             </ul>
           </div>
 

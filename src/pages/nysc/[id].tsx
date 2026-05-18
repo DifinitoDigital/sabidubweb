@@ -85,6 +85,7 @@ export default function NyscProfileDetail() {
   const [profile, setProfile] = useState<NyscProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewIndex, setPreviewIndex] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -489,7 +490,7 @@ export default function NyscProfileDetail() {
                       return (
                         <div
                           key={idx}
-                          onClick={() => setPreviewImage(url)}
+                          onClick={() => { setPreviewImage(url); setPreviewIndex(idx); }}
                           className="cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm active:scale-95 transition-transform duration-150"
                         >
                           {/* Image Box — explicit height for mobile */}
@@ -569,76 +570,96 @@ export default function NyscProfileDetail() {
         </div>
       )}
 
-      {previewImage && (
-        <div 
-          className="fixed inset-0 bg-black/95 backdrop-blur-lg z-50 flex flex-col justify-between select-none py-10 animate-fadeIn"
-        >
-          {/* Top Bar */}
-          <div className="w-full max-w-6xl mx-auto px-6 flex justify-between items-center z-50">
-            <div className="text-left">
-              <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest block">nysc memory board</span>
-              <span className="text-white text-xs font-bold">{profile.fullName}&apos;s Service Journey</span>
-            </div>
-            <button 
-              className="bg-white/10 hover:bg-white/20 text-white rounded-full px-4 py-2 transition-colors border border-white/10 text-xs font-black uppercase tracking-wider flex items-center gap-1.5"
-              onClick={() => setPreviewImage(null)}
-            >
-              ✕ Close
-            </button>
-          </div>
+      {previewImage && profile.galleryUrls && (() => {
+        const images = profile.galleryUrls.filter(Boolean);
+        const labels = ["CAMP MEMORY", "PPA MILESTONE", "POP GRADUATION"];
+        const current = images[previewIndex] || images[0];
+        const total = images.length;
+        const goPrev = () => setPreviewIndex(i => (i - 1 + total) % total);
+        const goNext = () => setPreviewIndex(i => (i + 1) % total);
 
-          {/* Horizontal Scrollable Slide Container */}
-          <div className="flex-1 w-full flex items-center justify-center overflow-x-auto py-4 px-6 md:px-12 scrollbar-none snap-x snap-mandatory">
-            <div className="flex gap-8 items-center h-full">
-              {profile.galleryUrls?.filter(Boolean).map((url, idx) => {
-                const labels = ["CAMP MEMORY", "PPA MILESTONE", "POP GRADUATION"];
-                const isActive = url === previewImage;
-                return (
-                  <div 
-                    key={idx} 
-                    className={`shrink-0 snap-center w-[85vw] max-w-[450px] aspect-[3/4.2] rounded-2xl overflow-hidden border transition-all duration-500 shadow-2xl ${
-                      isActive ? "border-emerald-400 scale-100 opacity-100" : "border-white/10 scale-95 opacity-50"
-                    } bg-black/40 flex flex-col cursor-pointer`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPreviewImage(url);
-                    }}
+        return (
+          <div className="fixed inset-0 bg-black/95 backdrop-blur-lg z-[100] flex flex-col">
+            {/* Top Bar */}
+            <div className="flex-none flex items-center justify-between px-5 py-4 border-b border-white/10">
+              <div>
+                <span className="text-[9px] font-black text-emerald-400 uppercase tracking-widest block">nysc memory board</span>
+                <span className="text-white text-xs font-bold">{profile.fullName}&apos;s Service Journey</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-gray-400 text-[10px] font-mono">{previewIndex + 1} / {total}</span>
+                <button
+                  className="bg-white/10 hover:bg-white/20 active:bg-white/30 text-white rounded-full w-8 h-8 flex items-center justify-center transition-colors border border-white/10 text-sm font-black"
+                  onClick={() => setPreviewImage(null)}
+                >✕</button>
+              </div>
+            </div>
+
+            {/* Main Image Area */}
+            <div className="flex-1 relative flex items-center justify-center overflow-hidden px-14 sm:px-20">
+
+              {/* Prev Arrow */}
+              {total > 1 && (
+                <button
+                  onClick={goPrev}
+                  className="absolute left-2 sm:left-4 z-10 bg-white/10 hover:bg-white/25 active:bg-white/40 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg font-black border border-white/10 transition-all"
+                >‹</button>
+              )}
+
+              {/* Active Image */}
+              <div className="w-full h-full max-w-lg mx-auto relative">
+                <img
+                  key={current}
+                  src={current}
+                  alt={labels[previewIndex] || "Memory"}
+                  className="w-full h-full object-contain rounded-xl select-none"
+                  draggable={false}
+                />
+                {/* Label badge */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-emerald-400 text-black px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">
+                    {labels[previewIndex] || "Service Photo"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Next Arrow */}
+              {total > 1 && (
+                <button
+                  onClick={goNext}
+                  className="absolute right-2 sm:right-4 z-10 bg-white/10 hover:bg-white/25 active:bg-white/40 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center text-lg font-black border border-white/10 transition-all"
+                >›</button>
+              )}
+            </div>
+
+            {/* Dot Indicators + Thumbnails */}
+            <div className="flex-none py-4 px-4 border-t border-white/10">
+              {/* Dot indicators */}
+              <div className="flex justify-center gap-2 mb-3">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setPreviewIndex(i)}
+                    className={`rounded-full transition-all ${i === previewIndex ? 'w-5 h-2 bg-emerald-400' : 'w-2 h-2 bg-white/30 hover:bg-white/60'}`}
+                  />
+                ))}
+              </div>
+              {/* Thumbnail strip */}
+              <div className="flex gap-3 justify-center overflow-x-auto pb-1">
+                {images.map((url, i) => (
+                  <div
+                    key={i}
+                    onClick={() => setPreviewIndex(i)}
+                    className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${i === previewIndex ? 'border-emerald-400 scale-105' : 'border-white/10 opacity-50 hover:opacity-80'}`}
                   >
-                    <div className="flex-1 relative overflow-hidden bg-gray-900">
-                      <img 
-                        src={url} 
-                        alt={labels[idx]} 
-                        className="w-full h-full object-cover pointer-events-none select-none"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none" />
-                      
-                      {/* Card Details */}
-                      <div className="absolute bottom-6 left-6 right-6 text-left space-y-1.5">
-                        <span className="bg-emerald-400 text-black px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest">
-                          {labels[idx]}
-                        </span>
-                        <h3 className="text-white text-lg font-black tracking-tight">{profile.fullName}</h3>
-                        <p className="text-gray-300 text-[10px] font-mono leading-relaxed">{profile.ppa.split(",")[0]} • {profile.deploymentState}</p>
-                      </div>
-                    </div>
+                    <img src={url} alt={labels[i]} className="w-full h-full object-cover" />
                   </div>
-                );
-              })}
+                ))}
+              </div>
             </div>
           </div>
-
-          {/* Bottom hint text */}
-          <div className="text-center z-50">
-            <p className="text-gray-400 text-[9px] uppercase font-black tracking-widest animate-pulse">
-              ← Scroll / Swipe Horizontally to View All Memories →
-            </p>
-            <p className="text-gray-500 text-[8px] mt-1 select-none">Click outer space to close</p>
-          </div>
-          
-          {/* Background click handler to close */}
-          <div className="absolute inset-0 z-0" onClick={() => setPreviewImage(null)} />
-        </div>
-      )}
+        );
+      })()}
 
       <Footer />
     </>
