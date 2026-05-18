@@ -258,7 +258,7 @@ export default function CreateNyscProfile() {
           ppa,
           tribe,
           badgeTheme,
-          gender,
+          gender: gender ? gender.toUpperCase() : undefined,
           avatarUrl,
           serviceStatus,
           galleryUrls,
@@ -839,12 +839,12 @@ export default function CreateNyscProfile() {
 
                 {/* Extra Details line */}
                 <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
-                  {tribe || "TRIBE"} Tribe • {platoonNo || "Platoon 1"}
+                  {tribe || "TRIBE"} Tribe • {stateOfOrigin || "STATE OF ORIGIN"} • {platoonNo || "Platoon 1"}
                 </p>
 
                 {/* Faint footer border line */}
                 <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                  <span className="truncate max-w-[130px] font-bold">{stateOfOrigin || "STATE"} • {callUpNo || "CALL-UP NO"}</span>
+                  <span className="truncate max-w-[130px] font-bold">{deploymentState || "DEPLOY STATE"} • {callUpNo || "CALL-UP NO"}</span>
                   <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                 </div>
               </div>
@@ -916,12 +916,12 @@ export default function CreateNyscProfile() {
 
                   {/* Extra Details line */}
                   <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] py-[1px]">
-                    {tribe || "TRIBE"} Tribe • {platoonNo || "Platoon 1"}
+                    {tribe || "TRIBE"} Tribe • {stateOfOrigin || "STATE OF ORIGIN"} • {platoonNo || "Platoon 1"}
                   </p>
 
                   {/* Faint footer border line */}
                   <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                    <span className="font-bold">{stateOfOrigin || "STATE"} • {callUpNo || "CALL-UP NO"}</span>
+                    <span className="font-bold">{deploymentState || "DEPLOY STATE"} • {callUpNo || "CALL-UP NO"}</span>
                     <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                   </div>
                 </div>

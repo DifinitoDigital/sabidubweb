@@ -358,7 +358,7 @@ export default function NyscHub() {
 
                       {/* Extra Details line */}
                       <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
-                        {item.tribe} Tribe • {item.platoonNo}
+                        {item.tribe} Tribe • {item.stateOfOrigin}
                       </p>
 
                       {/* Faint footer border line */}

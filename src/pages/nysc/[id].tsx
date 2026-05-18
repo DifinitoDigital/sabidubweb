@@ -342,12 +342,12 @@ export default function NyscProfileDetail() {
 
                 {/* Extra Details line */}
                 <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] py-[1px]">
-                  {profile.tribe} Tribe • {profile.platoonNo}
+                  {profile.tribe} Tribe • {profile.stateOfOrigin || "STATE OF ORIGIN"}
                 </p>
 
                 {/* Faint footer border line */}
                 <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                  <span className="font-bold">{profile.stateOfOrigin || "STATE"} • {profile.callUpNo}</span>
+                  <span className="font-bold">{profile.deploymentState || "DEPLOY STATE"} • {profile.callUpNo}</span>
                   <span className="shrink-0 font-bold">NYSC {profile.yearOfService} ({profile.batch})</span>
                 </div>
               </div>
