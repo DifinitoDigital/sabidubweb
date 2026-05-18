@@ -7,10 +7,10 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
   FaIdCard, FaUsers, FaBuilding, FaGlobe,
-  FaCamera, FaUpload, FaCheckCircle, FaChevronLeft, FaArrowRight
+  FaCamera, FaUpload, FaCheckCircle, FaChevronLeft, FaArrowRight, FaDownload
 } from "react-icons/fa";
 
-const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2RjZTJlNSI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LWUtMS43OS00IDRTOC4yMSA4IDEyIDhzNC0xLjc5IDQtNHMtMS43OS00LTQtNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00erIvPjwvc3ZnPg==";
+const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NiZDVlMSI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==";
 
 const CAMP_STATES = [
   "Abia (Mgbhan)", "Adamawa (Girei)", "Akwa Ibom (Nsit Atai)", "Anambra (Umuawulu-Mbaukwu)",
@@ -93,13 +93,23 @@ const BADGE_STYLES = {
     dot: "bg-emerald-600",
   }
 };
+
+const PORTRAIT_PLACEHOLDERS = {
+  Male: [
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600",
+    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600"
+  ],
+  Female: [
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600",
+    "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=600"
+  ]
+};
+
 const compressImage = (file: File, maxDim = 1000, quality = 0.75): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.readAsDataURL(file);
     reader.onload = (event) => {
       const img = new Image();
-      img.src = event.target?.result as string;
       img.onload = () => {
         const canvas = document.createElement("canvas");
         let width = img.width;
@@ -130,8 +140,10 @@ const compressImage = (file: File, maxDim = 1000, quality = 0.75): Promise<strin
       img.onerror = () => {
         resolve(event.target?.result as string);
       };
+      img.src = event.target?.result as string;
     };
     reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
   });
 };
 
@@ -160,6 +172,8 @@ export default function CreateNyscProfile() {
   const [story, setStory] = useState("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [downloadingPreview, setDownloadingPreview] = useState(false);
   const [formStep, setFormStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -169,6 +183,30 @@ export default function CreateNyscProfile() {
     setToastMessage(msg);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 4500);
+  };
+
+  const downloadPreviewCard = async () => {
+    if (!cardRef.current) return;
+    setDownloadingPreview(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(cardRef.current, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        scale: 2.5,
+      });
+      const link = document.createElement("a");
+      link.download = `${fullName.replace(/\s+/g, "_") || "my_nysc"}_passport.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      triggerToast("💖 Yearbook passport downloaded successfully!");
+    } catch (err) {
+      console.error("Preview card download failed:", err);
+      triggerToast("❌ Failed to save preview image.");
+    } finally {
+      setDownloadingPreview(false);
+    }
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -333,19 +371,20 @@ export default function CreateNyscProfile() {
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Service Status *</label>
                     <div className="flex gap-2">
                       {[
-                        { key: "Serving", label: "Currently Serving (Active)" },
-                        { key: "Served", label: "Served (Alumni)" }
+                        { key: "Serving", labelMobile: "Serving", labelDesktop: "Currently Serving (Active)" },
+                        { key: "Served", labelMobile: "Served", labelDesktop: "Served (Alumni)" }
                       ].map(status => (
                         <button
                           type="button"
                           key={status.key}
                           onClick={() => setServiceStatus(status.key)}
-                          className={`flex-1 py-2.5 border rounded-lg text-xs font-bold transition-all ${serviceStatus === status.key
+                          className={`flex-1 py-2.5 px-2 border rounded-lg text-xs font-bold transition-all ${serviceStatus === status.key
                             ? "bg-[#01353D] border-[#01353D] text-white"
                             : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
                             }`}
                         >
-                          {status.label}
+                          <span className="hidden sm:inline">{status.labelDesktop}</span>
+                          <span className="inline sm:hidden">{status.labelMobile}</span>
                         </button>
                       ))}
                     </div>
@@ -372,7 +411,7 @@ export default function CreateNyscProfile() {
                           accept="image/*"
                           className="hidden"
                         />
-                        <p className="text-[10px] text-gray-500">Supports JPG, PNG (Max 2MB).</p>
+                        <p className="text-[10px] text-gray-500">Supports JPG, PNG, WEBP (Auto-compressed).</p>
                       </div>
                     </div>
                   </div>
@@ -739,35 +778,170 @@ export default function CreateNyscProfile() {
           </div>
 
           {/* 2. The Live Preview Card Column */}
-          <div className="md:col-span-2 sticky top-28 space-y-4">
+          <div className="md:col-span-2 sticky top-28 space-y-4 text-center">
             <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Live Yearbook Card Preview</span>
             <div className={`relative aspect-[3/4.2] w-full max-w-[320px] mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-xl bg-gradient-to-b ${activeTheme.cardGradient}`}>
-              <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
+              {/* Background Pattern Mesh Overlay */}
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
                 <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                   <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
+                  <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
                 </svg>
               </div>
 
-              <div className="absolute top-4 left-4 right-4 flex justify-between items-center z-10">
-                <span className="text-[9px] font-black uppercase tracking-widest text-white/50">Sabidub Yearbook</span>
-                <span className={`text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border bg-emerald-500/10 text-emerald-400 border-emerald-500/20`}>
-                  {serviceStatus}
-                </span>
+              {/* TOP WATERMARK */}
+              <div className="absolute top-6 left-0 right-0 px-6 flex justify-between items-center z-20 text-[7.5px] font-black uppercase tracking-widest text-white/70 select-none">
+                <span>nysc passport</span>
+                <span>Powered by SabiDub</span>
               </div>
 
-              <div className="absolute inset-x-4 bottom-4 bg-black/40 backdrop-blur-md rounded-2xl p-4 border border-white/5 flex flex-col justify-end text-left h-[50%]">
-                <div className="w-14 h-14 rounded-full border-2 border-white/20 overflow-hidden bg-white/10 mb-2">
-                  <img src={avatarUrl} alt="Preview Avatar" className="w-full h-full object-cover" />
+              {/* FULL BLEED PORTRAIT PHOTO BACKGROUND JUST LIKE NYSC.tsx */}
+              {avatarUrl !== DEFAULT_AVATAR ? (
+                <div className="absolute inset-0 w-full h-full z-0">
+                  <img
+                    src={avatarUrl}
+                    alt="Full Portrait Preview"
+                    className="w-full h-full object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
                 </div>
-                <h4 className="text-sm font-black text-white leading-tight uppercase tracking-tight">{fullName || "YOUR FULL NAME"}</h4>
-                <p className="text-[10px] text-gray-300 font-bold mt-0.5 uppercase tracking-wide leading-none">{ppa || "PPA Assignment"}</p>
-                <div className="flex gap-2 items-center mt-3 pt-2.5 border-t border-white/10 text-[8px] text-white/60 font-mono">
-                  <span>{stateOfOrigin || "STATE"}</span>
-                  <span className="w-1 h-1 rounded-full bg-white/20" />
-                  <span>{callUpNo || "CALL-UP NO"}</span>
+              ) : (
+                /* Centered "No Face" Silhouette Avatar when no photo uploaded yet */
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-0">
+                  <div className="w-20 h-20 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={DEFAULT_AVATAR}
+                      alt="No Face Silhouette"
+                      className="w-12 h-12 opacity-60 filter invert"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
+              <div className="absolute bottom-4 left-6 right-6 z-20 flex flex-col text-left space-y-0.5 select-none">
+                {/* Service Status micro label */}
+                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-[1.2] py-[1px]">
+                  {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
+                </span>
+
+                {/* Large bold white name with verified icon */}
+                <h3 className="text-base font-black text-white leading-[1.2] truncate flex items-center gap-1.5 py-[1px]">
+                  {fullName || "YOUR FULL NAME"}
+                  <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                </h3>
+
+                {/* PPA Subtitle */}
+                <p className="text-[11px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
+                  with <span className={`${activeTheme.accentText} font-bold`}>{(ppa || "PPA Assignment").split(",")[0]}</span>
+                </p>
+
+                {/* Extra Details line */}
+                <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
+                  {tribe || "TRIBE"} Tribe • {platoonNo || "Platoon 1"}
+                </p>
+
+                {/* Faint footer border line */}
+                <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
+                  <span className="truncate max-w-[130px] font-bold">{stateOfOrigin || "STATE"} • {callUpNo || "CALL-UP NO"}</span>
+                  <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                 </div>
               </div>
             </div>
+
+            {/* Off-screen download target with rounded-none (border radius 0) and spacing optimized for canvas rendering */}
+            <div className="absolute left-[-9999px] top-[-9999px] pointer-events-none select-none">
+              <div
+                ref={cardRef}
+                className={`relative aspect-[3/4.2] w-[350px] rounded-none overflow-hidden bg-gradient-to-b ${activeTheme.cardGradient}`}
+                style={{ fontFamily: 'Inter, sans-serif' }}
+              >
+                {/* Pattern mesh */}
+                <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
+                  <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
+                    <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
+                  </svg>
+                </div>
+
+                {/* TOP WATERMARK */}
+                <div className="absolute top-6 left-0 right-0 px-6 flex justify-between items-center z-20 text-[8px] font-black uppercase tracking-widest text-white/70 select-none">
+                  <span>nysc passport</span>
+                  <span>Powered by SabiDub</span>
+                </div>
+
+                {/* FULL BLEED PORTRAIT PHOTO */}
+                <div className="absolute inset-0 w-full h-full z-0 bg-black">
+                  {avatarUrl !== DEFAULT_AVATAR ? (
+                    <img
+                      src={avatarUrl}
+                      alt="Full Portrait"
+                      className="w-full h-full object-cover object-center"
+                      crossOrigin="anonymous"
+                    />
+                  ) : (
+                    /* Center silhouette if avatar is default */
+                    <div className="w-full h-full flex items-center justify-center bg-black/50">
+                      <div className="w-20 h-20 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
+                        <img
+                          src={DEFAULT_AVATAR}
+                          alt="No Face Silhouette"
+                          className="w-12 h-12 opacity-60 filter invert"
+                        />
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+                </div>
+
+                {/* BOTTOM TEXT ZONE (pushed up by bottom-8, space-y-0.5 for small spacing) */}
+                <div className="absolute bottom-8 left-6 right-6 z-20 flex flex-col text-left space-y-0.5 select-none">
+                  {/* Service Status micro label */}
+                  <span className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-[1.2] py-[1px]">
+                    {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
+                  </span>
+
+                  {/* Large bold name with verified icon */}
+                  <h3 className="text-base font-black text-white leading-[1.2] flex items-center gap-1.5 py-[1px]">
+                    {fullName || "YOUR FULL NAME"}
+                    <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                  </h3>
+
+                  {/* PPA Subtitle */}
+                  <p className="text-[11px] text-gray-300 font-semibold leading-[1.2] py-[1px]">
+                    with <span className={`${activeTheme.accentText} font-bold`}>{(ppa || "PPA Assignment").split(",")[0]}</span>
+                  </p>
+
+                  {/* Extra Details line */}
+                  <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] py-[1px]">
+                    {tribe || "TRIBE"} Tribe • {platoonNo || "Platoon 1"}
+                  </p>
+
+                  {/* Faint footer border line */}
+                  <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
+                    <span className="font-bold">{stateOfOrigin || "STATE"} • {callUpNo || "CALL-UP NO"}</span>
+                    <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Download Preview Card Action */}
+            <button
+              type="button"
+              onClick={downloadPreviewCard}
+              disabled={downloadingPreview}
+              className="w-full max-w-[320px] mx-auto flex items-center justify-center gap-2 bg-[#01353D] hover:bg-[#024a54] disabled:opacity-60 text-white py-3 rounded-xl text-xs font-bold transition-all shadow-md select-none border border-white/10"
+            >
+              {downloadingPreview ? (
+                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <FaDownload size={10} />
+              )}
+              {downloadingPreview ? "Saving card image..." : "Download Preview Card"}
+            </button>
           </div>
         </div>
       </main>

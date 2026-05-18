@@ -337,32 +337,32 @@ export default function NyscHub() {
                       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
                     </div>
 
-                    {/* BOTTOM TEXT ZONE */}
-                    <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 pt-5 z-20 flex flex-col text-left space-y-1.5 select-none">
+                    {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
+                    <div className="absolute bottom-3 left-5 right-5 z-20 flex flex-col text-left space-y-0.5 select-none">
                       
                       {/* Service Status micro label */}
-                      <span className="text-[8px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-none">
+                      <span className="text-[7.5px] font-black uppercase tracking-[0.12em] text-emerald-400 leading-[1.2] py-[1px]">
                         {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                       </span>
 
                       {/* Large bold white name with verified icon */}
-                      <h3 className="text-sm sm:text-base font-black text-white leading-tight tracking-tight line-clamp-1 flex items-center gap-1.5">
+                      <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
                         {item.fullName}
-                        <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                        <FaCheckCircle className="text-emerald-400 text-[10px] shrink-0" />
                       </h3>
 
                       {/* PPA Subtitle */}
-                      <p className="text-[10px] text-gray-300 font-semibold leading-tight line-clamp-1">
+                      <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
                         with <span className={`${cardTheme.accentText} font-bold`}>{item.ppa.split(",")[0]}</span>
                       </p>
 
                       {/* Extra Details line */}
-                      <p className="text-[8.5px] text-gray-400 font-medium leading-none pt-0.5 line-clamp-1">
+                      <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
                         {item.tribe} Tribe • {item.platoonNo}
                       </p>
 
                       {/* Faint footer border line */}
-                      <div className="flex justify-between items-center pt-2.5 border-t border-white/10 mt-2 text-[7px] text-gray-500 font-mono">
+                      <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-1.5 text-[7px] text-gray-400 font-mono leading-[1.2] py-[1px]">
                         <span>NYSC {item.yearOfService}</span>
                         <span>{item.batch}</span>
                       </div>

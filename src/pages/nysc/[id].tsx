@@ -39,7 +39,7 @@ interface NyscProfile {
 
 // ─── Mock Data (mirrors nysc.tsx) ─────────────────────────────────────────────
 const MOCK_YEARBOOK: NyscProfile[] = [];
-const DEFAULT_AVATAR = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=250";
+const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NiZDVlMSI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==";
 
 // ─── Theme Colours ─────────────────────────────────────────────────────────────
 const BADGE_STYLES: Record<string, { cardGradient: string; accentColor: string; accentBg: string }> = {
@@ -230,13 +230,25 @@ export default function NyscProfileDetail() {
       <div className="bg-[#F8FAFA] min-h-screen pt-16 sm:pt-24 pb-20 overflow-x-hidden">
 
         {/* ── Hero Banner (full-bleed portrait + gradient overlay) ── */}
-        <div className="relative w-full h-[420px] overflow-hidden">
+        <div className="relative w-full h-[420px] overflow-hidden bg-[#01353D]">
           {/* Portrait Image */}
-          <img
-            src={profile.avatarUrl}
-            alt={profile.fullName}
-            className="absolute inset-0 w-full h-full object-cover object-top"
-          />
+          {profile.avatarUrl !== DEFAULT_AVATAR ? (
+            <img
+              src={profile.avatarUrl}
+              alt={profile.fullName}
+              className="absolute inset-0 w-full h-full object-cover object-top"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-[#01353D] flex items-center justify-center">
+              <div className="w-24 h-24 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
+                <img
+                  src={DEFAULT_AVATAR}
+                  alt="No Face Silhouette"
+                  className="w-12 h-12 opacity-60 filter invert"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Multi-stop gradient: only bottom 20% is opaque */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#F8FAFA] via-[#F8FAFA]/20 to-transparent pointer-events-none" />
@@ -264,6 +276,84 @@ export default function NyscProfileDetail() {
         {/* ── Content below the banner ── */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 -mt-28 relative z-10">
 
+          {/* Off-screen download target for html2canvas to capture the exact premium digital card design */}
+          <div className="absolute left-[-9999px] top-[-9999px] pointer-events-none select-none">
+            <div
+              ref={cardRef}
+              className={`relative aspect-[3/4.2] w-[350px] rounded-none overflow-hidden bg-gradient-to-b ${theme.cardGradient}`}
+              style={{ fontFamily: 'Inter, sans-serif' }}
+            >
+              {/* Pattern mesh */}
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
+                <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
+                  <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
+                </svg>
+              </div>
+
+              {/* TOP WATERMARK */}
+              <div className="absolute top-6 left-0 right-0 px-6 flex justify-between items-center z-20 text-[8px] font-black uppercase tracking-widest text-white/70 select-none">
+                <span>nysc passport</span>
+                <span>Powered by SabiDub</span>
+              </div>
+
+              {/* FULL BLEED PORTRAIT PHOTO */}
+              <div className="absolute inset-0 w-full h-full z-0 bg-black">
+                {profile.avatarUrl !== DEFAULT_AVATAR ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt={profile.fullName}
+                    className="w-full h-full object-cover object-center"
+                    crossOrigin="anonymous"
+                  />
+                ) : (
+                  /* Center silhouette if avatar is default */
+                  <div className="w-full h-full flex items-center justify-center bg-black/50">
+                    <div className="w-20 h-20 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
+                      <img
+                        src={DEFAULT_AVATAR}
+                        alt="No Face Silhouette"
+                        className="w-12 h-12 opacity-60 filter invert"
+                      />
+                    </div>
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+              </div>
+
+              {/* BOTTOM TEXT ZONE (pushed up by bottom-8, space-y-0.5 for small spacing) */}
+              <div className="absolute bottom-8 left-6 right-6 z-20 flex flex-col text-left space-y-0.5 select-none">
+                {/* Service Status micro label */}
+                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-[1.2] py-[1px]">
+                  {profile.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
+                </span>
+
+                {/* Large bold name with verified icon */}
+                <h3 className="text-base font-black text-white leading-[1.2] flex items-center gap-1.5 py-[1px]">
+                  {profile.fullName}
+                  <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                </h3>
+
+                {/* PPA Subtitle */}
+                <p className="text-[11px] text-gray-300 font-semibold leading-[1.2] py-[1px]">
+                  with <span className="text-emerald-400 font-bold">{(profile.ppa || "PPA Assignment").split(",")[0]}</span>
+                </p>
+
+                {/* Extra Details line */}
+                <p className="text-[9.5px] text-gray-400 font-medium leading-[1.2] py-[1px]">
+                  {profile.tribe} Tribe • {profile.platoonNo}
+                </p>
+
+                {/* Faint footer border line */}
+                <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
+                  <span className="font-bold">{profile.stateOfOrigin || "STATE"} • {profile.callUpNo}</span>
+                  <span className="shrink-0 font-bold">NYSC {profile.yearOfService} ({profile.batch})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Identity Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -274,7 +364,7 @@ export default function NyscProfileDetail() {
             {/* Top accent strip */}
             <div className={`h-1 w-full bg-gradient-to-r ${theme.cardGradient}`} />
 
-            <div ref={cardRef} className="p-6 sm:p-8">
+            <div className="p-6 sm:p-8">
 
               {/* ── Profile Header Row ── */}
               <div className="flex flex-col sm:flex-row sm:items-start gap-5 mb-8">
