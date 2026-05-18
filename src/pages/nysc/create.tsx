@@ -93,6 +93,47 @@ const BADGE_STYLES = {
     dot: "bg-emerald-600",
   }
 };
+const compressImage = (file: File, maxDim = 1000, quality = 0.75): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(event.target?.result as string);
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
+        resolve(compressedBase64);
+      };
+      img.onerror = () => {
+        resolve(event.target?.result as string);
+      };
+    };
+    reader.onerror = (err) => reject(err);
+  });
+};
 
 export default function CreateNyscProfile() {
   const router = useRouter();
@@ -130,18 +171,17 @@ export default function CreateNyscProfile() {
     setTimeout(() => setShowToast(false), 4500);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        triggerToast("❌ Profile Photo exceeds the 2MB size limit!");
-        return;
+      try {
+        const compressed = await compressImage(file);
+        setAvatarUrl(compressed);
+        triggerToast("📸 Profile photo compressed & loaded successfully!");
+      } catch (err) {
+        console.error(err);
+        triggerToast("❌ Failed to process the image.");
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatarUrl(reader.result as string);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -621,18 +661,21 @@ export default function CreateNyscProfile() {
                                   type="file"
                                   accept="image/*"
                                   className="hidden"
-                                  onChange={(e) => {
+                                  onChange={async (e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      const reader = new FileReader();
-                                      reader.onloadend = () => {
+                                      try {
+                                        const compressed = await compressImage(file);
                                         setGalleryUrls(prev => {
                                           const updated = [...prev];
-                                          updated[index] = reader.result as string;
+                                          updated[index] = compressed;
                                           return updated;
                                         });
-                                      };
-                                      reader.readAsDataURL(file);
+                                        triggerToast(`📸 ${labels[index]} compressed & loaded successfully!`);
+                                      } catch (err) {
+                                        console.error(err);
+                                        triggerToast("❌ Failed to process gallery photo.");
+                                      }
                                     }
                                   }}
                                 />
