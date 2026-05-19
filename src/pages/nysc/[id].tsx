@@ -86,7 +86,6 @@ export default function NyscProfileDetail() {
   const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewIndex, setPreviewIndex] = useState(0);
-  const [imageFit, setImageFit] = useState<"cover" | "contain">("cover");
 
   useEffect(() => {
     if (!id) return;
@@ -240,13 +239,6 @@ export default function NyscProfileDetail() {
               src={profile.avatarUrl}
               alt={profile.fullName}
               className="absolute inset-0 w-full h-full object-cover object-top"
-              onLoad={(e) => {
-                const img = e.currentTarget;
-                // Detect aspect ratio for the digital passport card lower down
-                if (img.naturalWidth > img.naturalHeight * 1.1) {
-                  setImageFit("contain");
-                }
-              }}
             />
           ) : (
             <div className="absolute inset-0 bg-[#01353D] flex items-center justify-center">
@@ -310,19 +302,10 @@ export default function NyscProfileDetail() {
               {/* FULL BLEED PORTRAIT PHOTO */}
               <div className="absolute inset-0 w-full h-full z-0 bg-black">
                 {profile.avatarUrl !== DEFAULT_AVATAR ? (
-                  <>
-                    {/* Blurred background to fill empty space if contained */}
-                    {imageFit === "contain" && (
-                      <div
-                        className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 blur-xl scale-110"
-                        style={{ backgroundImage: `url(${profile.avatarUrl})` }}
-                      />
-                    )}
-                    <div
-                      className={`relative z-10 w-full h-full bg-no-repeat bg-center ${imageFit === "contain" ? "bg-contain" : "bg-cover"}`}
-                      style={{ backgroundImage: `url(${profile.avatarUrl})` }}
-                    />
-                  </>
+                  <div
+                    className="relative z-10 w-full h-full bg-no-repeat bg-center bg-cover"
+                    style={{ backgroundImage: `url(${profile.avatarUrl})` }}
+                  />
                 ) : (
                   /* Center silhouette if avatar is default */
                   <div className="w-full h-full flex items-center justify-center bg-black/50">

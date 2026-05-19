@@ -179,7 +179,6 @@ export default function CreateNyscProfile() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [imageFit, setImageFit] = useState<"cover" | "contain">("cover");
 
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
@@ -400,14 +399,6 @@ export default function CreateNyscProfile() {
                           src={avatarUrl} 
                           alt="Avatar Preview" 
                           className="w-full h-full object-cover" 
-                          onLoad={(e) => {
-                            const img = e.currentTarget;
-                            if (img.naturalWidth > img.naturalHeight * 1.1) {
-                              setImageFit("contain");
-                            } else {
-                              setImageFit("cover");
-                            }
-                          }}
                         />
                       </div>
                       <div className="sm:col-span-2 text-center sm:text-left space-y-2">
@@ -846,14 +837,8 @@ export default function CreateNyscProfile() {
               {/* FULL BLEED PORTRAIT PHOTO BACKGROUND JUST LIKE NYSC.tsx */}
               {avatarUrl !== DEFAULT_AVATAR ? (
                 <div className="absolute inset-0 w-full h-full z-0 bg-black">
-                  {imageFit === "contain" && (
-                    <div
-                      className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 blur-xl scale-110"
-                      style={{ backgroundImage: `url(${avatarUrl})` }}
-                    />
-                  )}
                   <div
-                    className={`relative z-10 w-full h-full bg-no-repeat bg-center ${imageFit === "contain" ? "bg-contain" : "bg-cover"}`}
+                    className="relative z-10 w-full h-full bg-no-repeat bg-center bg-cover"
                     style={{ backgroundImage: `url(${avatarUrl})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
@@ -927,18 +912,10 @@ export default function CreateNyscProfile() {
                 {/* FULL BLEED PORTRAIT PHOTO */}
                 <div className="absolute inset-0 w-full h-full z-0 bg-black">
                   {avatarUrl !== DEFAULT_AVATAR ? (
-                    <>
-                      {imageFit === "contain" && (
-                        <div
-                          className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 blur-xl scale-110"
-                          style={{ backgroundImage: `url(${avatarUrl})` }}
-                        />
-                      )}
-                      <div
-                        className={`relative z-10 w-full h-full bg-no-repeat bg-center ${imageFit === "contain" ? "bg-contain" : "bg-cover"}`}
-                        style={{ backgroundImage: `url(${avatarUrl})` }}
-                      />
-                    </>
+                    <div
+                      className="relative z-10 w-full h-full bg-no-repeat bg-center bg-cover"
+                      style={{ backgroundImage: `url(${avatarUrl})` }}
+                    />
                   ) : (
                     /* Center silhouette if avatar is default */
                     <div className="w-full h-full flex items-center justify-center bg-black/50">
