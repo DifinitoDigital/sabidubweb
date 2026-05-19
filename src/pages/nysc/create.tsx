@@ -105,7 +105,7 @@ const PORTRAIT_PLACEHOLDERS = {
   ]
 };
 
-const compressImage = (file: File, maxDim = 1000, quality = 0.75): Promise<string> => {
+const compressImage = (file: File, maxDim = 1920, quality = 0.9): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (event) => {
