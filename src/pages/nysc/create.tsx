@@ -179,6 +179,7 @@ export default function CreateNyscProfile() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [imageFit, setImageFit] = useState<"cover" | "contain">("cover");
 
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
@@ -395,7 +396,19 @@ export default function CreateNyscProfile() {
                     <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Profile Picture *</label>
                     <div className="grid sm:grid-cols-3 gap-4 items-center">
                       <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-55 mx-auto sm:mx-0">
-                        <img src={avatarUrl} alt="Avatar Preview" className="w-full h-full object-cover" />
+                        <img 
+                          src={avatarUrl} 
+                          alt="Avatar Preview" 
+                          className="w-full h-full object-cover" 
+                          onLoad={(e) => {
+                            const img = e.currentTarget;
+                            if (img.naturalWidth > img.naturalHeight * 1.1) {
+                              setImageFit("contain");
+                            } else {
+                              setImageFit("cover");
+                            }
+                          }}
+                        />
                       </div>
                       <div className="sm:col-span-2 text-center sm:text-left space-y-2">
                         <button
@@ -832,11 +845,16 @@ export default function CreateNyscProfile() {
 
               {/* FULL BLEED PORTRAIT PHOTO BACKGROUND JUST LIKE NYSC.tsx */}
               {avatarUrl !== DEFAULT_AVATAR ? (
-                <div className="absolute inset-0 w-full h-full z-0">
-                  <img
-                    src={avatarUrl}
-                    alt="Full Portrait Preview"
-                    className="w-full h-full object-cover object-center"
+                <div className="absolute inset-0 w-full h-full z-0 bg-black">
+                  {imageFit === "contain" && (
+                    <div
+                      className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 blur-xl scale-110"
+                      style={{ backgroundImage: `url(${avatarUrl})` }}
+                    />
+                  )}
+                  <div
+                    className={`relative z-10 w-full h-full bg-no-repeat bg-center ${imageFit === "contain" ? "bg-contain" : "bg-cover"}`}
+                    style={{ backgroundImage: `url(${avatarUrl})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
                   <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
@@ -879,7 +897,7 @@ export default function CreateNyscProfile() {
 
                 {/* Faint footer border line */}
                 <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                  <span className="truncate max-w-[130px] font-bold">{deploymentState || "DEPLOY STATE"} • {callUpNo || "CALL-UP NO"}</span>
+                  <span className="truncate max-w-[130px] font-bold">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "CALL-UP NO").replace(/^NYSC\//i, "")}</span>
                   <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                 </div>
               </div>
@@ -909,12 +927,18 @@ export default function CreateNyscProfile() {
                 {/* FULL BLEED PORTRAIT PHOTO */}
                 <div className="absolute inset-0 w-full h-full z-0 bg-black">
                   {avatarUrl !== DEFAULT_AVATAR ? (
-                    <img
-                      src={avatarUrl}
-                      alt="Full Portrait"
-                      className="w-full h-full object-cover object-center"
-                      crossOrigin="anonymous"
-                    />
+                    <>
+                      {imageFit === "contain" && (
+                        <div
+                          className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 blur-xl scale-110"
+                          style={{ backgroundImage: `url(${avatarUrl})` }}
+                        />
+                      )}
+                      <div
+                        className={`relative z-10 w-full h-full bg-no-repeat bg-center ${imageFit === "contain" ? "bg-contain" : "bg-cover"}`}
+                        style={{ backgroundImage: `url(${avatarUrl})` }}
+                      />
+                    </>
                   ) : (
                     /* Center silhouette if avatar is default */
                     <div className="w-full h-full flex items-center justify-center bg-black/50">
@@ -956,7 +980,7 @@ export default function CreateNyscProfile() {
 
                   {/* Faint footer border line */}
                   <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                    <span className="font-bold">{deploymentState || "DEPLOY STATE"} • {callUpNo || "CALL-UP NO"}</span>
+                    <span className="font-bold">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "CALL-UP NO").replace(/^NYSC\//i, "")}</span>
                     <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                   </div>
                 </div>

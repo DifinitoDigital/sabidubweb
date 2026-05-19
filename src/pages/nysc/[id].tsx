@@ -239,10 +239,10 @@ export default function NyscProfileDetail() {
             <img
               src={profile.avatarUrl}
               alt={profile.fullName}
-              className={`absolute inset-0 w-full h-full object-top ${imageFit === "contain" ? "object-contain bg-black/90" : "object-cover"}`}
+              className="absolute inset-0 w-full h-full object-cover object-top"
               onLoad={(e) => {
                 const img = e.currentTarget;
-                // If it's a landscape image (wider than tall), contain it so it's not aggressively cropped
+                // Detect aspect ratio for the digital passport card lower down
                 if (img.naturalWidth > img.naturalHeight * 1.1) {
                   setImageFit("contain");
                 }
@@ -313,18 +313,14 @@ export default function NyscProfileDetail() {
                   <>
                     {/* Blurred background to fill empty space if contained */}
                     {imageFit === "contain" && (
-                      <img
-                        src={profile.avatarUrl}
-                        alt="bg-blur"
-                        className="absolute inset-0 w-full h-full object-cover opacity-30 blur-xl scale-110"
-                        crossOrigin="anonymous"
+                      <div
+                        className="absolute inset-0 w-full h-full bg-cover bg-center opacity-30 blur-xl scale-110"
+                        style={{ backgroundImage: `url(${profile.avatarUrl})` }}
                       />
                     )}
-                    <img
-                      src={profile.avatarUrl}
-                      alt={profile.fullName}
-                      className={`relative z-10 w-full h-full object-center ${imageFit === "contain" ? "object-contain" : "object-cover"}`}
-                      crossOrigin="anonymous"
+                    <div
+                      className={`relative z-10 w-full h-full bg-no-repeat bg-center ${imageFit === "contain" ? "bg-contain" : "bg-cover"}`}
+                      style={{ backgroundImage: `url(${profile.avatarUrl})` }}
                     />
                   </>
                 ) : (
