@@ -262,7 +262,7 @@ export default function CreateNyscProfile() {
           gender: gender ? gender.toUpperCase() : undefined,
           avatarUrl,
           serviceStatus,
-          galleryUrls,
+          galleryUrls: galleryUrls.filter(Boolean),
           story,
         }),
       });
@@ -707,14 +707,14 @@ export default function CreateNyscProfile() {
                   </div>
 
                   <div className="text-left">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">NYSC Memory Gallery (Max 3 pictures: Camp, PPA & POP)</label>
-                    <p className="text-[9px] text-gray-400 mb-2">Showcase your service journey milestones with the community.</p>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">NYSC Memory Gallery (All 3 pictures required: Camp, PPA & POP) *</label>
+                    <p className="text-[9px] text-gray-400 mb-2">Please upload all three photos to showcase your complete service journey.</p>
                     <div className="grid grid-cols-3 gap-2">
                       {[0, 1, 2].map((index) => {
                         const labels = ["CAMP Photo", "PPA Photo", "POP Photo"];
                         const isUploaded = galleryUrls[index] !== undefined;
                         return (
-                          <div key={index} className="relative aspect-square border border-dashed border-gray-200 rounded-xl overflow-hidden bg-gray-55 hover:bg-gray-100/50 transition-all flex flex-col items-center justify-center cursor-pointer p-1">
+                          <div key={index} className={`relative aspect-square border ${errors.galleryUrls && !isUploaded ? "border-red-500 bg-red-50" : "border-dashed border-gray-200 bg-gray-55"} rounded-xl overflow-hidden hover:bg-gray-100/50 transition-all flex flex-col items-center justify-center cursor-pointer p-1`}>
                             {isUploaded ? (
                               <>
                                 <img src={galleryUrls[index]} alt={labels[index]} className="w-full h-full object-cover rounded-lg" />
@@ -722,7 +722,11 @@ export default function CreateNyscProfile() {
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    setGalleryUrls(prev => prev.filter((_, idx) => idx !== index));
+                                    setGalleryUrls(prev => {
+                                      const updated = [...prev];
+                                      delete updated[index];
+                                      return updated;
+                                    });
                                   }}
                                   className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-[8px]"
                                 >
@@ -747,6 +751,7 @@ export default function CreateNyscProfile() {
                                           updated[index] = compressed;
                                           return updated;
                                         });
+                                        setErrors(prev => ({ ...prev, galleryUrls: "" }));
                                         triggerToast(`📸 ${labels[index]} compressed & loaded successfully!`);
                                       } catch (err) {
                                         console.error(err);
@@ -761,6 +766,7 @@ export default function CreateNyscProfile() {
                         );
                       })}
                     </div>
+                    {errors.galleryUrls && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.galleryUrls}</p>}
                   </div>
 
                   <div className="text-left">
@@ -798,10 +804,15 @@ export default function CreateNyscProfile() {
                         const newErrors: Record<string, string> = {};
                         if (!ppa.trim()) newErrors.ppa = "PPA is required";
                         
+                        const uploadedCount = galleryUrls.filter(Boolean).length;
+                        if (uploadedCount < 3) {
+                          newErrors.galleryUrls = "Please upload all 3 pictures (Camp, PPA, and POP)";
+                        }
+
                         setErrors(newErrors);
                         if (Object.keys(newErrors).length > 0) {
                           e.preventDefault();
-                          triggerToast("Please fill in the highlighted required fields.");
+                          triggerToast("Please complete all required fields and upload all 3 photos.");
                           return;
                         }
                       }}
