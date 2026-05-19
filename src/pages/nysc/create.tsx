@@ -178,6 +178,7 @@ export default function CreateNyscProfile() {
   const [submitting, setSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
@@ -423,24 +424,26 @@ export default function CreateNyscProfile() {
                         type="text"
                         required
                         value={fullName}
-                        onChange={e => setFullName(e.target.value)}
+                        onChange={e => { setFullName(e.target.value); setErrors(prev => ({ ...prev, fullName: "" })); }}
                         placeholder="e.g. Hamman Bakare"
-                        className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                        className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.fullName ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                       />
+                      {errors.fullName && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.fullName}</p>}
                     </div>
                     <div className="text-left">
                       <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">State of Origin *</label>
                       <select
                         required
                         value={stateOfOrigin}
-                        onChange={e => setStateOfOrigin(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                        onChange={e => { setStateOfOrigin(e.target.value); setErrors(prev => ({ ...prev, stateOfOrigin: "" })); }}
+                        className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.stateOfOrigin ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                       >
                         <option value="">Select State</option>
                         {NIGERIAN_STATES.map(s => (
                           <option key={s} value={s}>{s}</option>
                         ))}
                       </select>
+                      {errors.stateOfOrigin && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.stateOfOrigin}</p>}
                     </div>
                   </div>
 
@@ -451,10 +454,11 @@ export default function CreateNyscProfile() {
                         type="email"
                         required
                         value={email}
-                        onChange={e => setEmail(e.target.value)}
+                        onChange={e => { setEmail(e.target.value); setErrors(prev => ({ ...prev, email: "" })); }}
                         placeholder="e.g. bakare.t@mail.com"
-                        className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                        className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.email ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                       />
+                      {errors.email && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.email}</p>}
                     </div>
                     <div className="text-left">
                       <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Phone Number</label>
@@ -474,14 +478,15 @@ export default function CreateNyscProfile() {
                       <select
                         required
                         value={tribe}
-                        onChange={e => setTribe(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                        onChange={e => { setTribe(e.target.value); setErrors(prev => ({ ...prev, tribe: "" })); }}
+                        className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.tribe ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                       >
                         <option value="">Select Tribe</option>
                         {NIGERIAN_TRIBES.map(t => (
                           <option key={t} value={t}>{t}</option>
                         ))}
                       </select>
+                      {errors.tribe && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.tribe}</p>}
                     </div>
                     <div className="text-left">
                       <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Gender</label>
@@ -514,13 +519,22 @@ export default function CreateNyscProfile() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (!fullName.trim()) { triggerToast("Full Name is required!"); return; }
-                        if (!stateOfOrigin) { triggerToast("State of Origin is required!"); return; }
-                        if (!email.trim()) { triggerToast("Email Address is required!"); return; }
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        if (!emailRegex.test(email.trim())) { triggerToast("Please enter a valid email address!"); return; }
-                        if (!tribe) { triggerToast("Tribe is required!"); return; }
-                        if (avatarUrl === DEFAULT_AVATAR) { triggerToast("Please upload your profile photo first!"); return; }
+                        const newErrors: Record<string, string> = {};
+                        if (!fullName.trim()) newErrors.fullName = "Full Name is required";
+                        if (!stateOfOrigin) newErrors.stateOfOrigin = "State of Origin is required";
+                        if (!email.trim()) newErrors.email = "Email Address is required";
+                        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) newErrors.email = "Invalid email format";
+                        if (!tribe) newErrors.tribe = "Tribe is required";
+
+                        setErrors(newErrors);
+                        if (Object.keys(newErrors).length > 0) {
+                          triggerToast("Please fill in the highlighted required fields.");
+                          return;
+                        }
+                        if (avatarUrl === DEFAULT_AVATAR) {
+                          triggerToast("Please upload your profile photo first!");
+                          return;
+                        }
                         setFormStep(2);
                       }}
                       className="bg-[#01353D] text-white px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors"
@@ -541,24 +555,26 @@ export default function CreateNyscProfile() {
                         type="text"
                         required
                         value={callUpNo}
-                        onChange={e => setCallUpNo(e.target.value)}
+                        onChange={e => { setCallUpNo(e.target.value); setErrors(prev => ({ ...prev, callUpNo: "" })); }}
                         placeholder="e.g. NYSC/LAG/2025/284091"
-                        className="w-full px-3.5 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all uppercase"
+                        className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.callUpNo ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all uppercase`}
                       />
+                      {errors.callUpNo && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.callUpNo}</p>}
                     </div>
                     <div className="text-left">
                       <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Deployment Camp State *</label>
                       <select
                         required
                         value={deploymentState}
-                        onChange={e => setDeploymentState(e.target.value)}
-                        className="w-full px-3.5 py-2.5 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                        onChange={e => { setDeploymentState(e.target.value); setErrors(prev => ({ ...prev, deploymentState: "" })); }}
+                        className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.deploymentState ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                       >
                         <option value="">Select Camp State</option>
                         {CAMP_STATES.map(s => (
                           <option key={s} value={s}>{s}</option>
                         ))}
                       </select>
+                      {errors.deploymentState && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.deploymentState}</p>}
                     </div>
                   </div>
 
@@ -640,8 +656,15 @@ export default function CreateNyscProfile() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (!callUpNo.trim()) { triggerToast("Call-up Number is required!"); return; }
-                        if (!deploymentState) { triggerToast("Deployment State is required!"); return; }
+                        const newErrors: Record<string, string> = {};
+                        if (!callUpNo.trim()) newErrors.callUpNo = "Call-up Number is required";
+                        if (!deploymentState) newErrors.deploymentState = "Deployment State is required";
+                        
+                        setErrors(newErrors);
+                        if (Object.keys(newErrors).length > 0) {
+                          triggerToast("Please fill in the highlighted required fields.");
+                          return;
+                        }
                         setFormStep(3);
                       }}
                       className="bg-[#01353D] text-white px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors"
@@ -661,10 +684,11 @@ export default function CreateNyscProfile() {
                       type="text"
                       required
                       value={ppa}
-                      onChange={e => setPpa(e.target.value)}
+                      onChange={e => { setPpa(e.target.value); setErrors(prev => ({ ...prev, ppa: "" })); }}
                       placeholder="e.g. Government Secondary School, Wannune or Chevron Nigeria Ltd"
-                      className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                      className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.ppa ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                     />
+                    {errors.ppa && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.ppa}</p>}
                   </div>
 
                   <div className="text-left">
@@ -766,6 +790,17 @@ export default function CreateNyscProfile() {
                     </button>
                     <button
                       type="submit"
+                      onClick={(e) => {
+                        const newErrors: Record<string, string> = {};
+                        if (!ppa.trim()) newErrors.ppa = "PPA is required";
+                        
+                        setErrors(newErrors);
+                        if (Object.keys(newErrors).length > 0) {
+                          e.preventDefault();
+                          triggerToast("Please fill in the highlighted required fields.");
+                          return;
+                        }
+                      }}
                       disabled={submitting}
                       className="bg-emerald-600 text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-emerald-700 transition-colors disabled:bg-emerald-300"
                     >

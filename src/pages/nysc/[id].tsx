@@ -86,6 +86,7 @@ export default function NyscProfileDetail() {
   const [loading, setLoading] = useState(true);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const [imageFit, setImageFit] = useState<"cover" | "contain">("cover");
 
   useEffect(() => {
     if (!id) return;
@@ -238,7 +239,14 @@ export default function NyscProfileDetail() {
             <img
               src={profile.avatarUrl}
               alt={profile.fullName}
-              className="absolute inset-0 w-full h-full object-cover object-top"
+              className={`absolute inset-0 w-full h-full object-top ${imageFit === "contain" ? "object-contain bg-black/90" : "object-cover"}`}
+              onLoad={(e) => {
+                const img = e.currentTarget;
+                // If it's a landscape image (wider than tall), contain it so it's not aggressively cropped
+                if (img.naturalWidth > img.naturalHeight * 1.1) {
+                  setImageFit("contain");
+                }
+              }}
             />
           ) : (
             <div className="absolute inset-0 bg-[#01353D] flex items-center justify-center">
@@ -302,12 +310,23 @@ export default function NyscProfileDetail() {
               {/* FULL BLEED PORTRAIT PHOTO */}
               <div className="absolute inset-0 w-full h-full z-0 bg-black">
                 {profile.avatarUrl !== DEFAULT_AVATAR ? (
-                  <img
-                    src={profile.avatarUrl}
-                    alt={profile.fullName}
-                    className="w-full h-full object-cover object-center"
-                    crossOrigin="anonymous"
-                  />
+                  <>
+                    {/* Blurred background to fill empty space if contained */}
+                    {imageFit === "contain" && (
+                      <img
+                        src={profile.avatarUrl}
+                        alt="bg-blur"
+                        className="absolute inset-0 w-full h-full object-cover opacity-30 blur-xl scale-110"
+                        crossOrigin="anonymous"
+                      />
+                    )}
+                    <img
+                      src={profile.avatarUrl}
+                      alt={profile.fullName}
+                      className={`relative z-10 w-full h-full object-center ${imageFit === "contain" ? "object-contain" : "object-cover"}`}
+                      crossOrigin="anonymous"
+                    />
+                  </>
                 ) : (
                   /* Center silhouette if avatar is default */
                   <div className="w-full h-full flex items-center justify-center bg-black/50">
@@ -349,7 +368,7 @@ export default function NyscProfileDetail() {
 
                 {/* Faint footer border line */}
                 <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                  <span className="font-bold">{profile.deploymentState || "DEPLOY STATE"} • {profile.callUpNo}</span>
+                  <span className="font-bold">{profile.deploymentState || "DEPLOY STATE"} • {(profile.callUpNo || "").replace(/^NYSC\//i, "")}</span>
                   <span className="shrink-0 font-bold">NYSC {profile.yearOfService} ({profile.batch})</span>
                 </div>
               </div>
@@ -433,34 +452,34 @@ export default function NyscProfileDetail() {
                 />
                 <DetailRow
                   label="Tribe"
-                  value={profile.tribe}
+                  value={profile.tribe || "—"}
                   icon={<FaGlobe />}
                 />
                 <DetailRow
                   label="Deployment State"
-                  value={profile.deploymentState}
+                  value={profile.deploymentState || "—"}
                   icon={<FaMapMarkerAlt />}
                 />
 
                 <DetailRow
                   label="Service Year"
-                  value={profile.yearOfService}
+                  value={profile.yearOfService || "—"}
                   icon={<FaCalendarAlt />}
                 />
                 <DetailRow
                   label="Batch & Stream"
-                  value={`${profile.batch} · ${profile.stream}`}
+                  value={`${profile.batch || "—"} · ${profile.stream || "—"}`}
                 />
                 <DetailRow
                   label="Platoon"
-                  value={`${profile.platoonNo} · ${profile.platoonPosition}`}
+                  value={`${profile.platoonNo || "—"} · ${profile.platoonPosition || "—"}`}
                   icon={<FaUsers />}
                 />
 
                 <div className="col-span-2 sm:col-span-3">
                   <DetailRow
                     label="Primary Place of Assignment (PPA)"
-                    value={profile.ppa}
+                    value={profile.ppa || "—"}
                     icon={<FaBuilding />}
                   />
                 </div>
