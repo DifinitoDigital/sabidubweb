@@ -56,7 +56,7 @@ export default function NyscHub() {
   const fetchYearbook = async () => {
     if (!cachedYearbookList) setLoadingProfiles(true);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
       const response = await fetch(`${baseUrl}/profile/registered-as/NYSC`);
       if (response.ok) {
         const data = await response.json();
@@ -162,7 +162,7 @@ export default function NyscHub() {
       <Navbar />
 
       <div className="bg-[#FCFDFD] text-gray-900 min-h-screen pt-24 pb-12 overflow-x-hidden">
-        
+
         {/* Flat Minimalist Hero Section */}
         <section className="pt-16 sm:pt-36 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center border-b border-gray-150">
           <span className="bg-[#01353D]/5 text-[#01353D] px-3.5 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1.5 mb-4">
@@ -346,82 +346,82 @@ export default function NyscHub() {
               </button>
             </div>
           ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
-            <AnimatePresence>
-              {paginatedDirectory.map((item) => {
-                const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
+              <AnimatePresence>
+                {paginatedDirectory.map((item) => {
+                  const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
 
-                return (
-                  <motion.div
-                    key={item.id}
-                    onClick={() => router.push(`/nysc/${item.id}`)}
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 15 }}
-                    className={`relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group bg-gradient-to-b ${cardTheme.cardGradient}`}
-                  >
-                    {/* Background Pattern Mesh Overlay */}
-                    <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
-                      <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                        <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
-                        <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
-                      </svg>
-                    </div>
-
-                    {/* TOP HEADER WATERMARK */}
-                    <div className="absolute top-8 left-0 right-0 px-6 flex justify-between items-center z-20 text-[7.5px] font-black uppercase tracking-widest text-white/70 select-none">
-                      <span>nysc passport</span>
-                      <span>SabiDub</span>
-                    </div>
-
-                    {/* FULL BLEED PORTRAIT PHOTO */}
-                    <div className="absolute inset-0 w-full h-full z-0">
-                      <img
-                        src={item.avatarUrl}
-                        alt={item.fullName}
-                        loading="lazy"
-                        className="w-full h-full object-cover object-top"
-                        onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
-                    </div>
-
-                    {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
-                    <div className="absolute bottom-3 left-5 right-5 z-20 flex flex-col text-left space-y-0.5 select-none">
-                      
-                      {/* Service Status micro label */}
-                      <span className="text-[7.5px] font-black uppercase tracking-[0.12em] text-emerald-400 leading-[1.2] py-[1px]">
-                        {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
-                      </span>
-
-                      {/* Large bold white name with verified icon */}
-                      <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
-                        {item.fullName}
-                        <FaCheckCircle className="text-emerald-400 text-[10px] shrink-0" />
-                      </h3>
-
-                      {/* PPA Subtitle */}
-                      <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
-                        with <span className={`${cardTheme.accentText} font-bold`}>{item.ppa.split(",")[0]}</span>
-                      </p>
-
-                      {/* Extra Details line */}
-                      <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
-                        {item.tribe} Tribe • {item.stateOfOrigin} • {item.platoonNo}
-                      </p>
-
-                      {/* Faint footer border line */}
-                      <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-1.5 text-[7px] text-gray-400 font-mono leading-[1.2] py-[1px]">
-                        <span>NYSC {item.yearOfService}</span>
-                        <span>{item.batch}</span>
+                  return (
+                    <motion.div
+                      key={item.id}
+                      onClick={() => router.push(`/nysc/${item.id}`)}
+                      initial={{ opacity: 0, y: 15 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 15 }}
+                      className={`relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group bg-gradient-to-b ${cardTheme.cardGradient}`}
+                    >
+                      {/* Background Pattern Mesh Overlay */}
+                      <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
+                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                          <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
+                          <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
+                        </svg>
                       </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
+
+                      {/* TOP HEADER WATERMARK */}
+                      <div className="absolute top-8 left-0 right-0 px-6 flex justify-between items-center z-20 text-[7.5px] font-black uppercase tracking-widest text-white/70 select-none">
+                        <span>nysc passport</span>
+                        <span>SabiDub</span>
+                      </div>
+
+                      {/* FULL BLEED PORTRAIT PHOTO */}
+                      <div className="absolute inset-0 w-full h-full z-0">
+                        <img
+                          src={item.avatarUrl}
+                          alt={item.fullName}
+                          loading="lazy"
+                          className="w-full h-full object-cover object-top"
+                          onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
+                      </div>
+
+                      {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
+                      <div className="absolute bottom-3 left-5 right-5 z-20 flex flex-col text-left space-y-0.5 select-none">
+
+                        {/* Service Status micro label */}
+                        <span className="text-[7.5px] font-black uppercase tracking-[0.12em] text-emerald-400 leading-[1.2] py-[1px]">
+                          {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
+                        </span>
+
+                        {/* Large bold white name with verified icon */}
+                        <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
+                          {item.fullName}
+                          <FaCheckCircle className="text-emerald-400 text-[10px] shrink-0" />
+                        </h3>
+
+                        {/* PPA Subtitle */}
+                        <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
+                          with <span className={`${cardTheme.accentText} font-bold`}>{item.ppa.split(",")[0]}</span>
+                        </p>
+
+                        {/* Extra Details line */}
+                        <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
+                          {item.tribe} Tribe • {item.stateOfOrigin} • {item.platoonNo}
+                        </p>
+
+                        {/* Faint footer border line */}
+                        <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-1.5 text-[7px] text-gray-400 font-mono leading-[1.2] py-[1px]">
+                          <span>NYSC {item.yearOfService}</span>
+                          <span>{item.batch}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
           )}
           {/* Infinite Scroll loading indicator */}
           {visibleCount < filteredDirectory.length && (

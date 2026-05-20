@@ -226,8 +226,8 @@ export default function CreateNyscProfile() {
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !callUpNo || !deploymentState || !ppa || !tribe) {
-      triggerToast("Please fill in all required fields, including PPA and Tribe!");
+    if (!fullName || !email || !callUpNo || !deploymentState || !ppa || !tribe || !story) {
+      triggerToast("Please fill in all required fields, including PPA, Tribe, and your Story!");
       return;
     }
     if (avatarUrl === DEFAULT_AVATAR) {
@@ -698,14 +698,16 @@ export default function CreateNyscProfile() {
                   </div>
 
                   <div className="text-left">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">My NYSC Story & Experience</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">My NYSC Story & Experience *</label>
                     <textarea
+                      required
                       value={story}
-                      onChange={e => setStory(e.target.value)}
+                      onChange={e => { setStory(e.target.value); setErrors(prev => ({ ...prev, story: "" })); }}
                       placeholder="Share your memorable service experience, challenges, achievements or camp memories with the community..."
                       rows={4}
-                      className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all resize-none"
+                      className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.story ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all resize-none`}
                     />
+                    {errors.story && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.story}</p>}
                   </div>
 
                   <div className="text-left">
@@ -805,6 +807,7 @@ export default function CreateNyscProfile() {
                       onClick={(e) => {
                         const newErrors: Record<string, string> = {};
                         if (!ppa.trim()) newErrors.ppa = "PPA is required";
+                        if (!story.trim()) newErrors.story = "Your NYSC Story is required";
                         
                         const uploadedCount = galleryUrls.filter(Boolean).length;
                         if (uploadedCount < 3) {
