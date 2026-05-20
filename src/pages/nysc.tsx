@@ -18,6 +18,10 @@ const BADGE_STYLES = {
     accentText: "text-emerald-400",
     subText: "text-emerald-300/80",
     dot: "bg-emerald-500",
+    cardGradientStyle: "linear-gradient(to bottom, #0a3f2d, #04241a, #01140e)",
+    accentColor: "#34d399",
+    subTextColor: "rgba(110, 231, 183, 0.8)",
+    dotColor: "#10b981",
   },
   classic: {
     name: "Classic Green Theme",
@@ -25,6 +29,10 @@ const BADGE_STYLES = {
     accentText: "text-green-400",
     subText: "text-green-300/80",
     dot: "bg-green-600",
+    cardGradientStyle: "linear-gradient(to bottom, #045233, #02311e, #00170e)",
+    accentColor: "#4ade80",
+    subTextColor: "rgba(134, 239, 172, 0.8)",
+    dotColor: "#16a34a",
   },
   sage: {
     name: "Sage Green Theme",
@@ -32,6 +40,10 @@ const BADGE_STYLES = {
     accentText: "text-emerald-300",
     subText: "text-emerald-400/80",
     dot: "bg-emerald-600",
+    cardGradientStyle: "linear-gradient(to bottom, #3b523e, #243326, #121a13)",
+    accentColor: "#6ee7b7",
+    subTextColor: "rgba(52, 211, 153, 0.8)",
+    dotColor: "#059669",
   }
 };
 
@@ -365,7 +377,8 @@ export default function NyscHub() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 15 }}
-                      className={`relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group bg-gradient-to-b ${cardTheme.cardGradient}`}
+                      className="relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group"
+                      style={{ background: cardTheme.cardGradientStyle }}
                     >
                       {/* Background Pattern Mesh Overlay */}
                       <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
@@ -398,19 +411,19 @@ export default function NyscHub() {
                       <div className="absolute bottom-3 left-5 right-5 z-20 flex flex-col text-left space-y-0.5 select-none">
 
                         {/* Service Status micro label */}
-                        <span className="text-[7.5px] font-black uppercase tracking-[0.12em] text-emerald-400 leading-[1.2] py-[1px]">
+                        <span className="text-[7.5px] font-black uppercase tracking-[0.12em] leading-[1.2] py-[1px]" style={{ color: cardTheme.accentColor }}>
                           {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                         </span>
 
                         {/* Large bold white name with verified icon */}
                         <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
                           {item.fullName}
-                          <FaCheckCircle className="text-emerald-400 text-[10px] shrink-0" />
+                          <FaCheckCircle className="text-[10px] shrink-0" style={{ color: cardTheme.accentColor }} />
                         </h3>
 
                         {/* PPA Subtitle */}
                         <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
-                          with <span className={`${cardTheme.accentText} font-bold`}>{item.ppa.split(",")[0]}</span>
+                          with <span className="font-bold" style={{ color: cardTheme.accentColor }}>{item.ppa.split(",")[0]}</span>
                         </p>
 
                         {/* Extra Details line */}

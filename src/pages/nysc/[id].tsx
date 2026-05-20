@@ -42,21 +42,45 @@ const MOCK_YEARBOOK: NyscProfile[] = [];
 const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NiZDVlMSI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==";
 
 // ─── Theme Colours ─────────────────────────────────────────────────────────────
-const BADGE_STYLES: Record<string, { cardGradient: string; accentColor: string; accentBg: string }> = {
+const BADGE_STYLES: Record<string, {
+  cardGradient: string;
+  accentText: string;
+  subText: string;
+  dot: string;
+  cardGradientStyle: string;
+  accentColor: string;
+  subTextColor: string;
+  dotColor: string;
+}> = {
   emerald: {
     cardGradient: "from-[#0a3f2d] via-[#04241a] to-[#01140e]",
-    accentColor: "text-emerald-500",
-    accentBg: "bg-emerald-500/10 border-emerald-500/20",
+    accentText: "text-emerald-400",
+    subText: "text-emerald-300/80",
+    dot: "bg-emerald-500",
+    cardGradientStyle: "linear-gradient(to bottom, #0a3f2d, #04241a, #01140e)",
+    accentColor: "#34d399",
+    subTextColor: "rgba(110, 231, 183, 0.8)",
+    dotColor: "#10b981",
   },
   classic: {
     cardGradient: "from-[#045233] via-[#02311e] to-[#00170e]",
-    accentColor: "text-green-500",
-    accentBg: "bg-green-500/10 border-green-500/20",
+    accentText: "text-green-400",
+    subText: "text-green-300/80",
+    dot: "bg-green-600",
+    cardGradientStyle: "linear-gradient(to bottom, #045233, #02311e, #00170e)",
+    accentColor: "#4ade80",
+    subTextColor: "rgba(134, 239, 172, 0.8)",
+    dotColor: "#16a34a",
   },
   sage: {
     cardGradient: "from-[#3b523e] via-[#243326] to-[#121a13]",
-    accentColor: "text-emerald-400",
-    accentBg: "bg-emerald-400/10 border-emerald-400/20",
+    accentText: "text-emerald-300",
+    subText: "text-emerald-400/80",
+    dot: "bg-emerald-600",
+    cardGradientStyle: "linear-gradient(to bottom, #3b523e, #243326, #121a13)",
+    accentColor: "#6ee7b7",
+    subTextColor: "rgba(52, 211, 153, 0.8)",
+    dotColor: "#059669",
   },
 };
 
@@ -283,8 +307,8 @@ export default function NyscProfileDetail() {
           <div className="absolute left-[-9999px] top-[-9999px] pointer-events-none select-none">
             <div
               ref={cardRef}
-              className={`relative aspect-[3/4.2] w-[350px] rounded-none overflow-hidden bg-gradient-to-b ${theme.cardGradient}`}
-              style={{ fontFamily: 'Inter, sans-serif' }}
+              className="relative aspect-[3/4.2] w-[350px] rounded-none overflow-hidden"
+              style={{ fontFamily: 'Inter, sans-serif', background: theme.cardGradientStyle }}
             >
               {/* Pattern mesh */}
               <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
@@ -326,19 +350,19 @@ export default function NyscProfileDetail() {
               {/* BOTTOM TEXT ZONE (pushed up by bottom-8, space-y-0.5 for small spacing) */}
               <div className="absolute bottom-8 left-6 right-6 z-20 flex flex-col text-left space-y-0.5 select-none">
                 {/* Service Status micro label */}
-                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-[1.2] py-[1px]">
+                <span className="text-[9px] font-black uppercase tracking-[0.15em] leading-[1.2] py-[1px]" style={{ color: theme.accentColor }}>
                   {profile.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                 </span>
 
                 {/* Large bold name with verified icon */}
                 <h3 className="text-base font-black text-white leading-[1.2] flex items-center gap-1.5 py-[1px]">
                   {profile.fullName}
-                  <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                  <FaCheckCircle className="text-xs shrink-0" style={{ color: theme.accentColor }} />
                 </h3>
 
                 {/* PPA Subtitle */}
                 <p className="text-[11px] text-gray-300 font-semibold leading-[1.2] py-[1px]">
-                  with <span className="text-emerald-400 font-bold">{(profile.ppa || "PPA Assignment").split(",")[0]}</span>
+                  with <span className="font-bold" style={{ color: theme.accentColor }}>{(profile.ppa || "PPA Assignment").split(",")[0]}</span>
                 </p>
 
                 {/* Extra Details line */}
@@ -348,7 +372,7 @@ export default function NyscProfileDetail() {
 
                 {/* Faint footer border line */}
                 <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                  <span className="font-bold">{profile.deploymentState || "DEPLOY STATE"} • {(profile.callUpNo || "").replace(/^NYSC\//i, "")}</span>
+                  <span className="font-bold">{profile.deploymentState || "DEPLOY STATE"} • {(profile.callUpNo || "STATE CODE").replace(/^NYSC\//i, "")}</span>
                   <span className="shrink-0 font-bold">NYSC {profile.yearOfService} ({profile.batch})</span>
                 </div>
               </div>

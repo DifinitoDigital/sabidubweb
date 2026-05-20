@@ -77,6 +77,10 @@ const BADGE_STYLES = {
     accentText: "text-emerald-400",
     subText: "text-emerald-300/80",
     dot: "bg-emerald-500",
+    cardGradientStyle: "linear-gradient(to bottom, #0a3f2d, #04241a, #01140e)",
+    accentColor: "#34d399",
+    subTextColor: "rgba(110, 231, 183, 0.8)",
+    dotColor: "#10b981",
   },
   classic: {
     name: "Classic Green Theme",
@@ -84,6 +88,10 @@ const BADGE_STYLES = {
     accentText: "text-green-400",
     subText: "text-green-300/80",
     dot: "bg-green-600",
+    cardGradientStyle: "linear-gradient(to bottom, #045233, #02311e, #00170e)",
+    accentColor: "#4ade80",
+    subTextColor: "rgba(134, 239, 172, 0.8)",
+    dotColor: "#16a34a",
   },
   sage: {
     name: "Sage Green Theme",
@@ -91,6 +99,10 @@ const BADGE_STYLES = {
     accentText: "text-emerald-300",
     subText: "text-emerald-400/80",
     dot: "bg-emerald-600",
+    cardGradientStyle: "linear-gradient(to bottom, #3b523e, #243326, #121a13)",
+    accentColor: "#6ee7b7",
+    subTextColor: "rgba(52, 211, 153, 0.8)",
+    dotColor: "#059669",
   }
 };
 
@@ -556,13 +568,13 @@ export default function CreateNyscProfile() {
                 <div className="space-y-4">
                   <div className="grid sm:grid-cols-2 gap-3">
                     <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Call-up Number *</label>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">State Code *</label>
                       <input
                         type="text"
                         required
                         value={callUpNo}
                         onChange={e => { setCallUpNo(e.target.value); setErrors(prev => ({ ...prev, callUpNo: "" })); }}
-                        placeholder="e.g. NYSC/LAG/2025/284091"
+                        placeholder="e.g. LA/23A/1234"
                         className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.callUpNo ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all uppercase`}
                       />
                       {errors.callUpNo && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.callUpNo}</p>}
@@ -663,7 +675,7 @@ export default function CreateNyscProfile() {
                       type="button"
                       onClick={() => {
                         const newErrors: Record<string, string> = {};
-                        if (!callUpNo.trim()) newErrors.callUpNo = "Call-up Number is required";
+                        if (!callUpNo.trim()) newErrors.callUpNo = "State Code is required";
                         if (!deploymentState) newErrors.deploymentState = "Deployment State is required";
                         
                         setErrors(newErrors);
@@ -774,7 +786,7 @@ export default function CreateNyscProfile() {
                   </div>
 
                   <div className="text-left">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Select Green Accent Theme</label>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Select Theme Color for Card</label>
                     <div className="grid sm:grid-cols-3 gap-2">
                       {Object.entries(BADGE_STYLES).map(([key, value]) => (
                         <button
@@ -835,7 +847,10 @@ export default function CreateNyscProfile() {
           {/* 2. The Live Preview Card Column */}
           <div className="md:col-span-2 sticky top-28 space-y-4 text-center">
             <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Live Yearbook Card Preview</span>
-            <div className={`relative aspect-[3/4.2] w-full max-w-[320px] mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-xl bg-gradient-to-b ${activeTheme.cardGradient}`}>
+            <div
+              className="relative aspect-[3/4.2] w-full max-w-[320px] mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-xl"
+              style={{ background: activeTheme.cardGradientStyle }}
+            >
               {/* Background Pattern Mesh Overlay */}
               <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
                 <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
@@ -876,19 +891,19 @@ export default function CreateNyscProfile() {
               {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
               <div className="absolute bottom-4 left-6 right-6 z-20 flex flex-col text-left space-y-0.5 select-none">
                 {/* Service Status micro label */}
-                <span className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-[1.2] py-[1px]">
+                <span className="text-[9px] font-black uppercase tracking-[0.15em] leading-[1.2] py-[1px]" style={{ color: activeTheme.accentColor }}>
                   {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                 </span>
 
                 {/* Large bold white name with verified icon */}
                 <h3 className="text-base font-black text-white leading-[1.2] truncate flex items-center gap-1.5 py-[1px]">
                   {fullName || "YOUR FULL NAME"}
-                  <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                  <FaCheckCircle className="text-xs shrink-0" style={{ color: activeTheme.accentColor }} />
                 </h3>
 
                 {/* PPA Subtitle */}
                 <p className="text-[11px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
-                  with <span className={`${activeTheme.accentText} font-bold`}>{(ppa || "PPA Assignment").split(",")[0]}</span>
+                  with <span className="font-bold" style={{ color: activeTheme.accentColor }}>{(ppa || "PPA Assignment").split(",")[0]}</span>
                 </p>
 
                 {/* Extra Details line */}
@@ -898,7 +913,7 @@ export default function CreateNyscProfile() {
 
                 {/* Faint footer border line */}
                 <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                  <span className="truncate max-w-[130px] font-bold">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "CALL-UP NO").replace(/^NYSC\//i, "")}</span>
+                  <span className="truncate max-w-[130px] font-bold">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "STATE CODE").replace(/^NYSC\//i, "")}</span>
                   <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                 </div>
               </div>
@@ -908,8 +923,8 @@ export default function CreateNyscProfile() {
             <div className="absolute left-[-9999px] top-[-9999px] pointer-events-none select-none">
               <div
                 ref={cardRef}
-                className={`relative aspect-[3/4.2] w-[350px] rounded-none overflow-hidden bg-gradient-to-b ${activeTheme.cardGradient}`}
-                style={{ fontFamily: 'Inter, sans-serif' }}
+                className="relative aspect-[3/4.2] w-[350px] rounded-none overflow-hidden"
+                style={{ fontFamily: 'Inter, sans-serif', background: activeTheme.cardGradientStyle }}
               >
                 {/* Pattern mesh */}
                 <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
@@ -951,19 +966,19 @@ export default function CreateNyscProfile() {
                 {/* BOTTOM TEXT ZONE (pushed up by bottom-8, space-y-0.5 for small spacing) */}
                 <div className="absolute bottom-8 left-6 right-6 z-20 flex flex-col text-left space-y-0.5 select-none">
                   {/* Service Status micro label */}
-                  <span className="text-[9px] font-black uppercase tracking-[0.15em] text-emerald-400 leading-[1.2] py-[1px]">
+                  <span className="text-[9px] font-black uppercase tracking-[0.15em] leading-[1.2] py-[1px]" style={{ color: activeTheme.accentColor }}>
                     {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                   </span>
 
                   {/* Large bold name with verified icon */}
                   <h3 className="text-base font-black text-white leading-[1.2] flex items-center gap-1.5 py-[1px]">
                     {fullName || "YOUR FULL NAME"}
-                    <FaCheckCircle className="text-emerald-400 text-xs shrink-0" />
+                    <FaCheckCircle className="text-xs shrink-0" style={{ color: activeTheme.accentColor }} />
                   </h3>
 
                   {/* PPA Subtitle */}
                   <p className="text-[11px] text-gray-300 font-semibold leading-[1.2] py-[1px]">
-                    with <span className={`${activeTheme.accentText} font-bold`}>{(ppa || "PPA Assignment").split(",")[0]}</span>
+                    with <span className="font-bold" style={{ color: activeTheme.accentColor }}>{(ppa || "PPA Assignment").split(",")[0]}</span>
                   </p>
 
                   {/* Extra Details line */}
@@ -973,7 +988,7 @@ export default function CreateNyscProfile() {
 
                   {/* Faint footer border line */}
                   <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-2 text-[8.5px] text-gray-200 font-mono leading-[1.2] py-[1px]">
-                    <span className="font-bold">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "CALL-UP NO").replace(/^NYSC\//i, "")}</span>
+                    <span className="font-bold">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "STATE CODE").replace(/^NYSC\//i, "")}</span>
                     <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
                   </div>
                 </div>
