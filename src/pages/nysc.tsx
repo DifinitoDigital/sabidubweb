@@ -36,11 +36,16 @@ const BADGE_STYLES = {
 };
 
 let cachedYearbookList: any[] | null = null;
+let cacheTimestamp: number | null = null;
+const CACHE_TTL = 60 * 60 * 1000; // 1 hour in ms
 
 export default function NyscHub() {
   const router = useRouter();
-  const [yearbookList, setYearbookList] = useState<any[]>(cachedYearbookList || []);
-  const [loadingProfiles, setLoadingProfiles] = useState(!cachedYearbookList);
+  
+  const isCacheValid = cachedYearbookList && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_TTL);
+  
+  const [yearbookList, setYearbookList] = useState<any[]>(isCacheValid ? cachedYearbookList! : []);
+  const [loadingProfiles, setLoadingProfiles] = useState(!isCacheValid);
   const [savedPassport, setSavedPassport] = useState<any>(null);
 
   // Filtering States for Yearbook Directory
@@ -54,7 +59,8 @@ export default function NyscHub() {
   const [visibleCount, setVisibleCount] = useState(20);
 
   const fetchYearbook = async () => {
-    if (!cachedYearbookList) setLoadingProfiles(true);
+    const isCacheValid = cachedYearbookList && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_TTL);
+    if (!isCacheValid) setLoadingProfiles(true);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
       const response = await fetch(`${baseUrl}/profile/registered-as/NYSC`);
@@ -85,6 +91,7 @@ export default function NyscHub() {
           });
           setYearbookList(mapped);
           cachedYearbookList = mapped;
+          cacheTimestamp = Date.now();
         }
       }
     } catch (e) {
