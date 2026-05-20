@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -192,6 +192,31 @@ export default function CreateNyscProfile() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Handle phone/browser back button to close modal instead of leaving page
+  useEffect(() => {
+    const handlePopState = () => {
+      if (showPreviewModal) {
+        setShowPreviewModal(false);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [showPreviewModal]);
+
+  const openPreviewModal = () => {
+    setShowPreviewModal(true);
+    // Push a state so that phone back button just closes the modal
+    window.history.pushState({ previewModal: true }, "", window.location.pathname + "#preview");
+  };
+
+  const closePreviewModal = () => {
+    setShowPreviewModal(false);
+    // If we're at the #preview hash, go back to remove it
+    if (window.location.hash === "#preview") {
+      window.history.back();
+    }
+  };
 
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
@@ -847,7 +872,7 @@ export default function CreateNyscProfile() {
                           return;
                         }
                         // Open the full-screen card preview modal
-                        setShowPreviewModal(true);
+                        openPreviewModal();
                       }}
                       disabled={submitting}
                       className="bg-[#01353D] text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors disabled:opacity-50"
@@ -1164,7 +1189,7 @@ export default function CreateNyscProfile() {
               {/* Secondary: Go back to edit */}
               <button
                 type="button"
-                onClick={() => setShowPreviewModal(false)}
+                onClick={closePreviewModal}
                 className="w-full text-center text-[10px] text-gray-500 hover:text-gray-300 font-bold uppercase tracking-widest transition-colors py-1.5"
               >
                 ← Back to Edit
