@@ -90,30 +90,31 @@ export default function NyscProfileDetail() {
   useEffect(() => {
     if (!id) return;
 
+    let hasCached = false;
     // 1. Check in-memory cache first!
     if (profileCache[id as string]) {
       setProfile(profileCache[id as string]);
       setLoading(false);
-      return;
+      hasCached = true;
+    } else {
+      // 2. Check localStorage (user's own saved passport)
+      try {
+        const stored = localStorage.getItem("sabidub_nysc_passport");
+        if (stored) {
+          const parsed: NyscProfile = JSON.parse(stored);
+          if (parsed.id === id) {
+            setProfile(parsed);
+            hasCached = true;
+          }
+        }
+      } catch { }
     }
 
-    // 2. Check localStorage (user's own saved passport)
-    try {
-      const stored = localStorage.getItem("sabidub_nysc_passport");
-      if (stored) {
-        const parsed: NyscProfile = JSON.parse(stored);
-        if (parsed.id === id) {
-          setProfile(parsed);
-          profileCache[id as string] = parsed; // Cache it
-          setLoading(false);
-          return;
-        }
-      }
-    } catch { }
+    if (!hasCached) {
+      setLoading(true);
+    }
 
-    setLoading(true);
-
-    // 3. Fetch from backend API
+    // 3. Fetch from backend API to ensure fresh data and full galleryUrls
     const loadProfile = async () => {
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';

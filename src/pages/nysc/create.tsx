@@ -288,6 +288,8 @@ export default function CreateNyscProfile() {
           badgeTheme: details.badgeTheme,
           gender: details.gender,
           avatarUrl: details.avatarUrl || resData.profilePicture,
+          galleryUrls: details.galleryUrls || [],
+          story: details.story || "",
           serviceStatus: details.serviceStatus,
           createdAt: new Date().toLocaleDateString(),
         };
