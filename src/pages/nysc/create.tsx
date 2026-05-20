@@ -7,7 +7,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
   FaIdCard, FaUsers, FaBuilding, FaGlobe,
-  FaCamera, FaUpload, FaCheckCircle, FaChevronLeft, FaArrowRight, FaDownload
+  FaCamera, FaUpload, FaCheckCircle, FaChevronLeft, FaArrowRight, FaDownload, FaEye
 } from "react-icons/fa";
 
 const DEFAULT_AVATAR = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2NiZDVlMSI+PHBhdGggZD0iTTEyIDEyYzIuMjEgMCA0LTEuNzkgNC00cy0xLjc5LTQtNC00LTQgMS43OS00IDQgMS43OSA0IDQgNHptMCAyYy0yLjY3IDAtOCAxLjM0LTggNHYyaDE2di0yYzAtMi42Ni01LjMzLTQtOC00eiIvPjwvc3ZnPg==";
@@ -186,6 +186,7 @@ export default function CreateNyscProfile() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const [downloadingPreview, setDownloadingPreview] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [formStep, setFormStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -236,8 +237,7 @@ export default function CreateNyscProfile() {
     }
   };
 
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const publishProfile = async () => {
     if (!fullName || !email || !callUpNo || !deploymentState || !ppa || !tribe || !story) {
       triggerToast("Please fill in all required fields, including PPA, Tribe, and your Story!");
       return;
@@ -307,9 +307,9 @@ export default function CreateNyscProfile() {
         };
 
         localStorage.setItem("sabidub_nysc_passport", JSON.stringify(savedData));
-        triggerToast("🎉 Profile published successfully!");
-        
-        // Push back to the previous yearbook directory page!
+        triggerToast("🎉 Profile published & card saved!");
+
+        // Navigate back to yearbook directory
         setTimeout(() => {
           router.push('/nysc');
         }, 1500);
@@ -322,6 +322,20 @@ export default function CreateNyscProfile() {
     } finally {
       setSubmitting(false);
     }
+  };
+
+  // Combined: download the passport card image AND publish the profile together
+  const handlePublishAndDownload = async () => {
+    setShowPreviewModal(false);
+    // Kick off the card download immediately (non-blocking, runs in parallel)
+    downloadPreviewCard();
+    // Then publish to the API
+    await publishProfile();
+  };
+
+  const handleGenerate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Publishing now happens through the preview modal flow
   };
 
   const activeTheme = BADGE_STYLES[badgeTheme];
@@ -815,12 +829,12 @@ export default function CreateNyscProfile() {
                       Back
                     </button>
                     <button
-                      type="submit"
-                      onClick={(e) => {
+                      type="button"
+                      onClick={() => {
                         const newErrors: Record<string, string> = {};
                         if (!ppa.trim()) newErrors.ppa = "PPA is required";
                         if (!story.trim()) newErrors.story = "Your NYSC Story is required";
-                        
+
                         const uploadedCount = galleryUrls.filter(Boolean).length;
                         if (uploadedCount < 3) {
                           newErrors.galleryUrls = "Please upload all 3 pictures (Camp, PPA, and POP)";
@@ -828,15 +842,17 @@ export default function CreateNyscProfile() {
 
                         setErrors(newErrors);
                         if (Object.keys(newErrors).length > 0) {
-                          e.preventDefault();
                           triggerToast("Please complete all required fields and upload all 3 photos.");
                           return;
                         }
+                        // Open the full-screen card preview modal
+                        setShowPreviewModal(true);
                       }}
                       disabled={submitting}
-                      className="bg-emerald-600 text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-emerald-700 transition-colors disabled:bg-emerald-300"
+                      className="bg-[#01353D] text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors disabled:opacity-50"
                     >
-                      {submitting ? "Publishing..." : "Publish Profile"}
+                      <FaEye size={10} />
+                      View Preview &amp; Publish
                     </button>
                   </div>
                 </div>
@@ -995,20 +1011,10 @@ export default function CreateNyscProfile() {
               </div>
             </div>
 
-            {/* Download Preview Card Action */}
-            <button
-              type="button"
-              onClick={downloadPreviewCard}
-              disabled={downloadingPreview}
-              className="w-full max-w-[320px] mx-auto flex items-center justify-center gap-2 bg-[#01353D] hover:bg-[#024a54] disabled:opacity-60 text-white py-3 rounded-xl text-xs font-bold transition-all shadow-md select-none border border-white/10"
-            >
-              {downloadingPreview ? (
-                <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : (
-                <FaDownload size={10} />
-              )}
-              {downloadingPreview ? "Saving card image..." : "Download Preview Card"}
-            </button>
+            {/* Hint text below the live preview */}
+            <p className="text-[9px] text-gray-400 font-medium tracking-wide text-center max-w-[280px] mx-auto">
+              Complete the form and click <span className="text-[#01353D] font-black">View Preview &amp; Publish</span> to review your card before publishing.
+            </p>
           </div>
         </div>
       </main>
@@ -1039,6 +1045,131 @@ export default function CreateNyscProfile() {
               <div className="bg-gradient-to-r from-emerald-400 to-teal-500 h-full rounded-full w-4/5 animate-pulse" />
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────────────────
+           Full-Screen Card Preview Modal
+          ───────────────────────────────────────────────────────────────────── */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 z-[60] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-5 overflow-y-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.90, y: 24 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: "easeOut" }}
+            className="relative w-full max-w-[380px] mx-auto flex flex-col items-center gap-5 py-4"
+          >
+            {/* ── Header ── */}
+            <div className="text-center px-2">
+              <span className="block text-[8.5px] font-black uppercase tracking-[0.22em] mb-1.5" style={{ color: activeTheme.accentColor }}>
+                Your NYSC Digital Passport
+              </span>
+              <h2 className="text-white text-base font-black tracking-tight leading-tight">
+                Looking great, {fullName.split(" ")[0] || "Corper"}! 🎉
+              </h2>
+              <p className="text-gray-400 text-[10px] mt-1 leading-relaxed">
+                Review your passport card below, then hit <strong className="text-white">Download &amp; Publish</strong> to go live on the SabiDub yearbook.
+              </p>
+            </div>
+
+            {/* ── Card Preview ── */}
+            <div
+              className="relative aspect-[3/4.2] w-full max-w-[260px] mx-auto rounded-3xl overflow-hidden shadow-2xl shadow-black/60 border border-white/10"
+              style={{ background: activeTheme.cardGradientStyle }}
+            >
+              {/* Pattern mesh */}
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay z-10">
+                <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
+                  <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
+                </svg>
+              </div>
+              {/* Top watermark */}
+              <div className="absolute top-4 left-0 right-0 px-5 flex justify-between items-center z-20 text-[6.5px] font-black uppercase tracking-widest text-white/60 select-none">
+                <span>nysc passport</span>
+                <span>Powered by SabiDub</span>
+              </div>
+              {/* Portrait photo */}
+              {avatarUrl !== DEFAULT_AVATAR ? (
+                <div className="absolute inset-0 w-full h-full z-0 bg-black">
+                  <div className="relative z-10 w-full h-full bg-no-repeat bg-center bg-cover" style={{ backgroundImage: `url(${avatarUrl})` }} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent z-10 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-transparent to-transparent z-10 pointer-events-none" />
+                </div>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 z-0">
+                  <div className="w-14 h-14 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
+                    <img src={DEFAULT_AVATAR} alt="Silhouette" className="w-9 h-9 opacity-60 filter invert" />
+                  </div>
+                </div>
+              )}
+              {/* Bottom text zone */}
+              <div className="absolute bottom-3.5 left-4 right-4 z-20 flex flex-col text-left space-y-0.5 select-none">
+                <span className="text-[7.5px] font-black uppercase tracking-[0.15em] leading-[1.2] py-[1px]" style={{ color: activeTheme.accentColor }}>
+                  {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
+                </span>
+                <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
+                  {fullName || "YOUR FULL NAME"}
+                  <FaCheckCircle className="text-[9px] shrink-0" style={{ color: activeTheme.accentColor }} />
+                </h3>
+                <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
+                  with <span className="font-bold" style={{ color: activeTheme.accentColor }}>{(ppa || "PPA Assignment").split(",")[0]}</span>
+                </p>
+                <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
+                  {tribe || "TRIBE"} Tribe • {stateOfOrigin || "STATE"} • {platoonNo || "Platoon 1"}
+                </p>
+                <div className="flex justify-between items-center pt-1 border-t border-white/10 mt-1.5 text-[7px] text-gray-200 font-mono leading-[1.2] py-[1px]">
+                  <span className="font-bold truncate max-w-[110px]">{deploymentState || "DEPLOY STATE"} • {(callUpNo || "STATE CODE").replace(/^NYSC\//i, "")}</span>
+                  <span className="shrink-0 font-bold">NYSC {yearOfService} ({batch})</span>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Info strip ── */}
+            <div className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 grid grid-cols-2 gap-x-4 gap-y-1.5">
+              {[
+                ["Name", fullName || "—"],
+                ["State Code", callUpNo || "—"],
+                ["Deployment", deploymentState || "—"],
+                ["Service Year", `${yearOfService} · ${batch}`],
+              ].map(([label, val]) => (
+                <div key={label}>
+                  <p className="text-[8px] font-black text-gray-500 uppercase tracking-widest">{label}</p>
+                  <p className="text-[10px] font-bold text-white truncate">{val}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* ── Action Buttons ── */}
+            <div className="w-full flex flex-col gap-2.5">
+              {/* Primary: Download & Publish */}
+              <button
+                type="button"
+                onClick={handlePublishAndDownload}
+                disabled={submitting || downloadingPreview}
+                className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg disabled:opacity-60 text-white"
+                style={{ background: `linear-gradient(135deg, ${activeTheme.accentColor}cc, ${activeTheme.accentColor})` }}
+              >
+                {submitting ? (
+                  <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <FaDownload size={11} />
+                )}
+                <span style={{ color: '#000', opacity: 0.85 }}>
+                  {submitting ? "Publishing & Downloading..." : "Download & Publish"}
+                </span>
+              </button>
+
+              {/* Secondary: Go back to edit */}
+              <button
+                type="button"
+                onClick={() => setShowPreviewModal(false)}
+                className="w-full text-center text-[10px] text-gray-500 hover:text-gray-300 font-bold uppercase tracking-widest transition-colors py-1.5"
+              >
+                ← Back to Edit
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
 
