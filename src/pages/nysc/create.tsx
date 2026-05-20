@@ -307,10 +307,14 @@ export default function CreateNyscProfile() {
         };
 
         localStorage.setItem("sabidub_nysc_passport", JSON.stringify(savedData));
-        triggerToast("🎉 Profile published & card saved!");
+        triggerToast("🎉 Profile published successfully!");
+
+        // Trigger the card download now that publish succeeded
+        await downloadPreviewCard();
 
         // Navigate back to yearbook directory
         setTimeout(() => {
+          setShowPreviewModal(false);
           router.push('/nysc');
         }, 1500);
       } else {
@@ -324,12 +328,9 @@ export default function CreateNyscProfile() {
     }
   };
 
-  // Combined: download the passport card image AND publish the profile together
+  // Combined: publish the profile to the API first, then download the passport card image
   const handlePublishAndDownload = async () => {
-    setShowPreviewModal(false);
-    // Kick off the card download immediately (non-blocking, runs in parallel)
-    downloadPreviewCard();
-    // Then publish to the API
+    // `publishProfile` handles setting `submitting` to true, and triggers the download on success.
     await publishProfile();
   };
 
@@ -852,7 +853,7 @@ export default function CreateNyscProfile() {
                       className="bg-[#01353D] text-white px-6 py-3 rounded-lg text-xs font-black uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors disabled:opacity-50"
                     >
                       <FaEye size={10} />
-                      View Preview &amp; Publish
+                      View Preview
                     </button>
                   </div>
                 </div>
@@ -1013,7 +1014,7 @@ export default function CreateNyscProfile() {
 
             {/* Hint text below the live preview */}
             <p className="text-[9px] text-gray-400 font-medium tracking-wide text-center max-w-[280px] mx-auto">
-              Complete the form and click <span className="text-[#01353D] font-black">View Preview &amp; Publish</span> to review your card before publishing.
+              Complete the form and click <span className="text-[#01353D] font-black">View Preview</span> to review your card before publishing.
             </p>
           </div>
         </div>
@@ -1068,7 +1069,7 @@ export default function CreateNyscProfile() {
                 Looking great, {fullName.split(" ")[0] || "Corper"}! 🎉
               </h2>
               <p className="text-gray-400 text-[10px] mt-1 leading-relaxed">
-                Review your passport card below, then hit <strong className="text-white">Download &amp; Publish</strong> to go live on the SabiDub yearbook.
+                Review your passport card below, then hit <strong className="text-white">Publish &amp; Download</strong> to go live on the SabiDub yearbook.
               </p>
             </div>
 
@@ -1156,7 +1157,7 @@ export default function CreateNyscProfile() {
                   <FaDownload size={11} />
                 )}
                 <span style={{ color: '#000', opacity: 0.85 }}>
-                  {submitting ? "Publishing & Downloading..." : "Download & Publish"}
+                  {submitting ? "Publishing & Downloading..." : "Publish & Download"}
                 </span>
               </button>
 
