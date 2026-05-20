@@ -146,7 +146,7 @@ export default function Navbar() {
                             }}
                             className="bg-[#014751] text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-[#026372] transition-all hover:scale-105 active:scale-95 shadow-md flex items-center gap-2 group"
                         >
-                            <span>Download / Login</span>
+                            <span>Download</span>
                             <svg className="w-3 h-3 group-hover:translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                             </svg>
