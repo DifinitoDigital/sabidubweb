@@ -164,7 +164,9 @@ export default function Pricing() {
 
   // Filter plans client-side based on billing cycle, school type, and usage limit
   const filteredPlans = subscriptionPlans.filter(plan => {
-    const billingMatch = schoolType === "admission" ? true : (isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY");
+    const billingMatch = schoolType === "admission" ? true :
+                         schoolType === "nysc" ? plan.billingCycle === "YEARLY" :
+                         (isYearly ? plan.billingCycle === "YEARLY" : plan.billingCycle === "MONTHLY");
 
     let typeMatch = false;
     if (schoolType === "school") {
@@ -265,7 +267,7 @@ export default function Pricing() {
 
             <div className="mt-8 flex flex-col items-center gap-6">
               {/* Billing Toggle */}
-              {schoolType !== "admission" && (
+              {schoolType !== "admission" && schoolType !== "nysc" && (
                 <div className="bg-gray-100 p-1.5 rounded-full inline-flex items-center relative">
                   <div className="relative z-10 grid grid-cols-2 gap-2">
                     <button
@@ -309,7 +311,7 @@ export default function Pricing() {
           </motion.div>
 
           {/* Pricing Plans Table */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className={`mx-auto px-4 sm:px-6 ${schoolType === "nysc" ? "max-w-[900px]" : "max-w-7xl"}`}>
             <div className="bg-white border border-gray-100 shadow-[0_30px_60px_rgba(0,0,0,0.05)] rounded-2xl overflow-hidden flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100 text-left">
               {loading ? (
                 <div className="w-full py-20 text-center"><div className="animate-pulse">Loading plans...</div></div>
@@ -329,9 +331,9 @@ export default function Pricing() {
                         {schoolType !== "admission" && (
                           <div className="flex flex-col ml-3">
                             <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">
-                              billed {isYearly ? 'yearly' : 'monthly'}
+                              billed {(schoolType === "nysc" || isYearly) ? 'yearly' : 'monthly'}
                             </span>
-                            {isYearly && (
+                            {schoolType !== "nysc" && isYearly && (
                               <span className="text-[11px] text-green-600 font-bold">
                                 (Save {formatPrice(plan.price * 0.25)})
                               </span>
@@ -447,8 +449,8 @@ export default function Pricing() {
                       <div className="flex items-stretch divide-x divide-white/10">
                         <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
                           <span className="text-sm sm:text-lg font-bold leading-tight">{comparisonResult.plan1Name}</span>
-                          <span className="text-white/60 text-[10px] sm:text-xs mt-1 uppercase font-bold tracking-wider">{formatPrice(comparisonResult.plan1Price)} / {isYearly ? 'yr' : 'mo'}</span>
-                          {isYearly && schoolType !== "admission" && (
+                          <span className="text-white/60 text-[10px] sm:text-xs mt-1 uppercase font-bold tracking-wider">{formatPrice(comparisonResult.plan1Price)} / {(schoolType === "nysc" || isYearly) ? 'yr' : 'mo'}</span>
+                          {isYearly && schoolType !== "admission" && schoolType !== "nysc" && (
                             <span className="text-[9px] text-[#AFF8C8] font-bold">(Save {formatPrice(comparisonResult.plan1Price * 0.25)})</span>
                           )}
                           <span className="text-[9px] text-white/30 mt-1">{comparisonResult.plan1TotalFeatures} features</span>
@@ -468,8 +470,8 @@ export default function Pricing() {
                         </div>
                         <div className="flex-1 p-4 sm:p-6 flex flex-col items-center justify-center text-center">
                           <span className="text-sm sm:text-lg font-bold leading-tight">{comparisonResult.plan2Name}</span>
-                          <span className="text-white/60 text-[10px] sm:text-xs mt-1 uppercase font-bold tracking-wider">{formatPrice(comparisonResult.plan2Price)} / {isYearly ? 'yr' : 'mo'}</span>
-                          {isYearly && schoolType !== "admission" && (
+                          <span className="text-white/60 text-[10px] sm:text-xs mt-1 uppercase font-bold tracking-wider">{formatPrice(comparisonResult.plan2Price)} / {(schoolType === "nysc" || isYearly) ? 'yr' : 'mo'}</span>
+                          {isYearly && schoolType !== "admission" && schoolType !== "nysc" && (
                             <span className="text-[9px] text-[#AFF8C8] font-bold">(Save {formatPrice(comparisonResult.plan2Price * 0.25)})</span>
                           )}
                           <span className="text-[9px] text-white/30 mt-1">{comparisonResult.plan2TotalFeatures} features</span>
