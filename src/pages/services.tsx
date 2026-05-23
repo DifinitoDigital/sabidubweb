@@ -143,6 +143,29 @@ const services = [
             "Exam & Academic Event Reminders",
         ],
     },
+    {
+        id: "nysc",
+        tag: "07 — Youth Service",
+        title: "NYSC Digital Hub",
+        headline: "Learn, Connect, and Fund Platoon Memories",
+        description:
+            "A comprehensive community hub for prospective and serving corps members. Browse the live yearbook directory, customize your digital passport card with premium themes, and easily coordinate platoon contribution budgets for camp directives.",
+        color: "#059669",
+        light: "#E6F5EC",
+        link: "/nysc",
+        cta: "Access Hub",
+        stats: [
+            { value: "Active", label: "Yearbook" },
+            { value: "Premium", label: "Passports" },
+            { value: "Secure", label: "Ledgers" },
+        ],
+        features: [
+            "Served & Serving Corps Member Yearbook",
+            "Customizable Profile Passports (Emerald, Classic, Sage)",
+            "Platoon Crowdfund Ledgers & Target Progress Tracking",
+            "Real-time cohort and state deployment filters",
+        ],
+    },
 ];
 
 export default function Services() {

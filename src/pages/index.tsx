@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import SuniVoiceWidget from "../components/SuniVoiceWidget";
 import { useSuniNarration } from "../hooks/useSuniNarration";
 import { useSectionObserver } from "../hooks/useSectionObserver";
@@ -45,6 +45,7 @@ const fadeInUp = {
 };
 
 export default function Home() {
+  const [isGetStartedOpen, setIsGetStartedOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [userName, setUserName] = useState("Guest");
   const [institutionCount, setInstitutionCount] = useState<number | null>(null);
@@ -255,9 +256,12 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row justify-center gap-4 mb-8 sm:mb-16 px-4">
-              <a href="https://portal.sabidub.com/auth/school/signin" className="bg-[#014751] text-white px-6 py-3 rounded-md font-medium w-full sm:w-auto text-center">
+              <button
+                onClick={() => setIsGetStartedOpen(true)}
+                className="bg-[#014751] text-white px-6 py-3 rounded-md font-medium w-full sm:w-auto text-center active:scale-95 transition-all shadow-lg"
+              >
                 Get Started
-              </a>
+              </button>
               <button className="border border-white/20 text-white px-6 py-3 rounded-md font-medium hover:bg-white/10 transition-colors w-full sm:w-auto">
                 Request a demo
               </button>
@@ -564,6 +568,30 @@ export default function Home() {
                     <div className="flex-1 bg-[#014751]/5 rounded-xl p-2.5 border border-[#014751]/10 flex flex-col items-center">
                       <span className="text-[8px] text-[#014751]/60 font-bold uppercase mb-1 whitespace-nowrap">Current Rank</span>
                       <span className="text-xs font-black text-[#014751]">#4</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Card 6: Ride With Me (Small/Tall) */}
+              <div className="md:col-span-6 lg:col-span-4 md:row-span-1 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] sm:min-h-0 flex flex-col justify-between">
+                <div className="relative z-10">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 text-[8px] font-black uppercase tracking-wider mb-3">
+                    🚗 Ride with Me
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-1">Campus & Camp Transit</h3>
+                  <p className="text-gray-500 text-xs font-semibold leading-normal max-w-[280px]">
+                    Inter-state camp shuttles & verified campus rides for students & corpers. Share routes, split fares, travel safe.
+                  </p>
+                </div>
+                <div className="mt-4 relative z-10 flex justify-between items-center">
+                  <span className="text-[9px] font-mono text-blue-600 font-bold bg-white px-2 py-1 rounded-lg shadow-sm">Verified Co-Travelers</span>
+                  <div className="flex -space-x-2">
+                    <div className="w-6 h-6 rounded-full border border-white bg-gray-200 overflow-hidden relative">
+                      <Image src="/images/one-one.png" fill alt="R1" className="object-cover animate-[pulse_3s_infinite]" />
+                    </div>
+                    <div className="w-6 h-6 rounded-full border border-white bg-gray-300 overflow-hidden relative">
+                      <Image src="/images/one-v-one.png" fill alt="R2" className="object-cover animate-[pulse_3s_infinite_1.5s]" />
                     </div>
                   </div>
                 </div>
@@ -1025,7 +1053,7 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
               {/* School Management Portal */}
               <motion.div
                 variants={fadeInUp}
@@ -1166,6 +1194,48 @@ export default function Home() {
 
                 {/* Visual element (Orb) */}
                 <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] group-hover:bg-blue-400/30 transition-colors duration-700"></div>
+              </motion.div>
+
+              {/* NYSC Digital Hub */}
+              <motion.div
+                variants={fadeInUp}
+                initial="initial"
+                whileInView="animate"
+                transition={{ delay: 0.3 }}
+                whileHover={{ scale: 1.01 }}
+                className="bg-[#E6F5EC] p-8 sm:p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-500"
+              >
+                {/* Status Badge */}
+                <div className="relative z-10 flex mb-12">
+                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">NYSC Hub / Active</span>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">NYSC Portal</h3>
+                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
+                    Connect on Served & Serving Corp Members Yearbook, generate digital profile passports, and launch platoon financial directives seamlessly.
+                  </p>
+                </div>
+
+                {/* CTA */}
+                <div className="relative z-10 mt-12">
+                  <Link href="/nysc" className="inline-block group/link">
+                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
+                      Access Hub <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
+                    </span>
+                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
+                  </Link>
+                </div>
+
+                {/* Decorative background grid/dots */}
+                <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#059669 2px, transparent 0)', backgroundSize: '15px 15px' }}></div>
+
+                {/* Visual element (Orb) */}
+                <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px] group-hover:bg-emerald-400/30 transition-colors duration-700"></div>
               </motion.div>
             </div>
           </div>
@@ -1511,6 +1581,112 @@ export default function Home() {
 
         {/* Add Footer at the bottom of main */}
         < Footer />
+
+        {/* Get Started Selection Bottom Dialog */}
+        <AnimatePresence>
+          {isGetStartedOpen && (
+            <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4">
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsGetStartedOpen(false)}
+                className="absolute inset-0 bg-black/60 backdrop-blur-md"
+              />
+
+              {/* Sheet/Modal */}
+              <motion.div
+                initial={{ y: "100%", opacity: 0.5 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: "100%", opacity: 0.5 }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="relative w-full max-w-2xl bg-white dark:bg-[#0A0F14] rounded-t-[2.5rem] sm:rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden p-6 sm:p-10 select-none z-10"
+              >
+                {/* Drag handle for mobile */}
+                <div className="w-12 h-1 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-6 sm:hidden" onClick={() => setIsGetStartedOpen(false)} />
+
+                <div className="flex justify-between items-start mb-8">
+                  <div>
+                    <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                      Get Started with <span className="text-[#014751]">SabiDub</span>
+                    </h2>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1.5">
+                      Select your destination in our ecosystem
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setIsGetStartedOpen(false)}
+                    className="p-2 rounded-xl bg-gray-55 hover:bg-gray-100 text-gray-400 dark:text-gray-500 transition-colors"
+                  >
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                  {/* Student / Corper Option */}
+                  <a
+                    href="https://student.portal.sabidub.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col justify-between p-6 rounded-3xl bg-[#E6F5EC]/60 hover:bg-[#E6F5EC] border border-emerald-100 hover:border-emerald-200 transition-all duration-300 shadow-sm hover:shadow-lg text-left animate-[fadeIn_0.5s_ease-out]"
+                  >
+                    <div>
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🎓
+                      </div>
+                      <h3 className="text-lg font-black text-gray-900 mb-2">Student or Corper</h3>
+                      <p className="text-xs text-gray-600 font-medium leading-relaxed opacity-90">
+                        Access e-learning, JAMB cut-off analytics, NYSC Yearbook passport builder, platoon budgets, and safe ride-sharing networks.
+                      </p>
+                    </div>
+                    <div className="mt-8 text-xs font-black text-[#014751] uppercase tracking-wider flex items-center gap-2">
+                      Access Portal 
+                      <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </a>
+
+                  {/* School Admin Option */}
+                  <a
+                    href="https://portal.sabidub.com/auth/school/signin"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col justify-between p-6 rounded-3xl bg-[#FFF5EF]/60 hover:bg-[#FFF5EF] border border-orange-100 hover:border-orange-200 transition-all duration-300 shadow-sm hover:shadow-lg text-left animate-[fadeIn_0.5s_ease-out_0.1s]"
+                  >
+                    <div>
+                      <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        🏫
+                      </div>
+                      <h3 className="text-lg font-black text-gray-900 mb-2">School Administrator</h3>
+                      <p className="text-xs text-gray-600 font-medium leading-relaxed opacity-90">
+                        Manage institutional student records, process terms/semesters results, schedule timetables, and run secure school elections.
+                      </p>
+                    </div>
+                    <div className="mt-8 text-xs font-black text-orange-700 uppercase tracking-wider flex items-center gap-2">
+                      Access Admin 
+                      <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </div>
+                  </a>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    onClick={() => setIsGetStartedOpen(false)}
+                    className="text-[10px] font-black uppercase text-gray-400 tracking-widest hover:text-gray-600"
+                  >
+                    Close Dialog
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </main >
     </>
   );

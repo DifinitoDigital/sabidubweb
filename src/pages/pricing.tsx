@@ -259,7 +259,7 @@ export default function Pricing() {
         <section className="pt-32 pb-20 text-center px-4">
           <motion.div variants={fadeInUp} className="max-w-4xl mx-auto mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Our pricing</h1>
-            {schoolType !== "admission" && (
+            {schoolType !== "admission" && schoolType !== "nysc" && (
               <p className="text-gray-500 font-medium text-sm md:text-base">
                 Free 7-day trial, no credit card required
               </p>
