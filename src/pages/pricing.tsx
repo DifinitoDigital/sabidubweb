@@ -8,7 +8,7 @@ import axios from "axios";
 import { FaBolt as LuZap, FaCheck as LuCheck, FaMagnifyingGlass as LuSearch } from "react-icons/fa6";
 import Navbar from "../components/Navbar";
 
-type SchoolType = "school" | "admission" | "secondary" | "tertiary";
+type SchoolType = "school" | "admission" | "secondary" | "tertiary" | "nysc";
 
 // Map SchoolType to API planType
 const planTypeMap = {
@@ -141,6 +141,7 @@ export default function Pricing() {
   const hasAdmissionPlans = subscriptionPlans.some(plan => plan.planType === "ADMISSION_CHECKER");
   const hasSecondaryPlans = subscriptionPlans.some(plan => plan.planType === "SECONDARY");
   const hasTertiaryPlans = subscriptionPlans.some(plan => plan.planType === "TERTIARY");
+  const hasNyscPlans = subscriptionPlans.some(plan => plan.planType === "NYSC");
 
   // Auto-switch away from empty categories
   useEffect(() => {
@@ -148,16 +149,18 @@ export default function Pricing() {
       const currentAvailable = (schoolType === "secondary" && hasSecondaryPlans) ||
                                (schoolType === "tertiary" && hasTertiaryPlans) ||
                                (schoolType === "school" && hasSchoolPlans) ||
-                               (schoolType === "admission" && hasAdmissionPlans);
+                               (schoolType === "admission" && hasAdmissionPlans) ||
+                               (schoolType === "nysc" && hasNyscPlans);
       
       if (!currentAvailable) {
         if (hasSecondaryPlans) setSchoolType("secondary");
         else if (hasTertiaryPlans) setSchoolType("tertiary");
         else if (hasSchoolPlans) setSchoolType("school");
         else if (hasAdmissionPlans) setSchoolType("admission");
+        else if (hasNyscPlans) setSchoolType("nysc");
       }
     }
-  }, [subscriptionPlans, loading, hasSchoolPlans, hasAdmissionPlans, hasSecondaryPlans, hasTertiaryPlans, schoolType]);
+  }, [subscriptionPlans, loading, hasSchoolPlans, hasAdmissionPlans, hasSecondaryPlans, hasTertiaryPlans, hasNyscPlans, schoolType]);
 
   // Filter plans client-side based on billing cycle, school type, and usage limit
   const filteredPlans = subscriptionPlans.filter(plan => {
@@ -172,6 +175,8 @@ export default function Pricing() {
       typeMatch = plan.planType === "SECONDARY";
     } else if (schoolType === "tertiary") {
       typeMatch = plan.planType === "TERTIARY";
+    } else if (schoolType === "nysc") {
+      typeMatch = plan.planType === "NYSC";
     }
 
     return billingMatch && typeMatch;
@@ -281,12 +286,13 @@ export default function Pricing() {
 
               {/* School Type Toggle */}
               <div className="flex items-center justify-center flex-wrap gap-2 bg-white p-1.5 rounded-2xl border border-gray-200 shadow-sm">
-                {(["secondary", "tertiary", "school", "admission"] as SchoolType[]).map((type) => {
+                {(["secondary", "tertiary", "nysc", "school", "admission"] as SchoolType[]).map((type) => {
                   const available =
                     type === "school" ? hasSchoolPlans :
                       type === "admission" ? hasAdmissionPlans :
                         type === "secondary" ? hasSecondaryPlans :
-                          hasTertiaryPlans;
+                          type === "nysc" ? hasNyscPlans :
+                            hasTertiaryPlans;
                   if (!available) return null;
                   return (
                     <button
@@ -294,7 +300,7 @@ export default function Pricing() {
                       onClick={() => setSchoolType(type)}
                       className={`px-5 py-2.5 rounded-xl text-xs font-bold uppercase transition-all duration-200 ${schoolType === type ? "bg-[#014751] text-white shadow-lg shadow-[#014751]/20" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
                     >
-                      {type === "admission" ? "Admission Checker" : type === "school" ? "School" : type === "secondary" ? "Secondary" : "Tertiary"}
+                      {type === "admission" ? "Admission Checker" : type === "school" ? "School" : type === "secondary" ? "Secondary" : type === "nysc" ? "NYSC" : "Tertiary"}
                     </button>
                   );
                 })}
@@ -354,7 +360,7 @@ export default function Pricing() {
                       onClick={() => {
                         if (schoolType === "admission") {
                           router.push("/admission-checker");
-                        } else if (schoolType === "secondary" || schoolType === "tertiary") {
+                        } else if (schoolType === "secondary" || schoolType === "tertiary" || schoolType === "nysc") {
                           window.location.href = "https://student.portal.sabidub.com";
                         } else {
                           window.location.href = "https://portal.sabidub.com/auth/school/signin";
@@ -636,7 +642,7 @@ export default function Pricing() {
                             key={planId}
                             onClick={() => {
                               if (schoolType === "admission") router.push("/admission-checker");
-                              else if (schoolType === "secondary" || schoolType === "tertiary") window.location.href = "https://student.portal.sabidub.com";
+                              else if (schoolType === "secondary" || schoolType === "tertiary" || schoolType === "nysc") window.location.href = "https://student.portal.sabidub.com";
                               else window.location.href = "https://portal.sabidub.com/auth/school/signin";
                             }}
                             className="w-full py-3.5 bg-[#014751] text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#013b43] transition-all active:scale-95 shadow-md"
