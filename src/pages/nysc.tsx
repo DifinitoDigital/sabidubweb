@@ -74,7 +74,7 @@ export default function NyscHub() {
     const isCacheValid = cachedYearbookList && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_TTL);
     if (!isCacheValid) setLoadingProfiles(true);
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
       const response = await fetch(`${baseUrl}/profile/registered-as/NYSC`);
       if (response.ok) {
         const data = await response.json();
@@ -131,22 +131,6 @@ export default function NyscHub() {
     }
   }, []);
 
-  // Infinite Scroll scroll handler to load more profiles
-  useEffect(() => {
-    const handleScroll = () => {
-      const threshold = 150; // pixels from bottom to trigger loading more
-      const totalHeight = document.documentElement.scrollHeight;
-      const scrollPosition = window.innerHeight + window.scrollY;
-
-      if (totalHeight - scrollPosition < threshold) {
-        setVisibleCount(prev => prev + 20);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   // Filtering Logic
   const filteredDirectory = yearbookList.filter(item => {
     const matchesYear = filterYear === "All" || item.yearOfService === filterYear;
@@ -164,6 +148,32 @@ export default function NyscHub() {
 
     return matchesYear && matchesBatch && matchesStream && matchesStatus && matchesSearch;
   });
+
+  // Infinite Scroll scroll handler to load more profiles
+  useEffect(() => {
+    const handleScroll = () => {
+      const threshold = 250; // pixels from bottom to trigger loading more
+      const totalHeight = Math.max(
+        document.documentElement.scrollHeight,
+        document.body.scrollHeight
+      );
+      const scrollPosition = window.innerHeight + (
+        window.scrollY || 
+        window.pageYOffset || 
+        document.documentElement.scrollTop
+      );
+
+      if (totalHeight - scrollPosition < threshold) {
+        setVisibleCount(prev => prev + 20);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Trigger once on mount/update in case content height is small
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [filteredDirectory.length]);
 
   // Slice paginated items
   const paginatedDirectory = filteredDirectory.slice(0, visibleCount);
@@ -445,9 +455,18 @@ export default function NyscHub() {
           )}
           {/* Infinite Scroll loading indicator */}
           {visibleCount < filteredDirectory.length && (
-            <div className="flex justify-center items-center py-10">
-              <div className="w-5 h-5 border-2 border-t-transparent border-[#01353D] rounded-full animate-spin" />
-              <span className="ml-2.5 text-[9px] font-black text-gray-500 uppercase tracking-widest">Loading more memories...</span>
+            <div className="flex flex-col justify-center items-center py-10 gap-3">
+              <div className="flex items-center">
+                <div className="w-5 h-5 border-2 border-t-transparent border-[#01353D] rounded-full animate-spin" />
+                <span className="ml-2.5 text-[9px] font-black text-gray-500 uppercase tracking-widest">Loading more memories...</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVisibleCount((prev) => prev + 20)}
+                className="px-5 py-2.5 bg-white border border-gray-200 hover:bg-gray-55 text-gray-700 hover:text-gray-900 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm active:scale-95 cursor-pointer mt-1"
+              >
+                Load More Memories
+              </button>
             </div>
           )}
 
