@@ -462,7 +462,7 @@ export default function CreateNyscProfile() {
                           SabiDub for active serving corp members is fully optimized for our mobile experience. Download the app to join your platoon, manage platoon contributions, stream OBS, and access all interactive features.
                         </p>
                         <p className="text-[11px] font-bold text-[#01353D]">
-                          Already served or not currently serving? Select the "Served (Alumni)" option above to create your profile card on the website.
+                          Already served or not currently serving? Select the &quot;Served (Alumni)&quot; option above to create your profile card on the website.
                         </p>
                       </div>
 
