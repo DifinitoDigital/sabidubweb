@@ -574,7 +574,7 @@ export default function Home() {
               </div>
 
               {/* Card 6: Ride With Me (Large/Wide) */}
-              <div className="md:col-span-12 lg:col-span-8 md:row-span-1 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 sm:p-8 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] flex flex-col md:flex-row gap-6 justify-between">
+              <div className="md:col-span-12 lg:col-span-12 md:row-span-1 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 sm:p-8 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] flex flex-col md:flex-row gap-6 justify-between">
                 {/* Left Side: Info */}
                 <div className="flex flex-col justify-between flex-1 relative z-10">
                   <div>
@@ -583,7 +583,7 @@ export default function Home() {
                     </div>
                     <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Camp Transit Link Up</h3>
                     <p className="text-gray-500 text-xs font-semibold leading-relaxed max-w-[320px]">
-                      Inter-state camp shuttles & verified campus rides for corpers. Share routes, split fares, travel safe.
+                      Find corpers travelling the same route as you — form a pod, move to camp together, split the fare, and arrive safe. Works for the trip to camp, interstate travel, and the journey back home after camp.
                     </p>
                   </div>
                   <div className="mt-6 flex items-center gap-3">
@@ -599,44 +599,53 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Right Side: Interactive Shuttles/Routes Widget */}
+                {/* Right Side: Travel Pod Widget */}
                 <div className="flex-1 min-w-[280px] bg-white/65 backdrop-blur-md rounded-2xl p-4 border border-blue-100/60 relative z-10 flex flex-col justify-between shadow-sm">
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Active Shuttles</span>
+                      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Active Pods</span>
                       <span className="inline-flex items-center gap-1 text-[8px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
                         <span className="w-1 h-1 rounded-full bg-green-500 animate-ping"></span> Live
                       </span>
                     </div>
                     <div className="space-y-2">
-                      {/* Route - NYSC Camp */}
+                      {/* Route 1 — To Camp */}
                       <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/50 border border-blue-100/30 hover:bg-blue-50 transition-colors">
                         <div className="flex items-center gap-2">
                           <span className="text-lg">🏕️</span>
                           <div>
-                            <p className="text-[10px] font-black text-gray-900 leading-tight">NYSC Camp ⇄ Interstate</p>
-                            <p className="text-[8px] text-gray-400 font-bold uppercase mt-0.5">Weekly Transit</p>
-                            <span className="inline-flex items-center gap-1 text-[7px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded mt-1 border border-blue-100/50">
-                              💳 POD (Pay on Delivery) Supported
-                            </span>
+                            <p className="text-[10px] font-black text-gray-900 leading-tight">Departure State → NYSC Camp</p>
+                            <p className="text-[8px] text-gray-400 font-bold uppercase mt-0.5">To Camp · Pod Link Up</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-[10px] font-black text-[#014751]">₦8,500 <span className="text-[7px] text-gray-400 font-bold">(Est.)</span></p>
-                          <p className="text-[8px] text-emerald-500 font-bold">Booking Open</p>
+                          <p className="text-[8px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Open</p>
+                        </div>
+                      </div>
+                      {/* Route 2 — Back Home */}
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-purple-50/40 border border-purple-100/30 hover:bg-purple-50/70 transition-colors">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">🏠</span>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-900 leading-tight">NYSC Camp → Home State</p>
+                            <p className="text-[8px] text-gray-400 font-bold uppercase mt-0.5">Back Home · Pod Link Up</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[8px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Open</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Fare Split Indicator */}
+                  {/* Pod CTA */}
                   <div className="mt-3 pt-3 border-t border-blue-100/50 flex justify-between items-center">
                     <div className="flex items-center gap-1.5">
                       <span className="text-xs">👥</span>
-                      <span className="text-[9px] text-gray-500 font-bold uppercase">Split Fare: Up to 60% Off</span>
+                      <span className="text-[9px] text-gray-500 font-bold uppercase">Split Fare · Travel as One</span>
                     </div>
                     <button className="text-[9px] font-black uppercase bg-[#014751] hover:bg-[#01373e] text-white px-3 py-1.5 rounded-lg shadow-sm hover:scale-105 transition-all">
-                      Find Shuttles
+                      Find a Pod
                     </button>
                   </div>
                 </div>
