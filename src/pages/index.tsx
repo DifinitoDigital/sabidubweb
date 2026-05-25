@@ -573,26 +573,71 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Card 6: Ride With Me (Small/Tall) */}
-              <div className="md:col-span-6 lg:col-span-4 md:row-span-1 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] sm:min-h-0 flex flex-col justify-between">
-                <div className="relative z-10">
-                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 text-[8px] font-black uppercase tracking-wider mb-3">
-                    🚗 Ride with Me
+              {/* Card 6: Ride With Me (Large/Wide) */}
+              <div className="md:col-span-12 lg:col-span-8 md:row-span-1 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 sm:p-8 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] flex flex-col md:flex-row gap-6 justify-between">
+                {/* Left Side: Info */}
+                <div className="flex flex-col justify-between flex-1 relative z-10">
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 text-[8px] font-black uppercase tracking-wider mb-3">
+                      🚗 Ride with Me
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Campus & Camp Transit</h3>
+                    <p className="text-gray-500 text-xs font-semibold leading-relaxed max-w-[320px]">
+                      Inter-state camp shuttles & verified campus rides for corpers. Share routes, split fares, travel safe.
+                    </p>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-1">Campus & Camp Transit</h3>
-                  <p className="text-gray-500 text-xs font-semibold leading-normal max-w-[280px]">
-                    Inter-state camp shuttles & verified campus rides for students & corpers. Share routes, split fares, travel safe.
-                  </p>
+                  <div className="mt-6 flex items-center gap-3">
+                    <span className="text-[9px] font-mono text-blue-600 font-bold bg-white px-2 py-1.5 rounded-lg shadow-sm border border-blue-100/50">Verified Co-Travelers</span>
+                    <div className="flex -space-x-2">
+                      <div className="w-6 h-6 rounded-full border border-white bg-gray-200 overflow-hidden relative">
+                        <Image src="/images/one-one.png" fill alt="R1" className="object-cover animate-[pulse_3s_infinite]" />
+                      </div>
+                      <div className="w-6 h-6 rounded-full border border-white bg-gray-300 overflow-hidden relative">
+                        <Image src="/images/one-v-one.png" fill alt="R2" className="object-cover animate-[pulse_3s_infinite_1.5s]" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="mt-4 relative z-10 flex justify-between items-center">
-                  <span className="text-[9px] font-mono text-blue-600 font-bold bg-white px-2 py-1 rounded-lg shadow-sm">Verified Co-Travelers</span>
-                  <div className="flex -space-x-2">
-                    <div className="w-6 h-6 rounded-full border border-white bg-gray-200 overflow-hidden relative">
-                      <Image src="/images/one-one.png" fill alt="R1" className="object-cover animate-[pulse_3s_infinite]" />
+
+                {/* Right Side: Interactive Shuttles/Routes Widget */}
+                <div className="flex-1 min-w-[280px] bg-white/65 backdrop-blur-md rounded-2xl p-4 border border-blue-100/60 relative z-10 flex flex-col justify-between shadow-sm">
+                  <div>
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Active Shuttles</span>
+                      <span className="inline-flex items-center gap-1 text-[8px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                        <span className="w-1 h-1 rounded-full bg-green-500 animate-ping"></span> Live
+                      </span>
                     </div>
-                    <div className="w-6 h-6 rounded-full border border-white bg-gray-300 overflow-hidden relative">
-                      <Image src="/images/one-v-one.png" fill alt="R2" className="object-cover animate-[pulse_3s_infinite_1.5s]" />
+                    <div className="space-y-2">
+                      {/* Route - NYSC Camp */}
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-blue-50/50 border border-blue-100/30 hover:bg-blue-50 transition-colors">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">🏕️</span>
+                          <div>
+                            <p className="text-[10px] font-black text-gray-900 leading-tight">NYSC Camp ⇄ Interstate</p>
+                            <p className="text-[8px] text-gray-400 font-bold uppercase mt-0.5">Weekly Transit</p>
+                            <span className="inline-flex items-center gap-1 text-[7px] font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded mt-1 border border-blue-100/50">
+                              💳 POD (Pay on Delivery) Supported
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-[10px] font-black text-[#014751]">₦8,500 <span className="text-[7px] text-gray-400 font-bold">(Est.)</span></p>
+                          <p className="text-[8px] text-emerald-500 font-bold">Booking Open</p>
+                        </div>
+                      </div>
                     </div>
+                  </div>
+
+                  {/* Fare Split Indicator */}
+                  <div className="mt-3 pt-3 border-t border-blue-100/50 flex justify-between items-center">
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs">👥</span>
+                      <span className="text-[9px] text-gray-500 font-bold uppercase">Split Fare: Up to 60% Off</span>
+                    </div>
+                    <button className="text-[9px] font-black uppercase bg-[#014751] hover:bg-[#01373e] text-white px-3 py-1.5 rounded-lg shadow-sm hover:scale-105 transition-all">
+                      Find Shuttles
+                    </button>
                   </div>
                 </div>
               </div>
@@ -1248,22 +1293,22 @@ export default function Home() {
               {/* Background Elements */}
               <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-700" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
               <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#AFF8C8] rounded-full blur-[140px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
-              
+
               <div className="grid lg:grid-cols-2 gap-8 sm:gap-16 items-center relative z-10">
                 {/* Left Side: Content */}
                 <div className="text-left">
                   <motion.div variants={fadeInUp} initial="initial" whileInView="animate" className="inline-block px-3 py-1 mb-6 sm:mb-8 rounded-full bg-white/10 border border-white/20">
                     <span className="text-[#AFF8C8] text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                       <span className="w-1.5 h-1.5 rounded-full bg-[#AFF8C8] animate-pulse"></span>
-                       Mobile Experience
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#AFF8C8] animate-pulse"></span>
+                      Mobile Experience
                     </span>
                   </motion.div>
-                  
+
                   <h2 className="text-3xl sm:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[1.1]">
                     Your Education,<br />
                     <span className="text-[#AFF8C8] italic font-serif text-[1.1em]">In Your Pocket.</span>
                   </h2>
-                  
+
                   <p className="text-white/70 text-sm sm:text-lg mb-6 sm:mb-8 max-w-xl font-medium leading-relaxed">
                     Take your learning journey anywhere. Access thousands of past questions and track your rank — all without using data in offline mode.
                   </p>
@@ -1292,38 +1337,38 @@ export default function Home() {
 
                 {/* Right Side: Mockup */}
                 <div className="relative mt-12 lg:mt-0 px-4 sm:px-0">
-                   <motion.div 
-                     animate={{ 
-                       y: [-15, 15, -15],
-                       rotate: [-1, 1, -1]
-                     }}
-                     transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                     className="relative z-10 w-full max-w-[280px] sm:max-w-[300px] mx-auto filter drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
-                   >
-                     <Image 
-                       src="/images/app-mockup.png" 
-                       alt="SabiDub App Mockup" 
-                       width={500} 
-                       height={1000} 
-                       className="w-full h-auto brightness-110 rounded-[10px]"
-                       priority
-                     />
-                   </motion.div>
-                   
-                   {/* Tooltip Card */}
-                   <motion.div 
-                     initial={{ x: 20, opacity: 0 }}
-                     whileInView={{ x: 0, opacity: 1 }}
-                     className="absolute -bottom-4 right-0 sm:bottom-10 sm:-right-4 bg-white/95 backdrop-blur-xl p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/40 z-20 max-w-[150px] sm:max-w-[180px]"
-                   >
-                     <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                        <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600">
-                           <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                        </div>
-                        <span className="text-[8px] sm:text-[9px] font-black uppercase text-gray-400">Live Sync</span>
-                     </div>
-                     <p className="text-[10px] sm:text-[11px] font-bold text-gray-900 leading-snug">Synced across all your devices.</p>
-                   </motion.div>
+                  <motion.div
+                    animate={{
+                      y: [-15, 15, -15],
+                      rotate: [-1, 1, -1]
+                    }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative z-10 w-full max-w-[280px] sm:max-w-[300px] mx-auto filter drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
+                  >
+                    <Image
+                      src="/images/app-mockup.png"
+                      alt="SabiDub App Mockup"
+                      width={500}
+                      height={1000}
+                      className="w-full h-auto brightness-110 rounded-[10px]"
+                      priority
+                    />
+                  </motion.div>
+
+                  {/* Tooltip Card */}
+                  <motion.div
+                    initial={{ x: 20, opacity: 0 }}
+                    whileInView={{ x: 0, opacity: 1 }}
+                    className="absolute -bottom-4 right-0 sm:bottom-10 sm:-right-4 bg-white/95 backdrop-blur-xl p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/40 z-20 max-w-[150px] sm:max-w-[180px]"
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600">
+                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                      </div>
+                      <span className="text-[8px] sm:text-[9px] font-black uppercase text-gray-400">Live Sync</span>
+                    </div>
+                    <p className="text-[10px] sm:text-[11px] font-bold text-gray-900 leading-snug">Synced across all your devices.</p>
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -1643,7 +1688,7 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="mt-8 text-xs font-black text-[#014751] uppercase tracking-wider flex items-center gap-2">
-                      Access Portal 
+                      Access Portal
                       <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                       </svg>
@@ -1667,7 +1712,7 @@ export default function Home() {
                       </p>
                     </div>
                     <div className="mt-8 text-xs font-black text-orange-700 uppercase tracking-wider flex items-center gap-2">
-                      Access Admin 
+                      Access Admin
                       <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
                       </svg>
