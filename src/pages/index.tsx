@@ -574,7 +574,7 @@ export default function Home() {
               </div>
 
               {/* Card 6: Ride With Me (Large/Wide) */}
-              <div className="md:col-span-12 lg:col-span-12 md:row-span-1 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 sm:p-8 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[220px] flex flex-col md:flex-row gap-6 justify-between">
+              <div className="md:col-span-12 lg:col-span-12 bg-[#EFF6FF] border border-blue-100 rounded-[32px] p-6 sm:p-8 pb-10 sm:pb-12 relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-500 min-h-[260px] md:h-auto flex flex-col md:flex-row gap-6 justify-between">
                 {/* Left Side: Info */}
                 <div className="flex flex-col justify-between flex-1 relative z-10">
                   <div>
