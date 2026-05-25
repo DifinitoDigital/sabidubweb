@@ -401,22 +401,24 @@ export default function CreateNyscProfile() {
           {/* 1. The Form Column */}
           <div className="md:col-span-3 bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm">
             {/* Step Headers */}
-            <div className="flex justify-between items-center pb-6 border-b border-gray-100 mb-6">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${formStep >= 1 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"}`}>1</span>
-                <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 1 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>Bio</span>
+            {serviceStatus !== "Serving" && (
+              <div className="flex justify-between items-center pb-6 border-b border-gray-100 mb-6">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${formStep >= 1 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"}`}>1</span>
+                  <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 1 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>Bio</span>
+                </div>
+                <div className="flex-1 h-[1px] bg-gray-200 mx-1.5 sm:mx-3" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${formStep >= 2 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"}`}>2</span>
+                  <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 2 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>Deployment</span>
+                </div>
+                <div className="flex-1 h-[1px] bg-gray-200 mx-1.5 sm:mx-3" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${formStep >= 3 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"}`}>3</span>
+                  <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 3 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>PPA & Story</span>
+                </div>
               </div>
-              <div className="flex-1 h-[1px] bg-gray-200 mx-1.5 sm:mx-3" />
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${formStep >= 2 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"}`}>2</span>
-                <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 2 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>Deployment</span>
-              </div>
-              <div className="flex-1 h-[1px] bg-gray-200 mx-1.5 sm:mx-3" />
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${formStep >= 3 ? "bg-[#01353D] text-white" : "bg-gray-100 text-gray-400"}`}>3</span>
-                <span className={`text-[10px] sm:text-[11px] font-bold transition-all ${formStep === 3 ? "text-gray-900 font-extrabold" : "text-gray-400"}`}>PPA & Story</span>
-              </div>
-            </div>
+            )}
 
             <form onSubmit={handleGenerate} className="space-y-4">
               {/* STEP 1: BIO DETAILS */}
@@ -445,161 +447,219 @@ export default function CreateNyscProfile() {
                     </div>
                   </div>
 
-                  <div className="text-left">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Profile Picture *</label>
-                    <div className="grid sm:grid-cols-3 gap-4 items-center">
-                      <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-55 mx-auto sm:mx-0">
-                        <img 
-                          src={avatarUrl} 
-                          alt="Avatar Preview" 
-                          className="w-full h-full object-cover" 
-                        />
+                  {serviceStatus === "Serving" ? (
+                    <div className="mt-8 p-6 sm:p-8 bg-[#F8FAFA] rounded-2xl border border-gray-150 text-center space-y-6">
+                      <div className="w-16 h-16 bg-[#FFEDB1]/30 rounded-full flex items-center justify-center mx-auto text-[#01353D]">
+                        <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
                       </div>
-                      <div className="sm:col-span-2 text-center sm:text-left space-y-2">
+                      <div className="space-y-3">
+                        <h3 className="text-lg font-black text-gray-900 tracking-tight">
+                          Active Corp Members should use the Mobile App!
+                        </h3>
+                        <p className="text-xs text-gray-600 leading-relaxed max-w-md mx-auto">
+                          SabiDub for active serving corp members is fully optimized for our mobile experience. Download the app to join your platoon, manage platoon contributions, stream OBS, and access all interactive features.
+                        </p>
+                        <p className="text-[11px] font-bold text-[#01353D]">
+                          Already served or not currently serving? Select the "Served (Alumni)" option above to create your profile card on the website.
+                        </p>
+                      </div>
+
+                      <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+                        <a
+                          href="https://play.google.com/store/apps/details?id=com.difinito.digital.sabidub.i"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-900 transition-all duration-300 shadow-md group"
+                        >
+                          <div className="w-5 h-5 relative flex items-center">
+                            <svg viewBox="0 0 24 24" className="fill-white w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M3.609 1.814L13.792 12 3.61 22.186a2.23 2.23 0 0 1-.61-1.571V3.385c0-.6.22-1.156.61-1.571zM15.563 10.23L4.354 1.258a1.69 1.69 0 0 1 .632-.123c.48 0 .93.2 1.26.54l11.45 8.555-2.133 1.93zM15.563 13.77l2.133 1.931L6.246 24.255c-.33.34-.78.54-1.26.54-.22 0-.437-.044-.633-.124L15.563 13.77zm4.828-1.77L16.48 9.176l-2.008 1.817 1.542 1.541-1.542 1.542 2.008 1.817 3.911-2.824a1.69 1.69 0 0 0 .54-1.26c0-.43-.195-.835-.54-1.23z" />
+                            </svg>
+                          </div>
+                          <div className="text-left leading-none">
+                            <p className="text-[8px] uppercase tracking-wider opacity-60 mb-0.5">Get it on</p>
+                            <p className="text-xs font-black">Google Play</p>
+                          </div>
+                        </a>
+
                         <button
                           type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center sm:justify-start gap-1.5 w-full sm:w-auto"
+                          onClick={() => triggerToast("🍏 SabiDub iOS is currently polishing. Stay tuned!")}
+                          className="flex items-center justify-center gap-2 bg-black text-white px-5 py-3 rounded-xl hover:bg-gray-900 transition-all duration-300 shadow-md group"
                         >
-                          <FaUpload /> Upload Profile Photo
+                          <div className="w-5 h-5 relative flex items-center">
+                            <svg viewBox="0 0 24 24" className="fill-white w-full h-full" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.1 2.48-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.36 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                            </svg>
+                          </div>
+                          <div className="text-left leading-none">
+                            <p className="text-[8px] uppercase tracking-wider opacity-60 mb-0.5">Coming Soon on</p>
+                            <p className="text-xs font-black">App Store</p>
+                          </div>
                         </button>
-                        <input
-                          type="file"
-                          ref={fileInputRef}
-                          onChange={handleImageUpload}
-                          accept="image/*"
-                          className="hidden"
-                        />
-                        <p className="text-[10px] text-gray-500">Supports JPG, PNG, WEBP (Auto-compressed).</p>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="text-left">
+                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Profile Picture *</label>
+                        <div className="grid sm:grid-cols-3 gap-4 items-center">
+                          <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-55 mx-auto sm:mx-0">
+                            <img 
+                              src={avatarUrl} 
+                              alt="Avatar Preview" 
+                              className="w-full h-full object-cover" 
+                            />
+                          </div>
+                          <div className="sm:col-span-2 text-center sm:text-left space-y-2">
+                            <button
+                              type="button"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-xs font-bold hover:bg-gray-50 transition-colors flex items-center justify-center sm:justify-start gap-1.5 w-full sm:w-auto"
+                            >
+                              <FaUpload /> Upload Profile Photo
+                            </button>
+                            <input
+                              type="file"
+                              ref={fileInputRef}
+                              onChange={handleImageUpload}
+                              accept="image/*"
+                              className="hidden"
+                            />
+                            <p className="text-[10px] text-gray-500">Supports JPG, PNG, WEBP (Auto-compressed).</p>
+                          </div>
+                        </div>
+                      </div>
 
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Full Name *</label>
-                      <input
-                        type="text"
-                        required
-                        value={fullName}
-                        onChange={e => { setFullName(e.target.value); setErrors(prev => ({ ...prev, fullName: "" })); }}
-                        placeholder="e.g. Hamman Bakare"
-                        className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.fullName ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
-                      />
-                      {errors.fullName && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.fullName}</p>}
-                    </div>
-                    <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">State of Origin *</label>
-                      <select
-                        required
-                        value={stateOfOrigin}
-                        onChange={e => { setStateOfOrigin(e.target.value); setErrors(prev => ({ ...prev, stateOfOrigin: "" })); }}
-                        className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.stateOfOrigin ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
-                      >
-                        <option value="">Select State</option>
-                        {NIGERIAN_STATES.map(s => (
-                          <option key={s} value={s}>{s}</option>
-                        ))}
-                      </select>
-                      {errors.stateOfOrigin && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.stateOfOrigin}</p>}
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Email Address *</label>
-                      <input
-                        type="email"
-                        required
-                        value={email}
-                        onChange={e => { setEmail(e.target.value); setErrors(prev => ({ ...prev, email: "" })); }}
-                        placeholder="e.g. bakare.t@mail.com"
-                        className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.email ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
-                      />
-                      {errors.email && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.email}</p>}
-                    </div>
-                    <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Phone Number</label>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={e => setPhone(e.target.value)}
-                        placeholder="e.g. +234 812 345 6789"
-                        className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Tribe / Cultural Group *</label>
-                      <select
-                        required
-                        value={tribe}
-                        onChange={e => { setTribe(e.target.value); setErrors(prev => ({ ...prev, tribe: "" })); }}
-                        className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.tribe ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
-                      >
-                        <option value="">Select Tribe</option>
-                        {NIGERIAN_TRIBES.map(t => (
-                          <option key={t} value={t}>{t}</option>
-                        ))}
-                      </select>
-                      {errors.tribe && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.tribe}</p>}
-                    </div>
-                    <div className="text-left">
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Gender</label>
-                      <div className="flex gap-2">
-                        {["Male", "Female"].map(g => (
-                          <button
-                            type="button"
-                            key={g}
-                            onClick={() => setGender(g)}
-                            className={`flex-1 py-2 border rounded-lg text-[11px] font-bold transition-all ${gender === g
-                              ? "bg-[#01353D] border-[#01353D] text-white"
-                              : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
-                              }`}
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="text-left">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Full Name *</label>
+                          <input
+                            type="text"
+                            required
+                            value={fullName}
+                            onChange={e => { setFullName(e.target.value); setErrors(prev => ({ ...prev, fullName: "" })); }}
+                            placeholder="e.g. Hamman Bakare"
+                            className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.fullName ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
+                          />
+                          {errors.fullName && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.fullName}</p>}
+                        </div>
+                        <div className="text-left">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">State of Origin *</label>
+                          <select
+                            required
+                            value={stateOfOrigin}
+                            onChange={e => { setStateOfOrigin(e.target.value); setErrors(prev => ({ ...prev, stateOfOrigin: "" })); }}
+                            className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.stateOfOrigin ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
                           >
-                            {g}
-                          </button>
-                        ))}
+                            <option value="">Select State</option>
+                            {NIGERIAN_STATES.map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                          {errors.stateOfOrigin && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.stateOfOrigin}</p>}
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="flex justify-between pt-2">
-                    <button
-                      type="button"
-                      onClick={() => router.push('/nysc')}
-                      className="border border-gray-200 text-gray-500 px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newErrors: Record<string, string> = {};
-                        if (!fullName.trim()) newErrors.fullName = "Full Name is required";
-                        if (!stateOfOrigin) newErrors.stateOfOrigin = "State of Origin is required";
-                        if (!email.trim()) newErrors.email = "Email Address is required";
-                        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) newErrors.email = "Invalid email format";
-                        if (!tribe) newErrors.tribe = "Tribe is required";
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="text-left">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Email Address *</label>
+                          <input
+                            type="email"
+                            required
+                            value={email}
+                            onChange={e => { setEmail(e.target.value); setErrors(prev => ({ ...prev, email: "" })); }}
+                            placeholder="e.g. bakare.t@mail.com"
+                            className={`w-full px-3.5 py-2 bg-gray-55 border ${errors.email ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
+                          />
+                          {errors.email && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.email}</p>}
+                        </div>
+                        <div className="text-left">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Phone Number</label>
+                          <input
+                            type="tel"
+                            value={phone}
+                            onChange={e => setPhone(e.target.value)}
+                            placeholder="e.g. +234 812 345 6789"
+                            className="w-full px-3.5 py-2 bg-gray-55 border border-gray-200 rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all"
+                          />
+                        </div>
+                      </div>
 
-                        setErrors(newErrors);
-                        if (Object.keys(newErrors).length > 0) {
-                          triggerToast("Please fill in the highlighted required fields.");
-                          return;
-                        }
-                        if (avatarUrl === DEFAULT_AVATAR) {
-                          triggerToast("Please upload your profile photo first!");
-                          return;
-                        }
-                        setFormStep(2);
-                      }}
-                      className="bg-[#01353D] text-white px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors"
-                    >
-                      Next <FaArrowRight />
-                    </button>
-                  </div>
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="text-left">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Tribe / Cultural Group *</label>
+                          <select
+                            required
+                            value={tribe}
+                            onChange={e => { setTribe(e.target.value); setErrors(prev => ({ ...prev, tribe: "" })); }}
+                            className={`w-full px-3.5 py-2.5 bg-gray-55 border ${errors.tribe ? "border-red-500 bg-red-50" : "border-gray-200"} rounded-lg text-xs focus:outline-none focus:border-[#01353D] transition-all`}
+                          >
+                            <option value="">Select Tribe</option>
+                            {NIGERIAN_TRIBES.map(t => (
+                              <option key={t} value={t}>{t}</option>
+                            ))}
+                          </select>
+                          {errors.tribe && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.tribe}</p>}
+                        </div>
+                        <div className="text-left">
+                          <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5">Gender</label>
+                          <div className="flex gap-2">
+                            {["Male", "Female"].map(g => (
+                              <button
+                                type="button"
+                                key={g}
+                                onClick={() => setGender(g)}
+                                className={`flex-1 py-2 border rounded-lg text-[11px] font-bold transition-all ${gender === g
+                                  ? "bg-[#01353D] border-[#01353D] text-white"
+                                  : "bg-white border-gray-200 text-gray-600 hover:bg-gray-50"
+                                  }`}
+                              >
+                                {g}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex justify-between pt-2">
+                        <button
+                          type="button"
+                          onClick={() => router.push('/nysc')}
+                          className="border border-gray-200 text-gray-500 px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newErrors: Record<string, string> = {};
+                            if (!fullName.trim()) newErrors.fullName = "Full Name is required";
+                            if (!stateOfOrigin) newErrors.stateOfOrigin = "State of Origin is required";
+                            if (!email.trim()) newErrors.email = "Email Address is required";
+                            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) newErrors.email = "Invalid email format";
+                            if (!tribe) newErrors.tribe = "Tribe is required";
+
+                            setErrors(newErrors);
+                            if (Object.keys(newErrors).length > 0) {
+                              triggerToast("Please fill in the highlighted required fields.");
+                              return;
+                            }
+                            if (avatarUrl === DEFAULT_AVATAR) {
+                              triggerToast("Please upload your profile photo first!");
+                              return;
+                            }
+                            setFormStep(2);
+                          }}
+                          className="bg-[#01353D] text-white px-5 py-3 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 hover:bg-[#024a54] transition-colors"
+                        >
+                          Next <FaArrowRight />
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               )}
 

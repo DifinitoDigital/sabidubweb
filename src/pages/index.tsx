@@ -581,7 +581,7 @@ export default function Home() {
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-600 text-[8px] font-black uppercase tracking-wider mb-3">
                       🚗 Ride with Me
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Campus & Camp Transit</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">Camp Transit Link Up</h3>
                     <p className="text-gray-500 text-xs font-semibold leading-relaxed max-w-[320px]">
                       Inter-state camp shuttles & verified campus rides for corpers. Share routes, split fares, travel safe.
                     </p>
