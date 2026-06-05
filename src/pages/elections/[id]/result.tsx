@@ -110,7 +110,7 @@ export default function PublicElectionResultsPage() {
 
     function handleShare() {
         const url = window.location.href;
-        if (navigator.share) {
+        if (typeof navigator.share === "function") {
             navigator.share({ title: data?.title || "Election Results", text: `Check out the results for: ${data?.title} on SabiDub`, url });
         } else {
             navigator.clipboard.writeText(url);

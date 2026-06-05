@@ -212,7 +212,7 @@ export default function NyscProfileDetail({ initialProfile }: PageProps) {
   const [navigatorShareSupported, setNavigatorShareSupported] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && navigator.share) {
+    if (typeof window !== "undefined" && typeof navigator.share === "function") {
       setNavigatorShareSupported(true);
     }
   }, []);
@@ -302,7 +302,7 @@ export default function NyscProfileDetail({ initialProfile }: PageProps) {
       const shareText = `Check out my digital NYSC yearbook card on SabiDub! 🎓✨ Join the national yearbook directory, connect with fellow corp members, and create your own card here:`;
       const shareUrl = `${window.location.origin}/nysc/${profile.id}`;
 
-      if (navigator.share) {
+      if (typeof navigator.share === "function") {
         canvas.toBlob(async (blob) => {
           if (!blob) {
             await navigator.share({
@@ -742,7 +742,7 @@ export default function NyscProfileDetail({ initialProfile }: PageProps) {
                               type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (navigator.share) {
+                                if (typeof navigator.share === "function") {
                                   navigator.share({
                                     title: `${profile.fullName}'s ${labels[idx]}`,
                                     url: window.location.href
