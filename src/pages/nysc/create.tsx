@@ -233,6 +233,7 @@ export default function CreateNyscProfile() {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [formStep, setFormStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
+  const [publishProgress, setPublishProgress] = useState(0);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -316,7 +317,19 @@ export default function CreateNyscProfile() {
       return;
     }
 
+    setPublishProgress(0);
     setSubmitting(true);
+    let progressInterval = setInterval(() => {
+      setPublishProgress(prev => {
+        if (prev >= 95) {
+          clearInterval(progressInterval);
+          return 95;
+        }
+        const diff = Math.max(1, Math.round((98 - prev) / 10));
+        return prev + diff;
+      });
+    }, 450);
+
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL || 'http://localhost:4000';
       const response = await fetch(`${baseUrl}/profile/create`, {
@@ -350,6 +363,10 @@ export default function CreateNyscProfile() {
 
       const resData = await response.json();
       if (response.ok && resData) {
+        clearInterval(progressInterval);
+        setPublishProgress(100);
+        await new Promise(resolve => setTimeout(resolve, 800));
+
         const details = resData.nyscDetails || {};
         const savedData = {
           id: resData.id,
@@ -387,9 +404,11 @@ export default function CreateNyscProfile() {
           router.push('/nysc');
         }, 1500);
       } else {
+        clearInterval(progressInterval);
         triggerToast(`❌ Error: ${resData.message || "Failed to register profile"}`);
       }
     } catch (err) {
+      clearInterval(progressInterval);
       console.error("API error", err);
       triggerToast("❌ API Connection error. Please try again.");
     } finally {
@@ -414,12 +433,44 @@ export default function CreateNyscProfile() {
     <>
       {/* ── Circular Progress Loader Overlay when Submitting ── */}
       {submitting && (
-        <div className="fixed inset-0 z-50 bg-[#F8FAFA]/80 backdrop-blur-md flex flex-col items-center justify-center">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col items-center justify-center animate-fadeIn select-none">
           <div className="relative flex items-center justify-center">
-            <div className="w-16 h-16 rounded-full border-4 border-[#01353D]/10 border-t-[#01353D] animate-spin" />
+            {/* SVG Circular Progress */}
+            <svg className="w-24 h-24 transform -rotate-90">
+              <circle
+                cx="48"
+                cy="48"
+                r="40"
+                className="stroke-white/10"
+                strokeWidth="5"
+                fill="transparent"
+              />
+              <circle
+                cx="48"
+                cy="48"
+                r="40"
+                className="stroke-emerald-400 transition-all duration-300 ease-out"
+                strokeWidth="5"
+                fill="transparent"
+                strokeDasharray={2 * Math.PI * 40}
+                strokeDashoffset={2 * Math.PI * 40 * (1 - publishProgress / 100)}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute text-[11px] font-black text-white tracking-wider">
+              {publishProgress}%
+            </div>
           </div>
-          <h3 className="mt-5 text-xs font-black text-[#01353D] uppercase tracking-widest animate-pulse">Publishing Your Yearbook Card...</h3>
-          <p className="text-[10px] text-gray-500 mt-1">Compressing assets and establishing secure identity.</p>
+          <h3 className="mt-6 text-xs font-black text-white uppercase tracking-widest animate-pulse">
+            {publishProgress < 25 && "Step 1 of 4: Preparing photo uploads..."}
+            {publishProgress >= 25 && publishProgress < 50 && "Step 2 of 4: Uploading profile picture..."}
+            {publishProgress >= 50 && publishProgress < 75 && "Step 3 of 4: Uploading gallery memories..."}
+            {publishProgress >= 75 && publishProgress < 100 && "Step 4 of 4: Finalizing your yearbook card..."}
+            {publishProgress === 100 && "Card Published Successfully!"}
+          </h3>
+          <p className="text-[10px] text-gray-400 mt-1.5">
+            {publishProgress < 100 ? "Uploading..." : "Saving and downloading your yearbook card image."}
+          </p>
         </div>
       )}
       <Head>
