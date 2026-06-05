@@ -419,9 +419,9 @@ export default function NyscProfileDetail({ initialProfile }: PageProps) {
             <div className="absolute inset-0 bg-[#01353D] flex items-center justify-center">
               <div className="w-24 h-24 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
                 <img
-                  src={DEFAULT_AVATAR}
-                  alt="No Face Silhouette"
-                  className="w-12 h-12 opacity-60 filter invert"
+                  src="/images/favicon-white.png"
+                  alt="SabiDub Logo"
+                  className="w-12 h-12 object-contain animate-pulse"
                 />
               </div>
             </div>
@@ -474,27 +474,30 @@ export default function NyscProfileDetail({ initialProfile }: PageProps) {
                 <span>Powered by SabiDub</span>
               </div>
 
-              {/* FULL BLEED PORTRAIT PHOTO */}
-              <div className="absolute inset-0 w-full h-full z-0 bg-black">
+              {/* FULL BLEED PORTRAIT PHOTO OR BRAND LOGO PLACEHOLDER */}
+              <div className={`absolute inset-0 w-full h-full z-0 flex items-center justify-center ${
+                profile.avatarUrl === DEFAULT_AVATAR ? "bg-transparent" : "bg-black"
+              }`}>
                 {profile.avatarUrl !== DEFAULT_AVATAR ? (
-                  <div
-                    className="relative z-10 w-full h-full bg-no-repeat bg-center bg-cover"
-                    style={{ backgroundImage: `url(${profile.avatarUrl})` }}
-                  />
+                  <>
+                    <div
+                      className="relative z-10 w-full h-full bg-no-repeat bg-center bg-cover"
+                      style={{ backgroundImage: `url(${profile.avatarUrl})` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
+                  </>
                 ) : (
-                  /* Center silhouette if avatar is default */
-                  <div className="w-full h-full flex items-center justify-center bg-black/50">
-                    <div className="w-20 h-20 rounded-full border-2 border-white/20 bg-white/5 flex items-center justify-center overflow-hidden">
+                  <div className="flex flex-col items-center justify-center select-none pointer-events-none pb-16">
+                    <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg">
                       <img
-                        src={DEFAULT_AVATAR}
-                        alt="No Face Silhouette"
-                        className="w-12 h-12 opacity-60 filter invert"
+                        src="/images/favicon-white.png"
+                        alt="SabiDub Logo"
+                        className="w-9 h-9 object-contain animate-pulse"
                       />
                     </div>
                   </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10 pointer-events-none" />
               </div>
 
               {/* BOTTOM TEXT ZONE (pushed up by bottom-8, space-y-0.5 for small spacing) */}
@@ -545,8 +548,12 @@ export default function NyscProfileDetail({ initialProfile }: PageProps) {
               <div className="flex flex-col sm:flex-row sm:items-start gap-5 mb-8">
                 {/* Avatar */}
                 <div className="shrink-0">
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-md">
-                    <img src={profile.avatarUrl} alt={profile.fullName} className="w-full h-full object-cover object-top" />
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-gray-100 shadow-md flex items-center justify-center bg-[#01353D]">
+                    {profile.avatarUrl !== DEFAULT_AVATAR ? (
+                      <img src={profile.avatarUrl} alt={profile.fullName} className="w-full h-full object-cover object-top" />
+                    ) : (
+                      <img src="/images/favicon-white.png" alt="SabiDub Logo" className="w-10 h-10 object-contain animate-pulse" />
+                    )}
                   </div>
                 </div>
 

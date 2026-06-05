@@ -429,6 +429,7 @@ export default function NyscHub() {
 function YearbookCard({ item, router }: { item: any; router: any }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
+  const [isDefaultAvatar, setIsDefaultAvatar] = useState(!item.avatarUrl || item.avatarUrl === DEFAULT_AVATAR);
 
   useEffect(() => {
     if (imgRef.current?.complete) {
@@ -469,31 +470,48 @@ function YearbookCard({ item, router }: { item: any; router: any }) {
         <span>SabiDub</span>
       </div>
 
-      {/* FULL BLEED PORTRAIT PHOTO */}
-      <div className="absolute inset-0 w-full h-full z-0 bg-[#02241a] flex items-center justify-center">
-        {/* Shimmer Effect */}
-        {!imgLoaded && (
-          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/5 to-transparent animate-pulse z-10" />
+      {/* FULL BLEED PORTRAIT PHOTO OR BRAND LOGO PLACEHOLDER */}
+      <div className={`absolute inset-0 w-full h-full z-0 flex items-center justify-center transition-all ${
+        isDefaultAvatar ? "bg-transparent" : "bg-[#02241a]"
+      }`}>
+        {isDefaultAvatar ? (
+          <div className="flex flex-col items-center justify-center select-none pointer-events-none scale-100 group-hover:scale-105 transition-transform duration-500 pb-16">
+            <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-lg">
+              <img
+                src="/images/favicon-white.png"
+                alt="SabiDub"
+                className="w-9 h-9 object-contain animate-pulse"
+              />
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Shimmer Effect */}
+            {!imgLoaded && (
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/5 to-transparent animate-pulse z-10" />
+            )}
+            <img
+              ref={imgRef}
+              src={item.avatarUrl}
+              alt={item.fullName}
+              loading="lazy"
+              onLoad={() => setImgLoaded(true)}
+              className={`w-full h-full object-cover object-top transition-opacity duration-500 ${
+                imgLoaded ? "opacity-100" : "opacity-0"
+              }`}
+              onError={(e) => {
+                const imgEl = e.target as HTMLImageElement;
+                if (imgEl.src !== DEFAULT_AVATAR) {
+                  imgEl.src = DEFAULT_AVATAR;
+                }
+                setIsDefaultAvatar(true);
+                setImgLoaded(true);
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
+          </>
         )}
-        <img
-          ref={imgRef}
-          src={item.avatarUrl}
-          alt={item.fullName}
-          loading="lazy"
-          onLoad={() => setImgLoaded(true)}
-          className={`w-full h-full object-cover object-top transition-opacity duration-500 ${
-            imgLoaded ? "opacity-100" : "opacity-0"
-          }`}
-          onError={(e) => {
-            const imgEl = e.target as HTMLImageElement;
-            if (imgEl.src !== DEFAULT_AVATAR) {
-              imgEl.src = DEFAULT_AVATAR;
-            }
-            setImgLoaded(true);
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
       </div>
 
       {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
