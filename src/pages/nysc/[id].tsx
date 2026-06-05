@@ -245,6 +245,9 @@ export default function NyscProfileDetail() {
     );
   }
 
+  const nameParts = profile.fullName ? profile.fullName.trim().split(/\s+/) : [];
+  const displayName = nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : profile.fullName;
+
   return (
     <>
       <Head>
@@ -356,7 +359,7 @@ export default function NyscProfileDetail() {
 
                 {/* Large bold name with verified icon */}
                 <h3 className="text-base font-black text-white leading-[1.2] flex items-center gap-1.5 py-[1px]">
-                  {profile.fullName}
+                  {displayName}
                   <FaCheckCircle className="text-xs shrink-0" style={{ color: theme.accentColor }} />
                 </h3>
 

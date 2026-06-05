@@ -407,10 +407,6 @@ export default function NyscHub() {
           {/* Infinite Scroll loading indicator */}
           {visibleCount < filteredDirectory.length && (
             <div className="flex flex-col justify-center items-center py-10 gap-3">
-              <div className="flex items-center">
-                <div className="w-5 h-5 border-2 border-t-transparent border-[#01353D] rounded-full animate-spin" />
-                <span className="ml-2.5 text-[9px] font-black text-gray-500 uppercase tracking-widest">Loading more memories...</span>
-              </div>
               <button
                 type="button"
                 onClick={() => setVisibleCount((prev) => prev + 20)}
@@ -442,6 +438,10 @@ function YearbookCard({ item, router }: { item: any; router: any }) {
 
   const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
 
+  // Show at most 2 words on the card if name has 3 or more words
+  const nameParts = item.fullName ? item.fullName.trim().split(/\s+/) : [];
+  const displayName = nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : item.fullName;
+
   return (
     <motion.div
       onClick={() => router.push(`/nysc/${item.id}`)}
@@ -466,10 +466,10 @@ function YearbookCard({ item, router }: { item: any; router: any }) {
       </div>
 
       {/* FULL BLEED PORTRAIT PHOTO */}
-      <div className="absolute inset-0 w-full h-full z-0 bg-white/5">
+      <div className="absolute inset-0 w-full h-full z-0 bg-[#02241a] flex items-center justify-center">
         {/* Shimmer Effect */}
         {!imgLoaded && (
-          <div className="absolute inset-0 bg-white/10 animate-pulse z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/5 to-transparent animate-pulse z-10" />
         )}
         <img
           ref={imgRef}
@@ -481,7 +481,10 @@ function YearbookCard({ item, router }: { item: any; router: any }) {
             imgLoaded ? "opacity-100" : "opacity-0"
           }`}
           onError={(e) => {
-            (e.target as HTMLImageElement).style.opacity = '0';
+            const imgEl = e.target as HTMLImageElement;
+            if (imgEl.src !== DEFAULT_AVATAR) {
+              imgEl.src = DEFAULT_AVATAR;
+            }
             setImgLoaded(true);
           }}
         />
@@ -498,7 +501,7 @@ function YearbookCard({ item, router }: { item: any; router: any }) {
 
         {/* Large bold white name with verified icon */}
         <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
-          {item.fullName}
+          {displayName}
           <FaCheckCircle className="text-[10px] shrink-0" style={{ color: cardTheme.accentColor }} />
         </h3>
 

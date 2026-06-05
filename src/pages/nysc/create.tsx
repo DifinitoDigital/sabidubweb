@@ -117,46 +117,86 @@ const PORTRAIT_PLACEHOLDERS = {
   ]
 };
 
-const compressImage = (file: File, maxDim = 1920, quality = 0.9): Promise<string> => {
+/** Draw an image Blob/File through a canvas and return a JPEG base64 data URL. */
+const drawAndCompress = (blob: Blob, maxDim = 1920, quality = 0.9): Promise<string> => {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        let width = img.width;
-        let height = img.height;
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement("canvas");
+      let width = img.width;
+      let height = img.height;
 
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
         }
+      }
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) {
-          resolve(event.target?.result as string);
-          return;
-        }
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        // Fallback: read original file as base64
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+        return;
+      }
 
-        ctx.drawImage(img, 0, 0, width, height);
-        const compressedBase64 = canvas.toDataURL("image/jpeg", quality);
-        resolve(compressedBase64);
-      };
-      img.onerror = () => {
-        resolve(event.target?.result as string);
-      };
-      img.src = event.target?.result as string;
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/jpeg", quality));
     };
-    reader.onerror = (err) => reject(err);
-    reader.readAsDataURL(file);
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Failed to decode image"));
+    };
+    img.src = url;
   });
+};
+
+/**
+ * Compress an image file to a JPEG base64 data URL.
+ * HEIC/HEIF files (common from iPhones) are first converted to PNG
+ * using heic2any, then passed through the canvas pipeline.
+ */
+const compressImage = async (file: File, maxDim = 1920, quality = 0.9): Promise<string> => {
+  const isHeic =
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    file.name.toLowerCase().endsWith(".heic") ||
+    file.name.toLowerCase().endsWith(".heif");
+
+  if (isHeic) {
+    try {
+      // Dynamically import heic2any so it only loads in the browser
+      const heic2any = (await import("heic2any")).default;
+      const pngBlob = await heic2any({
+        blob: file,
+        toType: "image/png",
+        quality: 1,
+      }) as Blob;
+      return await drawAndCompress(pngBlob, maxDim, quality);
+    } catch (err) {
+      console.error("HEIC conversion failed, falling back to raw read:", err);
+      // Last-resort fallback: send file as-is
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+  }
+
+  // Standard image — use canvas directly
+  return drawAndCompress(file, maxDim, quality);
 };
 
 export default function CreateNyscProfile() {
@@ -182,6 +222,10 @@ export default function CreateNyscProfile() {
   const [serviceStatus, setServiceStatus] = useState("Serving");
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
   const [story, setStory] = useState("");
+
+  const nameParts = fullName ? fullName.trim().split(/\s+/) : [];
+  const displayName = nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : fullName;
+
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -525,10 +569,10 @@ export default function CreateNyscProfile() {
                               type="file"
                               ref={fileInputRef}
                               onChange={handleImageUpload}
-                              accept="image/*"
+                              accept="image/*,.heic,.heif"
                               className="hidden"
                             />
-                            <p className="text-[10px] text-gray-500">Supports JPG, PNG, WEBP (Auto-compressed).</p>
+                            <p className="text-[10px] text-gray-500">Supports JPG, PNG, WEBP, HEIC (Auto-compressed).</p>
                           </div>
                         </div>
                       </div>
@@ -999,7 +1043,7 @@ export default function CreateNyscProfile() {
 
                 {/* Large bold white name with verified icon */}
                 <h3 className="text-base font-black text-white leading-[1.2] truncate flex items-center gap-1.5 py-[1px]">
-                  {fullName || "YOUR FULL NAME"}
+                  {displayName || "YOUR FULL NAME"}
                   <FaCheckCircle className="text-xs shrink-0" style={{ color: activeTheme.accentColor }} />
                 </h3>
 
@@ -1074,7 +1118,7 @@ export default function CreateNyscProfile() {
 
                   {/* Large bold name with verified icon */}
                   <h3 className="text-base font-black text-white leading-[1.2] flex items-center gap-1.5 py-[1px]">
-                    {fullName || "YOUR FULL NAME"}
+                    {displayName || "YOUR FULL NAME"}
                     <FaCheckCircle className="text-xs shrink-0" style={{ color: activeTheme.accentColor }} />
                   </h3>
 
@@ -1195,7 +1239,7 @@ export default function CreateNyscProfile() {
                   {serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
                 </span>
                 <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
-                  {fullName || "YOUR FULL NAME"}
+                  {displayName || "YOUR FULL NAME"}
                   <FaCheckCircle className="text-[9px] shrink-0" style={{ color: activeTheme.accentColor }} />
                 </h3>
                 <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
