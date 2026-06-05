@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/Navbar";
@@ -49,6 +49,8 @@ const BADGE_STYLES = {
 
 let cachedYearbookList: any[] | null = null;
 let cacheTimestamp: number | null = null;
+let cachedVisibleCount = 20;
+let cachedScrollY = 0;
 const CACHE_TTL = 60 * 60 * 1000; // 1 hour in ms
 
 export default function NyscHub() {
@@ -68,7 +70,12 @@ export default function NyscHub() {
   const [searchQuery, setSearchQuery] = useState("");
 
   // Infinite Scroll Pagination State
-  const [visibleCount, setVisibleCount] = useState(20);
+  const [visibleCount, setVisibleCount] = useState(cachedVisibleCount);
+
+  // Cache visibleCount whenever it changes
+  useEffect(() => {
+    cachedVisibleCount = visibleCount;
+  }, [visibleCount]);
 
   const fetchYearbook = async () => {
     const isCacheValid = cachedYearbookList && cacheTimestamp && (Date.now() - cacheTimestamp < CACHE_TTL);
@@ -81,6 +88,7 @@ export default function NyscHub() {
         if (Array.isArray(data)) {
           const mapped = data.map((student: any) => {
             const details = student.nyscDetails || {};
+            const rawDate = details.createdAt || student.createdAt || '';
             return {
               id: student.id,
               fullName: details.fullName || student.name || 'Anonymous',
@@ -98,9 +106,13 @@ export default function NyscHub() {
               badgeTheme: details.badgeTheme || 'emerald',
               avatarUrl: details.avatarUrl || student.profilePicture || DEFAULT_AVATAR,
               serviceStatus: details.serviceStatus || 'Serving',
-              createdAt: details.createdAt ? new Date(details.createdAt).toLocaleDateString() : new Date().toLocaleDateString(),
+              createdAt: rawDate ? new Date(rawDate).toLocaleDateString() : new Date().toLocaleDateString(),
+              createdAtRaw: rawDate ? new Date(rawDate).getTime() : 0,
             };
           });
+          // Arrange cards based on creation timestamp (newest first)
+          mapped.sort((a, b) => b.createdAtRaw - a.createdAtRaw);
+
           setYearbookList(mapped);
           cachedYearbookList = mapped;
           cacheTimestamp = Date.now();
@@ -131,6 +143,16 @@ export default function NyscHub() {
     }
   }, []);
 
+  // Restore scroll position once data is populated
+  useEffect(() => {
+    if (yearbookList.length > 0 && cachedScrollY > 0) {
+      const timer = setTimeout(() => {
+        window.scrollTo(0, cachedScrollY);
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+  }, [yearbookList]);
+
   // Filtering Logic
   const filteredDirectory = yearbookList.filter(item => {
     const matchesYear = filterYear === "All" || item.yearOfService === filterYear;
@@ -152,16 +174,15 @@ export default function NyscHub() {
   // Infinite Scroll scroll handler to load more profiles
   useEffect(() => {
     const handleScroll = () => {
+      // Record current scroll position
+      cachedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+
       const threshold = 250; // pixels from bottom to trigger loading more
       const totalHeight = Math.max(
         document.documentElement.scrollHeight,
         document.body.scrollHeight
       );
-      const scrollPosition = window.innerHeight + (
-        window.scrollY || 
-        window.pageYOffset || 
-        document.documentElement.scrollTop
-      );
+      const scrollPosition = window.innerHeight + cachedScrollY;
 
       if (totalHeight - scrollPosition < threshold) {
         setVisibleCount(prev => prev + 20);
@@ -223,7 +244,7 @@ export default function NyscHub() {
         </section>
 
         {/* 1. DIRECTORY LIST SECTION */}
-        <div id="directory-section" className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 mt-12 space-y-6">
+        <div id="directory-section" className="max-w-7xl mx-auto px-3 sm:px-8 lg:px-12 mt-12 space-y-6">
 
           {/* Filter Panel */}
           <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm">
@@ -335,7 +356,7 @@ export default function NyscHub() {
           {/* Directory Grid — 2 cols on mobile, 3 on tablet, 4 on desktop */}
           {loadingProfiles ? (
             /* ── Skeleton Loading Cards ── */
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6 md:gap-8 pt-4">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
@@ -343,14 +364,14 @@ export default function NyscHub() {
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   {/* Top header skeleton */}
-                  <div className="absolute top-6 left-5 right-5 flex justify-between">
+                  <div className="absolute top-4 sm:top-6 left-3 right-3 sm:left-5 sm:right-5 flex justify-between">
                     <div className="h-1.5 w-16 bg-white/10 rounded-full" />
                     <div className="h-1.5 w-12 bg-white/10 rounded-full" />
                   </div>
                   {/* Avatar shimmer block */}
                   <div className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-transparent" />
                   {/* Bottom text skeleton */}
-                  <div className="absolute bottom-4 left-5 right-5 space-y-2">
+                  <div className="absolute bottom-4 left-3 right-3 sm:left-5 sm:right-5 space-y-2">
                     <div className="h-1.5 w-10 bg-emerald-400/30 rounded-full" />
                     <div className="h-3 w-3/4 bg-white/20 rounded-full" />
                     <div className="h-2 w-full bg-white/10 rounded-full" />
@@ -375,81 +396,11 @@ export default function NyscHub() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 pt-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 sm:gap-6 md:gap-8 pt-4">
               <AnimatePresence>
-                {paginatedDirectory.map((item) => {
-                  const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
-
-                  return (
-                    <motion.div
-                      key={item.id}
-                      onClick={() => router.push(`/nysc/${item.id}`)}
-                      initial={{ opacity: 0, y: 15 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 15 }}
-                      className="relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group"
-                      style={{ background: cardTheme.cardGradientStyle }}
-                    >
-                      {/* Background Pattern Mesh Overlay */}
-                      <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
-                        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-                          <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
-                          <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
-                        </svg>
-                      </div>
-
-                      {/* TOP HEADER WATERMARK */}
-                      <div className="absolute top-8 left-0 right-0 px-6 flex justify-between items-center z-20 text-[7.5px] font-black uppercase tracking-widest text-white/70 select-none">
-                        <span>nysc passport</span>
-                        <span>SabiDub</span>
-                      </div>
-
-                      {/* FULL BLEED PORTRAIT PHOTO */}
-                      <div className="absolute inset-0 w-full h-full z-0">
-                        <img
-                          src={item.avatarUrl}
-                          alt={item.fullName}
-                          loading="lazy"
-                          className="w-full h-full object-cover object-top"
-                          onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
-                        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
-                      </div>
-
-                      {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
-                      <div className="absolute bottom-3 left-5 right-5 z-20 flex flex-col text-left space-y-0.5 select-none">
-
-                        {/* Service Status micro label */}
-                        <span className="text-[7.5px] font-black uppercase tracking-[0.12em] leading-[1.2] py-[1px]" style={{ color: cardTheme.accentColor }}>
-                          {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
-                        </span>
-
-                        {/* Large bold white name with verified icon */}
-                        <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
-                          {item.fullName}
-                          <FaCheckCircle className="text-[10px] shrink-0" style={{ color: cardTheme.accentColor }} />
-                        </h3>
-
-                        {/* PPA Subtitle */}
-                        <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
-                          with <span className="font-bold" style={{ color: cardTheme.accentColor }}>{item.ppa.split(",")[0]}</span>
-                        </p>
-
-                        {/* Extra Details line */}
-                        <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
-                          {item.tribe} Tribe • {item.stateOfOrigin} • {item.platoonNo}
-                        </p>
-
-                        {/* Faint footer border line */}
-                        <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-1.5 text-[7px] text-gray-400 font-mono leading-[1.2] py-[1px]">
-                          <span>NYSC {item.yearOfService}</span>
-                          <span>{item.batch}</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+                {paginatedDirectory.map((item) => (
+                  <YearbookCard key={item.id} item={item} router={router} />
+                ))}
               </AnimatePresence>
             </div>
           )}
@@ -476,5 +427,97 @@ export default function NyscHub() {
 
       <Footer />
     </>
+  );
+}
+
+function YearbookCard({ item, router }: { item: any; router: any }) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current?.complete) {
+      setImgLoaded(true);
+    }
+  }, []);
+
+  const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
+
+  return (
+    <motion.div
+      onClick={() => router.push(`/nysc/${item.id}`)}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 15 }}
+      className="relative aspect-[3/4.2] w-full rounded-2xl overflow-hidden border border-white/10 cursor-pointer hover:border-[#01353D]/30 hover:shadow-xl hover:shadow-emerald-950/10 transition-all duration-300 active:scale-95 group"
+      style={{ background: cardTheme.cardGradientStyle }}
+    >
+      {/* Background Pattern Mesh Overlay */}
+      <div className="absolute inset-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
+        <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path d="M0,45 Q25,25 50,45 T100,45" fill="none" stroke="white" strokeWidth="0.8" />
+          <path d="M0,60 Q25,40 50,60 T100,60" fill="none" stroke="white" strokeWidth="0.8" />
+        </svg>
+      </div>
+
+      {/* TOP HEADER WATERMARK */}
+      <div className="absolute top-4 sm:top-8 left-0 right-0 px-4 sm:px-6 flex justify-between items-center z-20 text-[7.5px] font-black uppercase tracking-widest text-white/70 select-none">
+        <span>nysc passport</span>
+        <span>SabiDub</span>
+      </div>
+
+      {/* FULL BLEED PORTRAIT PHOTO */}
+      <div className="absolute inset-0 w-full h-full z-0 bg-white/5">
+        {/* Shimmer Effect */}
+        {!imgLoaded && (
+          <div className="absolute inset-0 bg-white/10 animate-pulse z-10" />
+        )}
+        <img
+          ref={imgRef}
+          src={item.avatarUrl}
+          alt={item.fullName}
+          loading="lazy"
+          onLoad={() => setImgLoaded(true)}
+          className={`w-full h-full object-cover object-top transition-opacity duration-500 ${
+            imgLoaded ? "opacity-100" : "opacity-0"
+          }`}
+          onError={(e) => {
+            (e.target as HTMLImageElement).style.opacity = '0';
+            setImgLoaded(true);
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-transparent z-10 pointer-events-none" />
+      </div>
+
+      {/* BOTTOM TEXT ZONE (Pushed up slightly and condensed to space-y-0.5 for premium tight spacing) */}
+      <div className="absolute bottom-3 left-3 right-3 sm:left-5 sm:right-5 z-20 flex flex-col text-left space-y-0.5 select-none">
+        {/* Service Status micro label */}
+        <span className="text-[7.5px] font-black uppercase tracking-[0.12em] leading-[1.2] py-[1px]" style={{ color: cardTheme.accentColor }}>
+          {item.serviceStatus === "Serving" ? "Active Serving" : "Served Alumni"}
+        </span>
+
+        {/* Large bold white name with verified icon */}
+        <h3 className="text-sm font-black text-white leading-[1.2] truncate flex items-center gap-1 py-[1px]">
+          {item.fullName}
+          <FaCheckCircle className="text-[10px] shrink-0" style={{ color: cardTheme.accentColor }} />
+        </h3>
+
+        {/* PPA Subtitle */}
+        <p className="text-[9.5px] text-gray-300 font-semibold leading-[1.2] truncate py-[1px]">
+          with <span className="font-bold" style={{ color: cardTheme.accentColor }}>{item.ppa.split(",")[0]}</span>
+        </p>
+
+        {/* Extra Details line */}
+        <p className="text-[8px] text-gray-400 font-medium leading-[1.2] truncate py-[1px]">
+          {item.tribe} Tribe • {item.stateOfOrigin} • {item.platoonNo}
+        </p>
+
+        {/* Faint footer border line */}
+        <div className="flex justify-between items-center pt-1.5 border-t border-white/10 mt-1.5 text-[7px] text-gray-400 font-mono leading-[1.2] py-[1px]">
+          <span>NYSC {item.yearOfService}</span>
+          <span>{item.batch}</span>
+        </div>
+      </div>
+    </motion.div>
   );
 }

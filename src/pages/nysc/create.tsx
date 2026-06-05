@@ -36,8 +36,8 @@ const NIGERIAN_STATES = [
 const NIGERIAN_TRIBES = [
   "Abayon", "Abua", "Achipa", "Adara", "Adim", "Adun", "Affade", "Afizere", "Afo", "Agbo",
   "Agila", "Agwagwune", "Ahan", "Ahwia", "Akaju-Ndem", "Akajuk", "Akoko", "Akpa", "Akpes", "Alago",
-  "Amo", "Anaguta", "Anan", "Anang", "Angas", "Ankwei", "Anyama", "Atyap", "Auyoka", "Awori",
-  "Ayu", "Babur", "Bachama", "Bada", "Bade", "Bahumono", "Bakulu", "Bali", "Bambuka", "Banda",
+  "Amo", "Anaguta", "Anan", "Anang", "Angas", "Ankwei", "Anyama", "Asholio", "Atyap", "Auyoka", "Awori",
+  "Ayu", "Babur", "Bachama", "Bada", "Bade", "Bahumono", "Bajju", "Bakulu", "Bali", "Bambuka", "Banda",
   "Bandawa", "Bariba", "Barke", "Bashiri", "Basa", "Bassa-Komo", "Bassa-Nge", "Batonu", "Batsama", "Baushi",
   "Baya", "Bekwarra", "Bette", "Bile", "Biliri", "Binawa", "Bini (Edo)", "Boki", "Bokkos", "Boma",
   "Bombaro", "Boritsu", "Bolewa", "Buduma", "Bumaji", "Bura", "Burak", "Bussa", "Buta", "Bwall",
@@ -48,9 +48,9 @@ const NIGERIAN_TRIBES = [
   "Fali", "Fulani", "Fyam", "Fyer", "Ga'anda", "Gade", "Galambi", "Gambiri", "Ganawuri", "Gbagyi",
   "Gbedde", "Gbo", "Gbotogo", "Gera", "Geruma", "Ghana", "Ghotuo", "Ginde", "Gira", "Gizigz",
   "Gobir", "Goemai", "Gokana", "Gombi", "Gornun", "Gura", "Gurmana", "Gwandara", "Gwari", "Gwom",
-  "Gwoza", "Gyem", "Hausa", "Higi", "Holma", "Ibeno", "Ibibio", "Ichen", "Icheve", "Idoma",
+  "Gwoza", "Gyem", "Ham", "Hausa", "Higi", "Holma", "Ibeno", "Ibibio", "Ichen", "Icheve", "Idoma",
   "Igala", "Igbo", "Igede", "Ijaw", "Ika", "Ikulu", "Irigwe", "Isoko", "Itsekiri", "Iyala",
-  "Izere", "Jaku", "Jara", "Jassawa", "Jawa", "Jeere", "Jera", "Jidda-Abu", "Jibu", "Jiti",
+  "Izere", "Jaba", "Jaku", "Jara", "Jassawa", "Jawa", "Jeere", "Jera", "Jidda-Abu", "Jibu", "Jiti",
   "Jorto", "Jukun", "Kaje", "Kajuru", "Kaka", "Kalabari", "Kamaku", "Kambari", "Kamwe", "Kanakuru",
   "Kanembu", "Kanuri", "Karimjo", "Kariya", "Katab", "Kenern", "Keshny", "Kiballo", "Kilba", "Kohumono",
   "Koma", "Kona", "Koro", "Kubi", "Kudachano", "Kufry", "Kugama", "Kugbo", "Kukuruku", "Kulere",
@@ -59,7 +59,7 @@ const NIGERIAN_TRIBES = [
   "Lemoro", "Limbola", "Lindiri", "Longuda", "Lopa", "Lotsu", "Lukshi", "Lungu", "Luri", "Mabo",
   "Mada", "Maha", "Mambilla", "Mangas", "Margi", "Matakarn", "Mbembe", "Mboi", "Mbote", "Mbula",
   "Mbum", "Mbutye", "Medye", "Megili", "Memyang", "Miango", "Milgili", "Mini", "Miri", "Miya",
-  "Mobber", "Montol", "Morwa", "Muchia", "Mumuye", "Mundang", "Mupun", "Mushere", "Mwaghavul", "Ndoro",
+  "Mobber", "Montol", "Moro'a", "Muchia", "Mumuye", "Mundang", "Mupun", "Mushere", "Mwaghavul", "Ndoro",
   "Ngamo", "Nggwahyi", "Ngizim", "Ngoshe", "Nguwimi", "Ninzam", "Njimbin", "Nkari", "Nkum", "Nokere",
   "Nuki", "Nungu", "Nupe", "Nyandang", "Odut", "Ogbia", "Ogoni", "Okobo", "Okpamheri", "Olulumo",
   "Oron", "Owan", "Owe", "Pa'a", "Pai", "Panyam", "Passam", "Pero", "Pyapun", "Quoll",
@@ -67,7 +67,7 @@ const NIGERIAN_TRIBES = [
   "Sarkawa", "Saya", "Shanga", "Shangawa", "Shira", "Shomo", "Shuwa Arab", "Sikdi", "Siri", "Sukur",
   "Sura", "Tangale", "Tarok", "Tiv", "Tula", "Umon", "Uncinda", "Urhobo", "Uvwie", "Uyanga",
   "Verre", "Waja", "Waka", "Warji", "Wula", "Wurkum", "Yagba", "Yako", "Yala", "Yandang",
-  "Yergan", "Yoruba", "Yoti", "Yungur", "Zarma", "Zangwal", "Other"
+  "Yergan", "Yoruba", "Yoti", "Youm", "Yungur", "Zarma", "Zangwal", "Other"
 ];
 
 const BADGE_STYLES = {
