@@ -197,9 +197,10 @@ export default function NyscProfileDetail() {
   const theme = BADGE_STYLES[profile?.badgeTheme || "emerald"];
   const isServing = profile?.serviceStatus === "Serving";
   const [downloading, setDownloading] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const downloadAsImage = async () => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || !profile) return;
     setDownloading(true);
     try {
       const html2canvas = (await import("html2canvas")).default;
@@ -210,13 +211,64 @@ export default function NyscProfileDetail() {
         scale: 2,
       });
       const link = document.createElement("a");
-      link.download = `${profile?.fullName?.replace(/\s+/g, "_") ?? "nysc"}_passport.png`;
+      link.download = `${profile.fullName.replace(/\s+/g, "_")}_passport.png`;
       link.href = canvas.toDataURL("image/png");
       link.click();
     } catch (err) {
       console.error("Download failed:", err);
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const shareCard = async () => {
+    if (!cardRef.current || !profile) return;
+    setSharing(true);
+    try {
+      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await html2canvas(cardRef.current, {
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: null,
+        scale: 2,
+      });
+
+      const shareText = `Check out my digital NYSC yearbook card on SabiDub! 🎓✨ Join the national yearbook directory, connect with fellow corp members, and create your own card here:`;
+      const shareUrl = `${window.location.origin}/nysc/${profile.id}`;
+
+      if (navigator.share) {
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            await navigator.share({
+              title: `${profile.fullName}'s NYSC Yearbook Card`,
+              text: `${shareText}\n\n${shareUrl}`,
+            }).catch(err => console.log("Text share failed:", err));
+            return;
+          }
+
+          const file = new File([blob], `${profile.fullName.replace(/\s+/g, "_")}_passport.png`, { type: "image/png" });
+          
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: `${profile.fullName}'s NYSC Yearbook Card`,
+              text: `${shareText}\n\n${shareUrl}`,
+            }).catch(err => console.log("File share failed:", err));
+          } else {
+            await navigator.share({
+              title: `${profile.fullName}'s NYSC Yearbook Card`,
+              text: `${shareText}\n\n${shareUrl}`,
+            }).catch(err => console.log("Text fallback failed:", err));
+          }
+        }, "image/png");
+      } else {
+        await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`);
+        alert("📋 Share message and yearbook link copied to clipboard! Paste it on WhatsApp, Twitter, or Facebook to share.");
+      }
+    } catch (err) {
+      console.error("Sharing failed:", err);
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -245,8 +297,12 @@ export default function NyscProfileDetail() {
     );
   }
 
+  // Title-case: capitalise first letter of each word, rest lowercase
+  const toTitleCase = (str: string) =>
+    str ? str.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) : str;
+
   const nameParts = profile.fullName ? profile.fullName.trim().split(/\s+/) : [];
-  const displayName = nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : profile.fullName;
+  const displayName = toTitleCase(nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : profile.fullName);
 
   return (
     <>
@@ -431,19 +487,36 @@ export default function NyscProfileDetail() {
                   </p>
                 </div>
 
-                {/* Download as Image Action */}
-                <button
-                  onClick={downloadAsImage}
-                  disabled={downloading}
-                  className="shrink-0 self-start flex items-center gap-1.5 bg-[#01353D] hover:bg-[#024a54] disabled:opacity-60 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-colors"
-                >
-                  {downloading ? (
-                    <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <FaDownload size={10} />
-                  )}
-                  {downloading ? "Saving..." : "Save as Image"}
-                </button>
+                {/* Action Buttons */}
+                <div className="shrink-0 self-start flex flex-row sm:flex-col gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                  {/* Download as Image Action */}
+                  <button
+                    onClick={downloadAsImage}
+                    disabled={downloading}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 bg-[#01353D] hover:bg-[#024a54] disabled:opacity-60 text-white px-4 py-2.5 rounded-lg text-xs font-bold transition-colors w-full"
+                  >
+                    {downloading ? (
+                      <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <FaDownload size={10} />
+                    )}
+                    {downloading ? "Saving..." : "Save as Image"}
+                  </button>
+
+                  {/* Share Action */}
+                  <button
+                    onClick={shareCard}
+                    disabled={sharing}
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 border border-[#01353D] text-[#01353D] hover:bg-[#01353D]/5 disabled:opacity-60 px-4 py-2.5 rounded-lg text-xs font-bold transition-colors w-full"
+                  >
+                    {sharing ? (
+                      <span className="w-3 h-3 border-2 border-[#01353D] border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <FaPaperPlane size={10} />
+                    )}
+                    {sharing ? "Sharing..." : "Share Card"}
+                  </button>
+                </div>
               </div>
 
               {/* ── Divider ── */}

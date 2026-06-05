@@ -438,9 +438,13 @@ function YearbookCard({ item, router }: { item: any; router: any }) {
 
   const cardTheme = BADGE_STYLES[item.badgeTheme as keyof typeof BADGE_STYLES] || BADGE_STYLES.emerald;
 
+  // Title-case: capitalise first letter of each word, lowercase the rest
+  const toTitleCase = (str: string) =>
+    str ? str.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) : str;
+
   // Show at most 2 words on the card if name has 3 or more words
   const nameParts = item.fullName ? item.fullName.trim().split(/\s+/) : [];
-  const displayName = nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : item.fullName;
+  const displayName = toTitleCase(nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : item.fullName);
 
   return (
     <motion.div

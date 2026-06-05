@@ -223,8 +223,12 @@ export default function CreateNyscProfile() {
   const [galleryUrls, setGalleryUrls] = useState<string[]>([]);
   const [story, setStory] = useState("");
 
+  // Title-case helper: capitalise first letter of every word, lowercase the rest
+  const toTitleCase = (str: string) =>
+    str ? str.replace(/\S+/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) : str;
+
   const nameParts = fullName ? fullName.trim().split(/\s+/) : [];
-  const displayName = nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : fullName;
+  const displayName = toTitleCase(nameParts.length >= 3 ? nameParts.slice(0, 2).join(' ') : fullName);
 
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -462,14 +466,14 @@ export default function CreateNyscProfile() {
             </div>
           </div>
           <h3 className="mt-6 text-xs font-black text-white uppercase tracking-widest animate-pulse">
-            {publishProgress < 25 && "Step 1 of 4: Preparing photo uploads..."}
-            {publishProgress >= 25 && publishProgress < 50 && "Step 2 of 4: Uploading profile picture..."}
-            {publishProgress >= 50 && publishProgress < 75 && "Step 3 of 4: Uploading gallery memories..."}
-            {publishProgress >= 75 && publishProgress < 100 && "Step 4 of 4: Finalizing your yearbook card..."}
-            {publishProgress === 100 && "Card Published Successfully!"}
+            {publishProgress < 30 && "Uploading your profile photo..."}
+            {publishProgress >= 30 && publishProgress < 55 && "Uploading camp photo (1 of 3)..."}
+            {publishProgress >= 55 && publishProgress < 80 && "Uploading PPA & POP photos..."}
+            {publishProgress >= 80 && publishProgress < 100 && "Publishing your yearbook card..."}
+            {publishProgress === 100 && "Published Successfully! 🎉"}
           </h3>
           <p className="text-[10px] text-gray-400 mt-1.5">
-            {publishProgress < 100 ? "Uploading..." : "Saving and downloading your yearbook card image."}
+            {publishProgress < 100 ? "Uploading..." : "Downloading your passport card image..."}
           </p>
         </div>
       )}
@@ -918,39 +922,78 @@ export default function CreateNyscProfile() {
                   </div>
 
                   <div className="text-left">
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">NYSC Memory Gallery (All 3 pictures required: Camp, PPA & POP) *</label>
-                    <p className="text-[9px] text-gray-400 mb-2">Please upload all three photos to showcase your complete service journey.</p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">NYSC Memory Gallery (All 3 required: Camp · PPA · POP) *</label>
+                    <p className="text-[9px] text-gray-400 mb-3">Upload all three photos in any order — Camp, PPA, and POP. All 3 are required before you can publish.</p>
+
+                    {/* All slots always unlocked — users can upload in any order */}
+                    <div className="flex flex-col gap-3">
                       {[0, 1, 2].map((index) => {
-                        const labels = ["CAMP Photo", "PPA Photo", "POP Photo"];
-                        const isUploaded = galleryUrls[index] !== undefined;
+                        const labels = ["Camp Photo", "PPA Photo", "POP Photo"];
+                        const descriptions = ["Your orientation camp memory", "Your primary assignment place", "Passing-Out Parade photo"];
+                        const icons = ["🏕️", "🏢", "🎓"];
+                        const isUploaded = !!galleryUrls[index];
+                        const stepNum = index + 1;
+
                         return (
-                          <div key={index} className={`relative aspect-square border ${errors.galleryUrls && !isUploaded ? "border-red-500 bg-red-50" : "border-dashed border-gray-200 bg-gray-55"} rounded-xl overflow-hidden hover:bg-gray-100/50 transition-all flex flex-col items-center justify-center cursor-pointer p-1`}>
+                          <div
+                            key={index}
+                            className={`relative border rounded-2xl overflow-hidden transition-all ${
+                              errors.galleryUrls && !isUploaded
+                                ? "border-red-400 bg-red-50/40"
+                                : isUploaded
+                                ? "border-emerald-300 bg-emerald-50/30"
+                                : "border-dashed border-[#01353D]/30 bg-gray-50"
+                            }`}
+                          >
                             {isUploaded ? (
-                              <>
-                                <img src={galleryUrls[index]} alt={labels[index]} className="w-full h-full object-cover rounded-lg" />
+                              /* Uploaded state: thumbnail + label + remove */
+                              <div className="flex items-center gap-3 p-3">
+                                <div className="relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border border-emerald-200 shadow-sm">
+                                  <img src={galleryUrls[index]} alt={labels[index]} className="w-full h-full object-cover" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 mb-0.5">
+                                    <span className="text-[8px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-100 px-1.5 py-0.5 rounded-full">
+                                      Photo {stepNum} ✓ Uploaded
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] font-bold text-gray-800 truncate">{labels[index]}</p>
+                                  <p className="text-[8px] text-gray-500 truncate">{descriptions[index]}</p>
+                                </div>
                                 <button
                                   type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
+                                  onClick={() => {
                                     setGalleryUrls(prev => {
                                       const updated = [...prev];
                                       delete updated[index];
                                       return updated;
                                     });
                                   }}
-                                  className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-[8px]"
+                                  className="shrink-0 w-7 h-7 flex items-center justify-center bg-red-100 hover:bg-red-200 text-red-600 rounded-full text-[10px] font-black transition-colors"
+                                  title="Remove and re-upload"
                                 >
                                   ✕
                                 </button>
-                              </>
+                              </div>
                             ) : (
-                              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer text-center">
-                                <span className="text-lg text-gray-400 font-bold">+</span>
-                                <span className="text-[8px] font-black text-gray-500 uppercase tracking-wider">{labels[index]}</span>
+                              /* Empty slot — always tappable */
+                              <label className="flex items-center gap-3 p-3 cursor-pointer">
+                                <div className="shrink-0 w-16 h-16 rounded-xl border-2 border-dashed border-[#01353D]/30 bg-[#01353D]/5 flex flex-col items-center justify-center text-xl">
+                                  <span>{icons[index]}</span>
+                                  <span className="text-[8px] font-black text-[#01353D] mt-0.5">TAP</span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-1.5 mb-0.5">
+                                    <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full bg-[#01353D]/10 text-[#01353D]">
+                                      Photo {stepNum} → Upload
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] font-bold text-gray-800 truncate">{labels[index]}</p>
+                                  <p className="text-[8px] text-gray-500 truncate">{descriptions[index]}</p>
+                                </div>
                                 <input
                                   type="file"
-                                  accept="image/*"
+                                  accept="image/*,.heic,.heif"
                                   className="hidden"
                                   onChange={async (e) => {
                                     const file = e.target.files?.[0];
@@ -963,10 +1006,10 @@ export default function CreateNyscProfile() {
                                           return updated;
                                         });
                                         setErrors(prev => ({ ...prev, galleryUrls: "" }));
-                                        triggerToast(`📸 ${labels[index]} compressed & loaded successfully!`);
+                                        triggerToast(`📸 ${labels[index]} uploaded!`);
                                       } catch (err) {
                                         console.error(err);
-                                        triggerToast("❌ Failed to process gallery photo.");
+                                        triggerToast("❌ Failed to process photo.");
                                       }
                                     }
                                   }}
@@ -977,7 +1020,7 @@ export default function CreateNyscProfile() {
                         );
                       })}
                     </div>
-                    {errors.galleryUrls && <p className="text-red-500 text-[9px] mt-1 font-bold">{errors.galleryUrls}</p>}
+                    {errors.galleryUrls && <p className="text-red-500 text-[9px] mt-2 font-bold">{errors.galleryUrls}</p>}
                   </div>
 
                   <div className="text-left">
