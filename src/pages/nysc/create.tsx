@@ -36,7 +36,7 @@ const NIGERIAN_STATES = [
 const NIGERIAN_TRIBES = [
   "Abayon", "Abua", "Achipa", "Adara", "Adim", "Adun", "Affade", "Afizere", "Afo", "Agbo",
   "Agila", "Agwagwune", "Ahan", "Ahwia", "Akaju-Ndem", "Akajuk", "Akoko", "Akpa", "Akpes", "Alago",
-  "Amo", "Anaguta", "Anan", "Anang", "Angas", "Ankwei", "Anyama", "Asholio", "Atyap", "Auyoka", "Awori",
+  "Amo", "Anaguta", "Anan", "Anang", "Ngas", "Ankwei", "Anyama", "Asholio", "Atyap", "Auyoka", "Awori",
   "Ayu", "Babur", "Bachama", "Bada", "Bade", "Bahumono", "Bajju", "Bakulu", "Bali", "Bambuka", "Banda",
   "Bandawa", "Bariba", "Barke", "Bashiri", "Basa", "Bassa-Komo", "Bassa-Nge", "Batonu", "Batsama", "Baushi",
   "Baya", "Bekwarra", "Bette", "Bile", "Biliri", "Binawa", "Bini (Edo)", "Boki", "Bokkos", "Boma",
@@ -602,10 +602,10 @@ export default function CreateNyscProfile() {
                         <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Profile Picture *</label>
                         <div className="grid sm:grid-cols-3 gap-4 items-center">
                           <div className="relative w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden bg-gray-55 mx-auto sm:mx-0">
-                            <img 
-                              src={avatarUrl} 
-                              alt="Avatar Preview" 
-                              className="w-full h-full object-cover" 
+                            <img
+                              src={avatarUrl}
+                              alt="Avatar Preview"
+                              className="w-full h-full object-cover"
                             />
                           </div>
                           <div className="sm:col-span-2 text-center sm:text-left space-y-2">
@@ -872,7 +872,7 @@ export default function CreateNyscProfile() {
                         const newErrors: Record<string, string> = {};
                         if (!callUpNo.trim()) newErrors.callUpNo = "State Code is required";
                         if (!deploymentState) newErrors.deploymentState = "Deployment State is required";
-                        
+
                         setErrors(newErrors);
                         if (Object.keys(newErrors).length > 0) {
                           triggerToast("Please fill in the highlighted required fields.");
@@ -1215,7 +1215,7 @@ export default function CreateNyscProfile() {
               <div className="absolute inset-0 rounded-full border-4 border-emerald-400/20" />
               <div className="absolute inset-0 rounded-full border-4 border-t-emerald-400 animate-spin" />
             </div>
-            
+
             <div className="space-y-1.5">
               <h4 className="text-white text-sm font-black uppercase tracking-widest">Generating Preview Card</h4>
               <p className="text-gray-300 text-[10px] leading-relaxed">Preparing high-definition graphics, rendering custom fonts, and packaging your NYSC preview passport card...</p>

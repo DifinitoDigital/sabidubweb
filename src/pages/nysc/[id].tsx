@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import {
   FaCheckCircle, FaBuilding, FaGlobe, FaIdCard,
   FaArrowLeft, FaPhone, FaEnvelope, FaMapMarkerAlt,
-  FaUsers, FaCalendarAlt, FaDownload
+  FaUsers, FaCalendarAlt, FaDownload, FaCamera, FaPaperPlane
 } from "react-icons/fa";
 import Link from "next/link";
 
@@ -506,41 +506,110 @@ export default function NyscProfileDetail() {
                 </div>
               )}
 
-              {/* ── Memoir Gallery Section (3-Column Polaroid Memory Board) ── */}
+              {/* ── Memoir Gallery Section (Story-Style Memory Cards Layout) ── */}
               {profile.galleryUrls && profile.galleryUrls.filter(Boolean).length > 0 && (
                 <div className="mt-8 pt-8 border-t border-gray-100">
                   <h3 className="text-xs font-black uppercase tracking-widest text-[#01353D] mb-4">NYSC Memory Gallery</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                     {profile.galleryUrls.filter(Boolean).map((url, idx) => {
                       const labels = ["CAMP MEMORY", "PPA MILESTONE", "POP GRADUATION"];
                       return (
                         <div
                           key={idx}
                           onClick={() => { setPreviewImage(url); setPreviewIndex(idx); }}
-                          className="cursor-pointer rounded-xl overflow-hidden border border-gray-200 bg-white shadow-sm active:scale-95 transition-transform duration-150"
+                          className="relative aspect-[9/16] w-full rounded-2xl overflow-hidden shadow-lg border border-gray-150 bg-black group hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-300 cursor-pointer"
                         >
-                          {/* Image Box — explicit height for mobile */}
-                          <div className="w-full h-48 sm:h-44 relative bg-gray-100">
-                            <img
-                              src={url}
-                              alt={labels[idx] || "Memory photo"}
-                              loading="lazy"
-                              className="absolute inset-0 w-full h-full object-cover"
-                              onError={(e) => {
-                                (e.target as HTMLImageElement).style.display = 'none';
-                              }}
-                            />
-                            {/* Always-visible gradient footer label (works on mobile touch) */}
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2">
-                              <span className="text-[8px] font-black text-white uppercase tracking-widest">
-                                {labels[idx] || "Service Photo"}
-                              </span>
+                          {/* Top Progress Indicators */}
+                          <div className="absolute top-2.5 inset-x-2.5 flex gap-1 z-20">
+                            {[0, 1, 2].map((i) => (
+                              <div
+                                key={i}
+                                className={`h-[2px] flex-1 rounded-full ${
+                                  i === idx ? "bg-white" : "bg-white/30"
+                                }`}
+                              />
+                            ))}
+                          </div>
+
+                          {/* Top Header Bar Overlay */}
+                          <div className="absolute top-5 inset-x-3 flex items-center justify-between z-20">
+                            <div className="flex items-center gap-2">
+                              <img
+                                src={profile.avatarUrl !== DEFAULT_AVATAR ? profile.avatarUrl : DEFAULT_AVATAR}
+                                alt="Avatar"
+                                className="w-7 h-7 rounded-full border border-white/20 object-cover"
+                              />
+                              <div className="flex flex-col text-left">
+                                <span className="text-[10px] font-black text-white leading-tight drop-shadow-sm tracking-wider">
+                                  {labels[idx]}
+                                </span>
+                                <span className="text-[8px] font-medium text-white/70 leading-none">
+                                  {profile.fullName}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-white/50 hover:text-white/90 text-[10px] font-bold p-1 cursor-pointer">
+                              ✕
                             </div>
                           </div>
-                          {/* Caption strip */}
-                          <div className="px-3 py-2 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-                            <p className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{labels[idx]}</p>
-                            <span className="text-[8px] text-emerald-500 font-black">↗ View</span>
+
+                          {/* Background Gradients Overlay */}
+                          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/60 to-transparent pointer-events-none z-10" />
+                          <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/80 via-black/25 to-transparent pointer-events-none z-10" />
+
+                          {/* Full Bleed Image */}
+                          <img
+                            src={url}
+                            alt={labels[idx]}
+                            loading="lazy"
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+
+                          {/* Left Bottom Information Pill */}
+                          <div className="absolute bottom-3.5 left-3 z-20 bg-white/15 backdrop-blur-md border border-white/20 rounded-full px-2.5 py-1.5 flex items-center gap-1.5 text-white text-[8px] font-black tracking-wide leading-none uppercase">
+                            <FaCamera size={9} className="opacity-90" />
+                            <span>
+                              {idx === 0 && (profile.deploymentState ? profile.deploymentState.split(" ")[0] : "CAMP")}
+                              {idx === 1 && (profile.ppa ? profile.ppa.split(",")[0] : "PPA")}
+                              {idx === 2 && (profile.yearOfService || "POP")}
+                            </span>
+                          </div>
+
+                          {/* Right Bottom floating action controls */}
+                          <div className="absolute bottom-3.5 right-3 flex items-center gap-2 z-20">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (navigator.share) {
+                                  navigator.share({
+                                    title: `${profile.fullName}'s ${labels[idx]}`,
+                                    url: window.location.href
+                                  }).catch(() => {});
+                                } else {
+                                  navigator.clipboard.writeText(window.location.href);
+                                  alert("Profile link copied!");
+                                }
+                              }}
+                              className="w-7 h-7 rounded-full bg-white/15 backdrop-blur-md border border-white/20 flex items-center justify-center text-white/80 hover:text-white active:scale-90 transition-all hover:bg-white/25"
+                              title="Share profile link"
+                            >
+                              <FaPaperPlane size={9} />
+                            </button>
+                            <div
+                              className="w-7 h-7 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white/35 active:scale-90 transition-all cursor-pointer"
+                              title="View full photo"
+                            >
+                              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="15 3 21 3 21 9" />
+                                <polyline points="9 21 3 21 3 15" />
+                                <line x1="21" y1="3" x2="14" y2="10" />
+                                <line x1="3" y1="21" x2="10" y2="14" />
+                              </svg>
+                            </div>
                           </div>
                         </div>
                       );
