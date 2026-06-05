@@ -11,6 +11,9 @@ import {
   FaUsers, FaCalendarAlt, FaDownload, FaCamera, FaPaperPlane
 } from "react-icons/fa";
 import Link from "next/link";
+import { GetServerSideProps } from "next";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface NyscProfile {
@@ -100,14 +103,19 @@ function DetailRow({ label, value, icon }: { label: string; value: string; icon?
 // In-memory cache to store full fetched profiles so that back-and-forth navigation is instantaneous!
 const profileCache: Record<string, NyscProfile> = {};
 
+// ─── Page Props (from getServerSideProps) ──────────────────────────────────────
+interface PageProps {
+  initialProfile: NyscProfile | null;
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
-export default function NyscProfileDetail() {
+export default function NyscProfileDetail({ initialProfile }: PageProps) {
   const router = useRouter();
   const { id } = router.query;
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const [profile, setProfile] = useState<NyscProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<NyscProfile | null>(initialProfile);
+  const [loading, setLoading] = useState(!initialProfile);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewIndex, setPreviewIndex] = useState(0);
 
@@ -247,7 +255,7 @@ export default function NyscProfileDetail() {
           }
 
           const file = new File([blob], `${profile.fullName.replace(/\s+/g, "_")}_passport.png`, { type: "image/png" });
-          
+
           if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({
               files: [file],
@@ -308,7 +316,27 @@ export default function NyscProfileDetail() {
     <>
       <Head>
         <title>{profile.fullName} — NYSC Corp Member Profile | SabiDub</title>
-        <meta name="description" content={`View the NYSC yearbook profile for ${profile.fullName}, serving at ${profile.ppa}.`} />
+        <meta name="description" content={`View the NYSC yearbook profile for ${profile.fullName}, serving at ${profile.ppa}. Join the SabiDub NYSC digital yearbook.`} />
+
+        {/* Open Graph — Facebook, WhatsApp, LinkedIn, etc. */}
+        <meta property="og:type" content="profile" />
+        <meta property="og:title" content={`${profile.fullName} — NYSC Yearbook Card`} />
+        <meta property="og:description" content={`${profile.fullName} is ${profile.serviceStatus === 'Serving' ? 'serving' : 'a served alumni'} at ${profile.ppa}. View their NYSC digital passport and join the SabiDub yearbook directory.`} />
+        <meta property="og:url" content={`https://www.sabidub.com/nysc/${profile.id}`} />
+        {profile.avatarUrl && profile.avatarUrl !== DEFAULT_AVATAR && (
+          <meta property="og:image" content={profile.avatarUrl} />
+        )}
+        <meta property="og:image:width" content="600" />
+        <meta property="og:image:height" content="800" />
+        <meta property="og:site_name" content="SabiDub" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${profile.fullName} — NYSC Yearbook Card | SabiDub`} />
+        <meta name="twitter:description" content={`${profile.fullName} is ${profile.serviceStatus === 'Serving' ? 'serving' : 'a served alumni'} at ${profile.ppa}. Join the SabiDub NYSC yearbook!`} />
+        {profile.avatarUrl && profile.avatarUrl !== DEFAULT_AVATAR && (
+          <meta name="twitter:image" content={profile.avatarUrl} />
+        )}
       </Head>
 
       <Navbar />
@@ -463,8 +491,8 @@ export default function NyscProfileDetail() {
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 mb-1.5">
                     <span className={`text-[8px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${isServing
-                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                        : "bg-gray-100 text-gray-500 border-gray-200"
+                      ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                      : "bg-gray-100 text-gray-500 border-gray-200"
                       }`}>
                       {isServing ? "Active Serving" : "Served Alumni"}
                     </span>
@@ -597,9 +625,8 @@ export default function NyscProfileDetail() {
                             {[0, 1, 2].map((i) => (
                               <div
                                 key={i}
-                                className={`h-[2px] flex-1 rounded-full ${
-                                  i === idx ? "bg-white" : "bg-white/30"
-                                }`}
+                                className={`h-[2px] flex-1 rounded-full ${i === idx ? "bg-white" : "bg-white/30"
+                                  }`}
                               />
                             ))}
                           </div>
@@ -661,7 +688,7 @@ export default function NyscProfileDetail() {
                                   navigator.share({
                                     title: `${profile.fullName}'s ${labels[idx]}`,
                                     url: window.location.href
-                                  }).catch(() => {});
+                                  }).catch(() => { });
                                 } else {
                                   navigator.clipboard.writeText(window.location.href);
                                   alert("Profile link copied!");
@@ -724,7 +751,7 @@ export default function NyscProfileDetail() {
               <div className="absolute inset-0 rounded-full border-4 border-emerald-400/20" />
               <div className="absolute inset-0 rounded-full border-4 border-t-emerald-400 animate-spin" />
             </div>
-            
+
             <div className="space-y-1.5">
               <h4 className="text-white text-sm font-black uppercase tracking-widest">Generating Digital Card</h4>
               <p className="text-gray-300 text-[10px] leading-relaxed">Preparing high-definition graphics, rendering custom fonts, and packaging your NYSC digital passport...</p>
@@ -833,3 +860,58 @@ export default function NyscProfileDetail() {
     </>
   );
 }
+
+// ─── Server-side data fetch for Open Graph meta tags ────────────────────────
+export const getServerSideProps: GetServerSideProps<PageProps> = async ({ params }) => {
+  const id = params?.id as string;
+  if (!id) {
+    return { props: { initialProfile: null } };
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/profile/${encodeURIComponent(id)}`, {
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (!res.ok) {
+      return { props: { initialProfile: null } };
+    }
+
+    const resData = await res.json();
+    if (!resData) {
+      return { props: { initialProfile: null } };
+    }
+
+    const details = resData.nyscDetails || {};
+    const mappedProfile: NyscProfile = {
+      id: resData.id,
+      fullName: details.fullName || resData.name || 'Anonymous',
+      email: details.email || undefined,
+      phone: details.phone || resData.number || undefined,
+      stateOfOrigin: details.stateOfOrigin || undefined,
+      callUpNo: details.callUpNo || 'N/A',
+      deploymentState: details.deploymentState || 'N/A',
+      yearOfService: details.yearOfService || '2026',
+      batch: details.batch || 'Batch A',
+      stream: details.stream || 'Stream 1',
+      platoonNo: details.platoonNo || 'Platoon 1',
+      platoonPosition: details.platoonPosition || 'Member',
+      ppa: details.ppa || 'N/A',
+      tribe: details.tribe || 'N/A',
+      gender: details.gender || resData.gender || 'Male',
+      badgeTheme: details.badgeTheme || 'emerald',
+      avatarUrl: details.avatarUrl || resData.profilePicture || DEFAULT_AVATAR,
+      galleryUrls: details.galleryUrls || [],
+      story: details.story || undefined,
+      serviceStatus: details.serviceStatus || 'Serving',
+      createdAt: details.createdAt
+        ? new Date(details.createdAt).toLocaleDateString()
+        : new Date().toLocaleDateString(),
+    };
+
+    return { props: { initialProfile: mappedProfile } };
+  } catch (err) {
+    console.error('SSR profile fetch failed:', err);
+    return { props: { initialProfile: null } };
+  }
+};
