@@ -8,6 +8,13 @@
   --background-end-rgb: 255, 255, 255;
 }
 
+/* Zero border radius across the entire website for buttons, cards, containers, and all components */
+*,
+*::before,
+*::after {
+  border-radius: 0 !important;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
 }

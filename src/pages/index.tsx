@@ -1,14 +1,10 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
-import SuniVoiceWidget from "../components/SuniVoiceWidget";
-import { useSuniNarration } from "../hooks/useSuniNarration";
-import { useSectionObserver } from "../hooks/useSectionObserver";
-import { suniSections } from "../data/suniScript";
 
 interface Author {
   id: string;
@@ -55,74 +51,16 @@ export default function Home() {
     setOpenFaq(openFaq === index ? -1 : index);
   };
 
-  // ── Suni narration ─────────────────────────────────────────────────────
-  const sectionIds = suniSections.map((s) => s.id);
-  const {
-    prefs,
-    updatePrefs,
-    isPlaying,
-    autoplayBlocked,
-    currentSectionId,
-    isSupported,
-    attemptAutoplay,
-    handleFirstGesture,
-    onSectionActive,
-    replaySection,
-    replayIntro,
-  } = useSuniNarration();
+  const portalsScrollRef = useRef<HTMLDivElement>(null);
 
-  const activeSectionId = useSectionObserver(sectionIds);
-
-  // Autoplay on mount
-  useEffect(() => {
-    attemptAutoplay();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Handle first-gesture on the whole document to unblock autoplay
-  // Ignore if the target is the chip itself (chip has its own onClick)
-  useEffect(() => {
-    if (!autoplayBlocked) return;
-    const handler = (e: PointerEvent) => {
-      const chip = document.getElementById('suni-autoplay-chip');
-      if (chip && chip.contains(e.target as Node)) return; // chip handles it
-      handleFirstGesture();
-    };
-    document.addEventListener('pointerdown', handler, { once: true });
-    return () => document.removeEventListener('pointerdown', handler);
-  }, [autoplayBlocked, handleFirstGesture]);
-
-  // Fire narration when scroll section changes
-  useEffect(() => {
-    if (activeSectionId) {
-      onSectionActive(activeSectionId);
+  const scrollPortals = (direction: 'left' | 'right') => {
+    if (portalsScrollRef.current) {
+      const scrollAmount = direction === 'left' ? -480 : 480;
+      portalsScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
-  }, [activeSectionId, onSectionActive]);
+  };
 
-  const handleMuteToggle = useCallback(() => {
-    updatePrefs({ muted: !prefs.muted });
-  }, [prefs.muted, updatePrefs]);
 
-  const handleVolumeChange = useCallback((v: number) => {
-    updatePrefs({ volume: v, muted: v === 0 });
-  }, [updatePrefs]);
-
-  const handleRateChange = useCallback((v: number) => {
-    updatePrefs({ rate: v });
-  }, [updatePrefs]);
-
-  const handleDisableToggle = useCallback(() => {
-    updatePrefs({ disabled: !prefs.disabled });
-  }, [prefs.disabled, updatePrefs]);
-
-  const handleVoiceModeToggle = useCallback(() => {
-    updatePrefs({ voiceMode: prefs.voiceMode === 'audio' ? 'speech' : 'audio' });
-  }, [prefs.voiceMode, updatePrefs]);
-
-  const handleReplaySection = useCallback(() => {
-    if (activeSectionId) replaySection(activeSectionId);
-  }, [activeSectionId, replaySection]);
-  // ── End Suni ───────────────────────────────────────────────────────────
 
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
@@ -197,27 +135,6 @@ export default function Home() {
       </Head>
       <main className="min-h-screen bg-white relative">
 
-        {/* Suni Voice Widget — always visible */}
-        <SuniVoiceWidget
-          isPlaying={isPlaying}
-          muted={prefs.muted}
-          volume={prefs.volume}
-          rate={prefs.rate}
-          disabled={prefs.disabled}
-          voiceMode={prefs.voiceMode}
-          autoplayBlocked={autoplayBlocked}
-          isSupported={isSupported}
-          currentSectionId={currentSectionId}
-          activeSectionId={activeSectionId}
-          onMuteToggle={handleMuteToggle}
-          onVolumeChange={handleVolumeChange}
-          onRateChange={handleRateChange}
-          onDisableToggle={handleDisableToggle}
-          onVoiceModeToggle={handleVoiceModeToggle}
-          onReplaySection={handleReplaySection}
-          onReplayIntro={replayIntro}
-          onFirstGesture={handleFirstGesture}
-        />
 
         <Navbar />
 
@@ -1090,299 +1007,293 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Digital Ecosystem Section — schooltools narration */}
-        <section data-suni-section="schooltools" className="px-4 sm:px-6 py-24 bg-[#FAF9F6] relative overflow-hidden border-t border-gray-100">
-          <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#014751 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
+        {/* Digital Ecosystem Section — Styled after modern value-prop editorial layout */}
+        <section data-suni-section="schooltools" className="px-4 sm:px-6 lg:px-12 py-24 bg-white relative overflow-hidden border-t border-gray-100">
+          <div className="max-w-7xl xl:max-w-[1560px] mx-auto">
+            {/* Top Tag & Scroll Controls */}
+            <div className="flex items-center justify-between">
+              <span className="border border-gray-900 px-3 py-1 rounded-none text-[11px] font-mono uppercase tracking-widest text-gray-900 font-medium">
+                OUR NETWORK
+              </span>
 
-          <div className="max-w-7xl mx-auto relative z-10">
-            <div className="text-center mb-16">
-              <motion.div variants={fadeInUp} initial="initial" whileInView="animate" className="inline-block px-4 py-1.5 mb-6 rounded-full bg-[#014751]/5 border border-[#014751]/10">
-                <span className="text-[#014751] text-[10px] font-black uppercase tracking-widest">Our Network</span>
-              </motion.div>
-              <h2 className="text-4xl sm:text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tighter">
-                One Ecosystem. <span className="text-[#014751] italic font-serif">Multiple Gateways.</span>
-              </h2>
-              <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
-                Whether you&apos;re managing an institution, leading as a student ambassador, or supporting our users, SabiDub provides tailored portals for every role.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto px-4">
-              {/* School Management Portal */}
-              <motion.div
-                variants={fadeInUp}
-                initial="initial"
-                whileInView="animate"
-                whileHover={{ scale: 1.01 }}
-                className="bg-[#FFEFE4] p-8 sm:p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-500"
-              >
-                {/* Status Badge */}
-                <div className="relative z-10 flex mb-12">
-                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
-                    <div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
-                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">Portal / Admin-priority</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">School Management</h3>
-                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
-                    High-performance administration tools. Manage student records, academic calendars, and institutional analytics with precision.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="relative z-10 mt-12 flex flex-wrap items-center gap-6">
-                  <Link href="https://portal.sabidub.com/auth/school/signin" className="inline-block group/link">
-                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
-                      Access Portal <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
-                    </span>
-                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
-                  </Link>
-                </div>
-
-                {/* Geometric Shapes (Chevrons/Arrows) */}
-                <div className="absolute top-1/2 right-[-20px] -translate-y-1/2 pointer-events-none opacity-40">
-                  <svg width="340" height="340" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M180 50L280 170L180 290" stroke="url(#orange-grad)" strokeWidth="80" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
-                    <path d="M80 50L180 170L80 290" stroke="url(#orange-grad)" strokeWidth="80" strokeLinecap="round" strokeLinejoin="round" />
-                    <defs>
-                      <linearGradient id="orange-grad" x1="80" y1="170" x2="280" y2="170" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#F97316" />
-                        <stop offset="1" stopColor="#F97316" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
+              {/* Scroll Navigation Arrows */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => scrollPortals('left')}
+                  className="w-10 h-10 rounded-none border border-gray-300 bg-white shadow-sm hover:border-gray-900 flex items-center justify-center text-gray-700 hover:text-black transition-all active:scale-95"
+                  aria-label="Scroll left"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                   </svg>
-                </div>
-              </motion.div>
-
-              {/* Ambassador Hub */}
-              <motion.div
-                variants={fadeInUp}
-                initial="initial"
-                whileInView="animate"
-                transition={{ delay: 0.1 }}
-                whileHover={{ scale: 1.01 }}
-                className="bg-[#F1F1F0] p-8 sm:p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-500"
-              >
-                {/* Status Badge */}
-                <div className="relative z-10 flex mb-12">
-                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
-                    <div className="w-2.5 h-2.5 rounded-full bg-black"></div>
-                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">Open for applications</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">Ambassador Hub</h3>
-                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
-                    Dedicated space for student leaders. Coordinate campus activities, manage outreach, and track impact across the network.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="relative z-10 mt-12 flex flex-wrap items-center gap-6">
-                  <Link href="https://portal.sabidub.com/ambassador/login" className="inline-block group/link">
-                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
-                      Join Hub <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
-                    </span>
-                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
-                  </Link>
-                </div>
-
-                {/* Geometric Shapes (Discs/Circles) */}
-                <div className="absolute top-0 right-0 h-full w-1/3 pointer-events-none opacity-20">
-                  <svg width="100%" height="100%" viewBox="0 0 200 600" preserveAspectRatio="xMidYMid slice" fill="none">
-                    <circle cx="200" cy="150" r="100" fill="url(#bw-grad)" />
-                    <circle cx="200" cy="350" r="100" fill="url(#bw-grad)" />
-                    <circle cx="200" cy="550" r="100" fill="url(#bw-grad)" />
-                    <defs>
-                      <linearGradient id="bw-grad" x1="100" y1="400" x2="200" y2="400" gradientUnits="userSpaceOnUse">
-                        <stop stopColor="#000" />
-                        <stop offset="1" stopColor="#000" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollPortals('right')}
+                  className="w-10 h-10 rounded-none border border-gray-300 bg-white shadow-sm hover:border-gray-900 flex items-center justify-center text-gray-700 hover:text-black transition-all active:scale-95"
+                  aria-label="Scroll right"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
-                </div>
-              </motion.div>
-
-              {/* Global Student Network */}
-              <motion.div
-                variants={fadeInUp}
-                initial="initial"
-                whileInView="animate"
-                transition={{ delay: 0.2 }}
-                whileHover={{ scale: 1.01 }}
-                className="bg-[#E4F2FF] p-8 sm:p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-500"
-              >
-                {/* Status Badge */}
-                <div className="relative z-10 flex mb-12">
-                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
-                    <div className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></div>
-                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">Active Network</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">Student Network</h3>
-                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
-                    Connect across <span className="font-bold text-[#014751]">Countries, Schools, and Departments</span>. Participate in real-time 1vs1 competitions and access institutional hubs.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="relative z-10 mt-12">
-                  <Link href="/services" className="inline-block group/link">
-                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
-                      Explore Network <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
-                    </span>
-                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
-                  </Link>
-                </div>
-
-                {/* Decorative background grid/dots */}
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#014751 2px, transparent 0)', backgroundSize: '15px 15px' }}></div>
-
-                {/* Visual element (Orb) */}
-                <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-blue-400/20 rounded-full blur-[80px] group-hover:bg-blue-400/30 transition-colors duration-700"></div>
-              </motion.div>
-
-              {/* NYSC Digital Hub */}
-              <motion.div
-                variants={fadeInUp}
-                initial="initial"
-                whileInView="animate"
-                transition={{ delay: 0.3 }}
-                whileHover={{ scale: 1.01 }}
-                className="bg-[#E6F5EC] p-8 sm:p-12 rounded-[24px] relative overflow-hidden group min-h-[420px] flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-500"
-              >
-                {/* Status Badge */}
-                <div className="relative z-10 flex mb-12">
-                  <div className="bg-white px-5 py-2.5 rounded-full flex items-center gap-3 shadow-sm">
-                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-                    <span className="text-[13px] font-medium text-gray-800 tracking-tight">NYSC Hub / Active</span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="relative z-10">
-                  <h3 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-6 tracking-tight">NYSC Portal</h3>
-                  <p className="text-gray-600 text-[17px] leading-relaxed max-w-[320px] font-medium opacity-80">
-                    Connect on Served & Serving Corp Members Yearbook, generate digital profile passports, and launch platoon financial directives seamlessly.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="relative z-10 mt-12">
-                  <Link href="/nysc" className="inline-block group/link">
-                    <span className="font-bold text-gray-900 flex items-center gap-2 group-hover/link:gap-3 transition-all duration-300 uppercase text-[13px] tracking-widest">
-                      Access Hub <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7-7 7" /></svg>
-                    </span>
-                    <div className="h-0.5 w-full bg-gray-900 mt-1"></div>
-                  </Link>
-                </div>
-
-                {/* Decorative background grid/dots */}
-                <div className="absolute inset-0 opacity-[0.05] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#059669 2px, transparent 0)', backgroundSize: '15px 15px' }}></div>
-
-                {/* Visual element (Orb) */}
-                <div className="absolute bottom-[-100px] right-[-100px] w-64 h-64 bg-emerald-400/20 rounded-full blur-[80px] group-hover:bg-emerald-400/30 transition-colors duration-700"></div>
-              </motion.div>
-            </div>
-          </div>
-        </section>
-
-        {/* ─── MOBILE APP SECTION ─── */}
-        <section className="py-8 sm:py-16 bg-white overflow-hidden relative">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-[#014751] rounded-[32px] sm:rounded-[48px] p-6 sm:p-12 relative overflow-hidden group">
-              {/* Background Elements */}
-              <div className="absolute inset-0 opacity-20 group-hover:opacity-30 transition-opacity duration-700" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
-              <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#AFF8C8] rounded-full blur-[140px] opacity-20 -translate-y-1/2 translate-x-1/2"></div>
-
-              <div className="grid lg:grid-cols-2 gap-8 sm:gap-16 items-center relative z-10">
-                {/* Left Side: Content */}
-                <div className="text-left">
-                  <motion.div variants={fadeInUp} initial="initial" whileInView="animate" className="inline-block px-3 py-1 mb-6 sm:mb-8 rounded-full bg-white/10 border border-white/20">
-                    <span className="text-[#AFF8C8] text-[9px] sm:text-[10px] font-black uppercase tracking-widest flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#AFF8C8] animate-pulse"></span>
-                      Mobile Experience
-                    </span>
-                  </motion.div>
-
-                  <h2 className="text-3xl sm:text-5xl font-black text-white mb-4 sm:mb-6 tracking-tighter leading-[1.1]">
-                    Your Education,<br />
-                    <span className="text-[#AFF8C8] italic font-serif text-[1.1em]">In Your Pocket.</span>
-                  </h2>
-
-                  <p className="text-white/70 text-sm sm:text-lg mb-6 sm:mb-8 max-w-xl font-medium leading-relaxed">
-                    Take your learning journey anywhere. Access thousands of past questions and track your rank — all without using data in offline mode.
-                  </p>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#AFF8C8] shrink-0 border border-white/10">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                      </div>
-                      <div>
-                        <h4 className="text-white font-bold text-xs sm:text-sm mb-1 uppercase tracking-wider">Offline Study</h4>
-                        <p className="text-white/40 text-[10px] sm:text-[11px] leading-tight font-medium">Study past questions without internet connection.</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center text-[#AFF8C8] shrink-0 border border-white/10">
-                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
-                      </div>
-                      <div>
-                        <h4 className="text-white font-bold text-xs sm:text-sm mb-1 uppercase tracking-wider">Smart Alerts</h4>
-                        <p className="text-white/40 text-[10px] sm:text-[11px] leading-tight font-medium">Instant exam and study session reminders.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Side: Mockup */}
-                <div className="relative mt-12 lg:mt-0 px-4 sm:px-0">
-                  <motion.div
-                    animate={{
-                      y: [-15, 15, -15],
-                      rotate: [-1, 1, -1]
-                    }}
-                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                    className="relative z-10 w-full max-w-[280px] sm:max-w-[300px] mx-auto filter drop-shadow-[0_35px_35px_rgba(0,0,0,0.5)]"
-                  >
-                    <Image
-                      src="/images/app-mockup.png"
-                      alt="SabiDub App Mockup"
-                      width={500}
-                      height={1000}
-                      className="w-full h-auto brightness-110 rounded-[10px]"
-                      priority
-                    />
-                  </motion.div>
-
-                  {/* Tooltip Card */}
-                  <motion.div
-                    initial={{ x: 20, opacity: 0 }}
-                    whileInView={{ x: 0, opacity: 1 }}
-                    className="absolute -bottom-4 right-0 sm:bottom-10 sm:-right-4 bg-white/95 backdrop-blur-xl p-4 sm:p-5 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/40 z-20 max-w-[150px] sm:max-w-[180px]"
-                  >
-                    <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-600">
-                        <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                      </div>
-                      <span className="text-[8px] sm:text-[9px] font-black uppercase text-gray-400">Live Sync</span>
-                    </div>
-                    <p className="text-[10px] sm:text-[11px] font-bold text-gray-900 leading-snug">Synced across all your devices.</p>
-                  </motion.div>
-                </div>
+                </button>
               </div>
             </div>
+
+            {/* Subtle Divider */}
+            <div className="w-full h-px bg-gray-200 my-8"></div>
+
+            {/* Two-column Header */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-14">
+              <div className="lg:col-span-8">
+                <h2 className="text-3xl sm:text-5xl md:text-6xl font-normal text-gray-900 tracking-tight leading-[1.1]">
+                  Structure and clarity across every educational journey
+                </h2>
+              </div>
+              <div className="lg:col-span-4 lg:pl-6">
+                <p className="text-gray-500 text-base sm:text-lg leading-relaxed font-normal">
+                  SabiDub replaces fragmented workflows with a structured, connected ecosystem designed specifically for African education.
+                </p>
+              </div>
+            </div>
+
+            {/* Horizontal Scrollable Cards */}
+            <div
+              ref={portalsScrollRef}
+              className="flex overflow-x-auto gap-6 sm:gap-8 pb-8 no-scrollbar snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:-mx-6 sm:px-6 lg:mx-0 lg:px-0"
+            >
+              {/* Card 1: School Management */}
+              <Link
+                href="https://portal.sabidub.com/auth/school/signin"
+                className="group flex-shrink-0 w-[85vw] sm:w-[380px] md:w-[420px] lg:w-[450px] xl:w-[470px] snap-start flex flex-col"
+              >
+                {/* Visual Canvas (Real image with dark overlay & no border radius) */}
+                <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
+                  <Image
+                    src="/images/IMG_5609.JPG"
+                    alt="School Management"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/60 z-0"></div>
+
+                  {/* Floating White Widget */}
+                  <div className="w-full max-w-[320px] bg-white rounded-md p-5 shadow-2xl relative z-10 border border-white/60">
+                    <div className="flex justify-between items-center text-xs text-gray-700 font-medium mb-4">
+                      <span>School Management</span>
+                      <span className="text-gray-400 font-bold tracking-widest">⋮</span>
+                    </div>
+
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="text-3xl font-bold text-gray-900 tracking-tight">365</span>
+                      <span className="text-[11px] font-semibold text-emerald-600 flex items-center">
+                        ↗ 142 records active
+                      </span>
+                    </div>
+
+                    {/* Segmented Progress Bar */}
+                    <div className="flex items-center gap-1 mb-4 h-3 w-full">
+                      {[...Array(24)].map((_, i) => (
+                        <div
+                          key={i}
+                          className={`flex-1 h-full rounded-none ${
+                            i < 15 ? 'bg-orange-500' : 'bg-gray-200'
+                          }`}
+                        ></div>
+                      ))}
+                    </div>
+
+                    {/* Bottom Breakdown stats */}
+                    <div className="flex items-center justify-between text-[11px] text-gray-500 font-medium pt-2 border-t border-gray-100">
+                      <span>• 120 Intake</span>
+                      <span>• 200 Active</span>
+                      <span>45 Alumni</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Typography Below Visual */}
+                <div className="mt-5">
+                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight group-hover:text-[#014751] transition-colors flex items-center justify-between">
+                    <span>Structured school management</span>
+                    <span className="text-gray-400 group-hover:text-[#014751] group-hover:translate-x-1 transition-all text-lg">→</span>
+                  </h3>
+                  <p className="text-gray-500 text-sm sm:text-base leading-relaxed mt-2 font-normal">
+                    Standardize how institutions manage student records, academic calendars, and institutional analytics with precision.
+                  </p>
+                </div>
+              </Link>
+
+              {/* Card 2: Ambassador Hub */}
+              <Link
+                href="https://portal.sabidub.com/ambassador/login"
+                className="group flex-shrink-0 w-[85vw] sm:w-[380px] md:w-[420px] lg:w-[450px] xl:w-[470px] snap-start flex flex-col"
+              >
+                {/* Visual Canvas (Real image with dark overlay & no border radius) */}
+                <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
+                  <Image
+                    src="/images/IMG_5569.JPG"
+                    alt="Ambassador Hub"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/60 z-0"></div>
+
+                  {/* Floating Dark Widget */}
+                  <div className="w-full max-w-[280px] bg-[#161C24]/95 backdrop-blur-md rounded-md p-5 shadow-2xl relative z-10 border border-white/10 text-white">
+                    <div className="flex justify-between items-center text-xs text-gray-300 font-medium mb-3">
+                      <span className="flex items-center gap-1">Campus Hub ▾</span>
+                      <span className="text-[10px] text-gray-400">1-7 Apr</span>
+                    </div>
+
+                    <div className="flex justify-center my-2">
+                      <span className="bg-emerald-950/80 text-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-none border border-emerald-500/30">
+                        365 cycles
+                      </span>
+                    </div>
+
+                    {/* Dotted threshold line & Bar Graph */}
+                    <div className="relative pt-4 pb-2 border-t border-dashed border-yellow-500/40 mt-1">
+                      <div className="flex items-end justify-between h-20 px-2 gap-3">
+                        <div className="w-8 h-10 bg-white/10 rounded-none"></div>
+                        <div className="w-10 h-16 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-none relative overflow-hidden">
+                          <div className="absolute inset-0 opacity-40 bg-[repeating-linear-gradient(45deg,transparent,transparent_2px,#000_2px,#000_4px)]"></div>
+                        </div>
+                        <div className="w-8 h-8 bg-white/10 rounded-none"></div>
+                        <div className="w-8 h-12 bg-white/10 rounded-none"></div>
+                      </div>
+                      <div className="flex justify-between text-[9px] text-gray-400 font-mono px-2 pt-1">
+                        <span>Tue</span>
+                        <span className="text-white font-bold">Wed</span>
+                        <span>Thur</span>
+                        <span>Fri</span>
+                      </div>
+                    </div>
+
+                    <p className="text-center text-[11px] text-gray-300 font-medium mt-2">
+                      34.4% on track
+                    </p>
+                  </div>
+                </div>
+
+                {/* Typography Below Visual */}
+                <div className="mt-5">
+                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight group-hover:text-[#014751] transition-colors flex items-center justify-between">
+                    <span>Real-time chapter visibility</span>
+                    <span className="text-gray-400 group-hover:text-[#014751] group-hover:translate-x-1 transition-all text-lg">→</span>
+                  </h3>
+                  <p className="text-gray-500 text-sm sm:text-base leading-relaxed mt-2 font-normal">
+                    Track student leadership progress, campus outreach milestones, and active network impact in real-time.
+                  </p>
+                </div>
+              </Link>
+
+              {/* Card 3: Student Network */}
+              <Link
+                href="/services"
+                className="group flex-shrink-0 w-[85vw] sm:w-[380px] md:w-[420px] lg:w-[450px] xl:w-[470px] snap-start flex flex-col"
+              >
+                {/* Visual Canvas (Real image with dark overlay & no border radius) */}
+                <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
+                  <Image
+                    src="/images/IMG_5599.JPG"
+                    alt="Student Network"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/60 z-0"></div>
+
+                  {/* Overlapping Avatars & Speech Tag */}
+                  <div className="flex flex-col items-center relative z-10">
+                    <div className="bg-white text-gray-900 text-[10px] font-bold px-3 py-1 rounded-none shadow-lg mb-4 flex items-center gap-1.5 animate-bounce">
+                      <span>Alex Jonathan</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    </div>
+
+                    <div className="flex items-center -space-x-3 sm:-space-x-4">
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
+                        <Image src="/images/founder.jpg" alt="Student" fill className="object-cover" />
+                      </div>
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
+                        <Image src="/images/taiye-garrick.jpeg" alt="Student" fill className="object-cover" />
+                      </div>
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
+                        <Image src="/images/jnr.jpg" alt="Student" fill className="object-cover" />
+                      </div>
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
+                        <Image src="/images/abafoni.jpg" alt="Student" fill className="object-cover" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Typography Below Visual */}
+                <div className="mt-5">
+                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight group-hover:text-[#014751] transition-colors flex items-center justify-between">
+                    <span>Seamless peer coordination</span>
+                    <span className="text-gray-400 group-hover:text-[#014751] group-hover:translate-x-1 transition-all text-lg">→</span>
+                  </h3>
+                  <p className="text-gray-500 text-sm sm:text-base leading-relaxed mt-2 font-normal">
+                    Connect across Countries, Schools, and Departments. Participate in real-time 1vs1 competitions and institutional hubs.
+                  </p>
+                </div>
+              </Link>
+
+              {/* Card 4: NYSC Portal */}
+              <Link
+                href="/nysc"
+                className="group flex-shrink-0 w-[85vw] sm:w-[380px] md:w-[420px] lg:w-[450px] xl:w-[470px] snap-start flex flex-col"
+              >
+                {/* Visual Canvas (Real image with dark overlay & no border radius) */}
+                <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
+                  <Image
+                    src="/images/IMG_5713.JPG"
+                    alt="NYSC Portal"
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-black/60 z-0"></div>
+
+                  {/* Floating Digital Passport / Certificate Card */}
+                  <div className="w-full max-w-[290px] bg-[#0E1E1C]/95 backdrop-blur-md rounded-md p-5 shadow-2xl relative z-10 border border-emerald-500/20 text-white">
+                    <div className="flex justify-between items-center text-xs text-emerald-300 font-semibold mb-3">
+                      <span>NYSC Hub</span>
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    </div>
+
+                    <div className="flex items-center gap-3 p-3 rounded-none bg-white/5 border border-white/10 mb-3">
+                      <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 text-lg">
+                        🎓
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-white">Corps Member Passport</p>
+                        <p className="text-[10px] text-emerald-400 font-mono">ID: NYSC-NG-2026</p>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center text-[11px] text-gray-400 pt-1">
+                      <span>Platoon Directive</span>
+                      <span className="text-emerald-300 font-bold">Verified ✓</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Typography Below Visual */}
+                <div className="mt-5">
+                  <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight group-hover:text-[#014751] transition-colors flex items-center justify-between">
+                    <span>Corps Member Digital Passport</span>
+                    <span className="text-gray-400 group-hover:text-[#014751] group-hover:translate-x-1 transition-all text-lg">→</span>
+                  </h3>
+                  <p className="text-gray-500 text-sm sm:text-base leading-relaxed mt-2 font-normal">
+                    Connect on Served & Serving Corp Members Yearbook, generate digital profile passports, and launch platoon directives seamlessly.
+                  </p>
+                </div>
+              </Link>
+            </div>
           </div>
         </section>
+
 
         {/* Blog/Featured Articles Section — community narration */}
         <section data-suni-section="community" className="py-20 bg-gray-50/50 overflow-hidden">

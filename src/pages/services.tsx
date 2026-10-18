@@ -427,56 +427,7 @@ export default function Services() {
                     </div>
                 </section>
 
-                {/* ─── CTA ─── */}
-                <section className="px-6 py-28 bg-white">
-                    <div className="max-w-5xl mx-auto">
-                        <div className="relative overflow-hidden bg-[#011F24] rounded-[48px] p-10 sm:p-20 text-center">
-                            {/* Decorative glow spots */}
-                            <div className="absolute top-0 left-1/4 w-64 h-64 bg-[#FFEDB1]/20 rounded-full blur-[80px] pointer-events-none" />
-                            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-[#014751]/80 rounded-full blur-[80px] pointer-events-none" />
 
-                            <div className="relative z-10">
-                                <p className="text-[11px] font-extrabold uppercase tracking-[0.3em] text-[#FFEDB1]/70 mb-6">
-                                    Ready to Start?
-                                </p>
-                                <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white mb-8 leading-tight tracking-tight">
-                                    Your Education,<br />
-                                    <span className="text-[#FFEDB1]">Upgraded.</span>
-                                </h2>
-                                <p className="text-white/50 text-lg mb-14 max-w-xl mx-auto font-medium">
-                                    A unified gateway for <span className="text-white">Schools, Ambassadors, and Students</span>. Join the ecosystem building the future of Nigerian education.
-                                </p>
-                                <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
-                                    <Link
-                                        href="https://portal.sabidub.com/auth/school/signin"
-                                        className="w-full lg:w-auto px-8 py-5 bg-[#FFEDB1] text-[#011F24] rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center"
-                                    >
-                                        Register School
-                                    </Link>
-                                    <Link
-                                        href="https://portal.sabidub.com/ambassador/login"
-                                        className="w-full lg:w-auto px-8 py-5 bg-white text-[#011F24] rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center"
-                                    >
-                                        Join as Ambassador
-                                    </Link>
-                                    <Link
-                                        href="#download-app"
-                                        className="w-full lg:w-auto px-8 py-5 bg-teal-500 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all active:scale-95 shadow-xl text-center flex items-center justify-center gap-2"
-                                    >
-                                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 2H6.5C5.12 2 4 3.12 4 4.5v15C4 20.88 5.12 22 6.5 22h11c1.38 0 2.5-1.12 2.5-2.5v-15C20 3.12 18.88 2 17.5 2zM12 20c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm5-4H7V5h10v11z" /></svg>
-                                        Download / Login
-                                    </Link>
-                                    <Link
-                                        href="/contact"
-                                        className="w-full lg:w-auto px-8 py-5 border border-white/10 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-white/5 transition-all text-center"
-                                    >
-                                        Contact Us
-                                    </Link>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
 
                 <Footer />
             </motion.main>
