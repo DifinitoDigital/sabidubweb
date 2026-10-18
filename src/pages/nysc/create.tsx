@@ -599,6 +599,24 @@ export default function CreateNyscProfile() {
                           </div>
                         </button>
                       </div>
+
+                      <div className="pt-5 border-t border-gray-200/80 flex flex-col items-center justify-center gap-2.5">
+                        <p className="text-xs text-gray-500 font-medium">
+                          Prefer using your web browser or already have an account?
+                        </p>
+                        <a
+                          href="https://student.portal.sabidub.com/signin"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-white border-2 border-[#01353D] text-[#01353D] hover:bg-[#01353D] hover:text-white transition-all duration-300 text-xs font-black uppercase tracking-wider shadow-sm group"
+                        >
+                          <svg className="w-4 h-4 text-[#01353D] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                          </svg>
+                          <span>Log in using Web</span>
+                          <span className="transition-transform group-hover:translate-x-1">&rarr;</span>
+                        </a>
+                      </div>
                     </div>
                   ) : (
                     <>
