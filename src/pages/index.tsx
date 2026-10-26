@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 import { motion, AnimatePresence } from "framer-motion";
+import { User, UserCheck, GraduationCap, Users } from "lucide-react";
 
 interface Author {
   id: string;
@@ -1071,7 +1072,7 @@ export default function Home() {
                 {/* Visual Canvas (Real image with dark overlay & no border radius) */}
                 <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
                   <Image
-                    src="/images/IMG_5609.JPG"
+                    src="/images/school image.jpg"
                     alt="School Management"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -1133,8 +1134,8 @@ export default function Home() {
                 {/* Visual Canvas (Real image with dark overlay & no border radius) */}
                 <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
                   <Image
-                    src="/images/IMG_5569.JPG"
-                    alt="Ambassador Hub"
+                    src="/images/ambassador.jpg"
+                    alt="Ambassadorship Program"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
@@ -1180,7 +1181,7 @@ export default function Home() {
                 {/* Typography Below Visual */}
                 <div className="mt-5">
                   <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 tracking-tight group-hover:text-[#014751] transition-colors flex items-center justify-between">
-                    <span>Real-time chapter visibility</span>
+                    <span>Ambassadorship program</span>
                     <span className="text-gray-400 group-hover:text-[#014751] group-hover:translate-x-1 transition-all text-lg">→</span>
                   </h3>
                   <p className="text-gray-500 text-sm sm:text-base leading-relaxed mt-2 font-normal">
@@ -1207,22 +1208,22 @@ export default function Home() {
                   {/* Overlapping Avatars & Speech Tag */}
                   <div className="flex flex-col items-center relative z-10">
                     <div className="bg-white text-gray-900 text-[10px] font-bold px-3 py-1 rounded-none shadow-lg mb-4 flex items-center gap-1.5 animate-bounce">
-                      <span>Alex Jonathan</span>
+                      <span>Suni Gin</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                     </div>
 
                     <div className="flex items-center -space-x-3 sm:-space-x-4">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
-                        <Image src="/images/founder.jpg" alt="Student" fill className="object-cover" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gradient-to-br from-emerald-500 to-[#014751] flex items-center justify-center text-white relative z-40">
+                        <User className="w-7 h-7 sm:w-8 sm:h-8" />
                       </div>
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
-                        <Image src="/images/taiye-garrick.jpeg" alt="Student" fill className="object-cover" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white relative z-30">
+                        <UserCheck className="w-7 h-7 sm:w-8 sm:h-8" />
                       </div>
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
-                        <Image src="/images/jnr.jpg" alt="Student" fill className="object-cover" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white relative z-20">
+                        <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8" />
                       </div>
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gray-300 relative">
-                        <Image src="/images/abafoni.jpg" alt="Student" fill className="object-cover" />
+                      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-white/80 shadow-xl bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center text-white relative z-10">
+                        <Users className="w-7 h-7 sm:w-8 sm:h-8" />
                       </div>
                     </div>
                   </div>
@@ -1248,7 +1249,7 @@ export default function Home() {
                 {/* Visual Canvas (Real image with dark overlay & no border radius) */}
                 <div className="w-full h-[400px] sm:h-[440px] rounded-none relative overflow-hidden p-6 sm:p-8 flex items-center justify-center shadow-sm group-hover:shadow-xl transition-all duration-500 bg-black">
                   <Image
-                    src="/images/IMG_5713.JPG"
+                    src="/images/digital nysc.jpg"
                     alt="NYSC Portal"
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
